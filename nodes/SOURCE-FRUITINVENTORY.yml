@@ -1,6 +1,6 @@
 fileVersion: 1
-id: 8930d2a0-e851-4b9b-9ebf-119c8c1300f6
-name: INPUT_TABLE
+id: a3b954f2-1f4e-4f54-b71b-616a8c50726e
+name: FRUITINVENTORY
 operation:
   database: ""
   deployEnabled: true
@@ -13,13 +13,13 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: fb2f42ea-9f88-4c90-995d-360146162b04
-          stepCounter: 8930d2a0-e851-4b9b-9ebf-119c8c1300f6
+          columnCounter: 32de5fee-2203-40ae-aa6f-08c922e86266
+          stepCounter: a3b954f2-1f4e-4f54-b71b-616a8c50726e
         config: {}
-        dataType: DATE
+        dataType: VARCHAR(16777216)
         defaultValue: ""
         description: ""
-        name: DS
+        name: FRUITNAME
         nullable: true
         primaryKey: false
         sourceColumnReferences:
@@ -32,13 +32,13 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 01304229-fe59-45f3-aaf0-0c2894cdfc13
-          stepCounter: 8930d2a0-e851-4b9b-9ebf-119c8c1300f6
+          columnCounter: 8d6eb029-8a8c-4a0b-9476-93cf095e7250
+          stepCounter: a3b954f2-1f4e-4f54-b71b-616a8c50726e
         config: {}
         dataType: NUMBER(38,0)
         defaultValue: ""
         description: ""
-        name: METRIC
+        name: STOREA
         nullable: true
         primaryKey: false
         sourceColumnReferences:
@@ -51,13 +51,13 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 5b10420b-a4f0-428a-95cb-4a5d3ef036bf
-          stepCounter: 8930d2a0-e851-4b9b-9ebf-119c8c1300f6
+          columnCounter: eb9f1901-cb26-43de-8c93-394539e38a0d
+          stepCounter: a3b954f2-1f4e-4f54-b71b-616a8c50726e
         config: {}
-        dataType: VARCHAR(16777216)
+        dataType: NUMBER(38,0)
         defaultValue: ""
         description: ""
-        name: DIM_COUNTRY
+        name: STOREB
         nullable: true
         primaryKey: false
         sourceColumnReferences:
@@ -65,26 +65,7 @@ operation:
             transform: ""
         transform: ""
         uniqueKey: false
-      - acceptedValues:
-          strictMatch: true
-          values: []
-        appliedColumnTests: {}
-        columnReference:
-          columnCounter: 415295f4-4943-4ce7-9146-ddaa406df03a
-          stepCounter: 8930d2a0-e851-4b9b-9ebf-119c8c1300f6
-        config: {}
-        dataType: VARCHAR(16777216)
-        defaultValue: ""
-        description: ""
-        name: DIM_VERTICAL
-        nullable: true
-        primaryKey: false
-        sourceColumnReferences:
-          - columnReferences: []
-            transform: ""
-        transform: ""
-        uniqueKey: false
-  name: INPUT_TABLE
+  name: FRUITINVENTORY
   schema: ""
   sqlType: Source
   type: sourceInput
