@@ -3,17 +3,21 @@ id: 545725ee-63bd-4205-98f2-e314079db7a8
 name: DMFS_MONTHLY_SALES
 operation:
   config:
-    addcolumnleveldmfs: true
+    addcolumnleveldmfs: false
     adddmfs:
       items:
         - columnNameExpressions:
             columnCounter: 6d3a0204-998e-46ad-9139-56b601f5c6b7
             stepCounter: 545725ee-63bd-4205-98f2-e314079db7a8
           system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: 526c97c4-d556-44a4-ae04-e887fb3b4f16
+            stepCounter: 545725ee-63bd-4205-98f2-e314079db7a8
+          system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
-    addobjectleveldmfs: true
+    addobjectleveldmfs: false
     scheduleCRON: ""
     schedulePeriod: "60"
     schedulePeriodOption: TRIGGER_ON_CHANGES
