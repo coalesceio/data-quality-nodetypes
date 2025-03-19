@@ -2,8 +2,8 @@ fileVersion: 1
 id: "423"
 mappingDefinitions:
   SOURCE:
-    database: SMHASKE_DEV
-    schema: SOURCE_TABLES
+    database: ANANDHIS_DEV
+    schema: SOURCE_DATA
   TARGET:
     database: SMHASKE_DEV
     schema: TARGET_TEST
