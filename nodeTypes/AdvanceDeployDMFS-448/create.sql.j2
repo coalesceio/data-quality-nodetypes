@@ -45,6 +45,19 @@ does not permit copying or modification for any other purpose.
                     ON  ({{ column[loop.index0] }}) ; 
                 {% endfor %}
             {% endif %}
+
+            {% set sourceDatabase = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
+            {% set sourceSchema = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
+
+            {{ stage('creating Data quality result view', true, "sql", "create") }}  
+            CREATE OR REPLACE VIEW {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} AS
+            SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
+            FROM snowflake.local.data_quality_monitoring_results
+            where TABLE_DATABASE = '{{sourceDatabase}}'
+            and TABLE_SCHEMA = '{{sourceSchema}}'
+            and TABLE_NAME = '{{dep.node.name}}'
+            ;
+ 
         {%endfor%}
 
     {%elif currentState != undefined and desiredState!=currentState %}
@@ -136,11 +149,17 @@ does not permit copying or modification for any other purpose.
                     {% endif %}    
                 {% endfor %}
 
+            {% set sourceDatabase = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
+            {% set sourceSchema = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
 
-
+            {{ stage('creating Data quality result view', true, "sql", "create") }}  
+            CREATE OR REPLACE VIEW {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} AS
+            SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
+            FROM snowflake.local.data_quality_monitoring_results
+            where TABLE_DATABASE = '{{sourceDatabase}}'
+            and TABLE_SCHEMA = '{{sourceSchema}}'
+            and TABLE_NAME = '{{dep.node.name}}';
             {% endif %}
-
-
         {%endfor%}
     {%endif%}
 {%endif%}

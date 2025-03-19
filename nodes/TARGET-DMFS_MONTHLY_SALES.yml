@@ -10,6 +10,18 @@ operation:
             columnCounter: 6d3a0204-998e-46ad-9139-56b601f5c6b7
             stepCounter: 545725ee-63bd-4205-98f2-e314079db7a8
           system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: 526c97c4-d556-44a4-ae04-e887fb3b4f16
+            stepCounter: 545725ee-63bd-4205-98f2-e314079db7a8
+          system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: 0b1e825f-6259-4d96-8a90-47cd3b34c81c
+            stepCounter: 545725ee-63bd-4205-98f2-e314079db7a8
+          system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: e1622777-9c76-4b5a-890a-8d2b47b9653f
+            stepCounter: 545725ee-63bd-4205-98f2-e314079db7a8
+          system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
