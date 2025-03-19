@@ -1,0 +1,11 @@
+fileVersion: 1
+id: "423"
+mappingDefinitions:
+  SOURCE:
+    database: SMHASKE_DEV
+    schema: SOURCE_TABLES
+  TARGET:
+    database: SMHASKE_DEV
+    schema: TARGET_TEST
+name: smhaske_test_env
+type: Environment

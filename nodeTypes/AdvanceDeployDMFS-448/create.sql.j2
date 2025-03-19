@@ -1,0 +1,146 @@
+{#
+    Copyright (c) 2023 Coalesce. All rights reserved.
+This script and its associated documentation are confidential and proprietary to Coalesce.
+Unauthorized reproduction, distribution, or disclosure of this material is strictly prohibited.
+Coalesce permits you to copy and modify this script for the purposes of using with Coalsce but
+does not permit copying or modification for any other purpose.  
+#}
+{# == Node Type Version        : 1  == #}
+{# == Node Type Name           : DMFs == #}
+{# == Node Type Description    : This node creates DMFs == #}
+
+
+
+{% if desiredState %}
+
+	{% if currentState == undefined %}
+
+        {%- for dep in desiredState.sources[0].dependencies -%}
+            {{ stage('Add DMFs Schedule', true, "sql", "create") }}     
+            ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+            {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
+            SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
+            {% elif desiredState.config.schedulePeriodOption == 'CRON'%}
+            SET DATA_METRIC_SCHEDULE = 'USING CRON {{desiredState.config.scheduleCRON}}'
+            {% elif desiredState.config.schedulePeriodOption == 'TRIGGER_ON_CHANGES'%}
+            SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
+            {% endif%}
+
+            {% if desiredState.config.addobjectleveldmfs%}    
+                {% set object_expression = desiredState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
+                {% for r in object_expression %} 
+                    {{ stage('Add Object Level DMF', true, "sql", "create") }}     
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
+                    ON  () ; 
+                {% endfor %}
+            {% endif %}
+
+            {% if desiredState.config.addcolumnleveldmfs%}    
+                {% set column, expression = desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, desiredState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}
+                {% for r in column %}      
+                    {{ stage('Add Column DMF', true, "sql", "create") }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
+                    ON  ({{ column[loop.index0] }}) ; 
+                {% endfor %}
+            {% endif %}
+        {%endfor%}
+
+    {%elif currentState != undefined and desiredState!=currentState %}
+        {% set nsVariables = namespace(nsCurrentschedulePeriodOption="") %}
+        {% set nsVariables = namespace(nsDesiredschedulePeriodOption="") %}
+
+        {% set nsVariables.nsCurrentschedulePeriodOption = currentState.config.schedulePeriodOption  %}
+        {% set nsVariables.nsDesiredschedulePeriodOption = desiredState.config.schedulePeriodOption  %}
+
+        {%- for dep in desiredState.sources[0].dependencies -%}
+            {% if nsVariables.nsCurrentschedulePeriodOption != nsVariables.nsDesiredschedulePeriodOption %}
+                {{ stage('Add DMFs Schedule', true, "sql", "create") }}
+                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
+                SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
+                {% elif desiredState.config.schedulePeriodOption == 'CRON'%}
+                SET DATA_METRIC_SCHEDULE = 'USING CRON {{desiredState.config.scheduleCRON}}'
+                {% elif desiredState.config.schedulePeriodOption == 'TRIGGER_ON_CHANGES'%}
+                SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
+                {% endif%}
+            {% endif%}
+
+            {# object level logic#}
+
+            {% if not desiredState.config.addobjectleveldmfs%}  
+                {% set  expression_currentState =  currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
+                {% for r in expression_currentState %}   
+                    {{ stage('Dropping Object Level DMF ', true, "sql", "create") }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
+                    ON  ();  
+                {% endfor %}
+            {% endif %}            
+            
+            {% if desiredState.config.addobjectleveldmfs%}    
+                {% set  expression = desiredState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
+                {% set expression_currentState =  currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
+
+                {% if ( expression_currentState == [] and expression != expression_currentState) %}
+                    {{ stage('Adding New Object Level DMF ', true, "sql", "create") }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
+                    ON  ();  
+                {% elif ( expression == [] and expression != expression_currentState) %}
+                    {{ stage('Drop existing Object Level DMF ', true, "sql", "create") }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
+                    ON  ();  
+                {% endif%}
+
+            {% endif %}
+
+            {# column level logic#}
+
+            {% if not desiredState.config.addcolumnleveldmfs%}  
+                {% set  column_currentState, expression_currentState = currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, currentState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}   
+                {% for r in column_currentState %}   
+                    {{ stage('Dropping Column DMF ', true, "sql", "create") }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
+                    ON  ({{ column_currentState[loop.index0] }});  
+                {% endfor %}
+            {% endif %}            
+            
+            {% if desiredState.config.addcolumnleveldmfs%}    
+                {% set id, column, expression = desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') | list, desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, desiredState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}   
+
+                {% set id_currentState, column_currentState, expression_currentState = currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') | list, currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, currentState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}   
+
+                {% for r in column %}   
+                    {% set singleid = id[loop.index0] %}
+                    {% if singleid not in currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') %}
+                        {{ stage('Adding New Column DMF ', true, "sql", "create") }}
+
+                        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                        ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
+                        ON  ({{ column[loop.index0] }}); 
+                    {% endif %}    
+                {% endfor %}
+
+                {% for r in column_currentState %}   
+                    {% set singleid = id_currentState[loop.index0] %}
+                    {% if singleid not in desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') %}
+                        {{ stage('Dropping Column DMF ', true, "sql", "create") }}
+
+                        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                        DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
+                        ON  ({{ column_currentState[loop.index0] }}); 
+                    {% endif %}    
+                {% endfor %}
+
+
+
+            {% endif %}
+
+
+        {%endfor%}
+    {%endif%}
+{%endif%}

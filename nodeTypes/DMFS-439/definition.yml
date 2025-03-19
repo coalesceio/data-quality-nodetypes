@@ -1,0 +1,119 @@
+fileVersion: 1
+id: "439"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |+
+    capitalized: New Type
+    short: DMFS
+    tagColor: gray
+    plural: New Types
+
+
+    config:
+
+    - groupName: Scheduling Options
+      items:
+     
+    # Way to schedule the task to run #
+     
+      - displayName: Schedule Options
+        attributeName: schedulePeriodOption
+        type: dropdownSelector
+        default: Minutes
+        options:
+          - Minutes
+          - CRON
+          - TRIGGER_ON_CHANGES
+        isRequired: true
+     
+      - displayName: Enter task schedule using minutes
+        attributeName: schedulePeriod
+        type: textBox
+        default: '60'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Minutes' %} true {% else %} false {% endif %}"
+     
+      - displayName: Enter task schedule using CRON
+        attributeName: scheduleCRON
+        type: textBox
+        placeholder: '5 0-23 * * * America/Los_Angeles'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
+     
+      - displayName: Enter predecessor task(s) separated by a comma
+        attributeName: predTask
+        type: textBox
+        default: 'DATA_TRANSFORMATION_ROOT_TASK'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
+     
+      - displayName: Enter root task name
+        attributeName: rootTask
+        type: textBox
+        default: 'DATA_TRANSFORMATION_ROOT_TASK'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
+     
+    - groupName: Add DMFs
+      items:
+
+      - type: tabular
+        displayName: 'DMF Functions'
+        attributeName: adddmfs
+        columns:
+
+        -  type: columnDropdownSelector
+           displayName: Column Name
+           attributeName: columnNameExpressions
+
+        - displayName: System DMFs
+          attributeName: system_dmfs
+          type: dropdownSelector
+          default: UNION ALL
+          options:
+          - "BLANK_COUNT"
+          - "BLANK_PERCENT"
+          - "NULL_COUNT"
+          - "AVG"
+          - "MAX"
+          - "MIN"
+          - "STDDEV"
+          - "DUPLICATE_COUNT"
+          - "UNIQUE_COUNT"
+          - "FRESHNESS"
+        isRequired: false
+
+
+    - groupName: Drop DMFs
+      items:
+
+      - type: tabular
+        displayName: 'DMF Functions'
+        attributeName: dropdmfs
+        columns:
+
+        -  type: columnDropdownSelector
+           displayName: Column Name
+           attributeName: dropcolumnNameExpressions
+
+        - displayName: System DMFs
+          attributeName: drop_system_dmfs
+          type: dropdownSelector
+          default: UNION ALL
+          options:
+          - "BLANK_COUNT"
+          - "BLANK_PERCENT"
+          - "NULL_COUNT"
+          - "AVG"
+          - "MAX"
+          - "MIN"
+          - "STDDEV"
+          - "DUPLICATE_COUNT"
+          - "UNIQUE_COUNT"
+          - "FRESHNESS"
+        isRequired: false
+
+name: DMFS
+type: NodeType

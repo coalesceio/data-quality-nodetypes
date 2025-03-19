@@ -1,0 +1,30 @@
+{%- for dep in sources[0].dependencies -%}
+    {{ stage('Add DMFs Schedule') }}
+    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+    {% if config.schedulePeriodOption == 'Minutes' %}
+    SET DATA_METRIC_SCHEDULE = '{{config.schedulePeriod}} Minutes'
+    {% elif config.schedulePeriodOption == 'CRON'%}
+    SET DATA_METRIC_SCHEDULE = 'USING CRON {{config.scheduleCRON}}'
+    {% elif config.schedulePeriodOption == 'TRIGGER_ON_CHANGES'%}
+    SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
+    {% endif%}
+
+    {% set column, expression = config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, config.adddmfs.get('items') | map(attribute='system_dmfs') | list %}
+
+    {% for r in column %}
+        {{ stage('Add DMFs on '+  '{{r}}') }}
+        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+        ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }} 
+        ON  ({{r}}) ; 
+    {% endfor %}
+
+    {% set column, expression = config.dropdmfs.get('items') | map(attribute='dropcolumnNameExpressions.name') | list, config.dropdmfs.get('items') | map(attribute='drop_system_dmfs') | list %}
+
+    {% for r in column %}
+        {{ stage('Drop DMFs on '+  '{{r}}') }}
+        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+        DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }} 
+        ON  ({{r}}) ; 
+    {% endfor %}
+
+{%endfor%}
