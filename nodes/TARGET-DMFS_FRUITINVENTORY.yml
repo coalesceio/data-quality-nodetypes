@@ -7,7 +7,7 @@ operation:
     adddmfs:
       items:
         - columnNameExpressions:
-            columnCounter: 6c038c6c-6ca0-4a4e-8a53-57f44c20a61a
+            columnCounter: d73e557d-9564-4d2f-b27f-f943990df8fc
             stepCounter: 090c1927-a355-4e77-9c73-b0eab42bb83a
           system_dmfs: NULL_COUNT
     adddmfsobject:
