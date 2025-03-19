@@ -3,21 +3,13 @@ id: 5c8c66a5-ffb9-4ccd-97a4-447fb663288e
 name: DMFS_INPUT_TABLE
 operation:
   config:
-    addcolumnleveldmfs: true
+    addcolumnleveldmfs: false
     adddmfs:
-      items:
-        - columnNameExpressions:
-            columnCounter: d244d9ce-8b2b-48c4-9a67-6db0d8c0e7a7
-            stepCounter: 5c8c66a5-ffb9-4ccd-97a4-447fb663288e
-          system_dmfs: NULL_COUNT
-        - columnNameExpressions:
-            columnCounter: 466062c1-8d59-462b-b060-ee383bb557d4
-            stepCounter: 5c8c66a5-ffb9-4ccd-97a4-447fb663288e
-          system_dmfs: NULL_COUNT
+      items: []
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
-    addobjectleveldmfs: true
+    addobjectleveldmfs: false
     scheduleCRON: ""
     schedulePeriod: "60"
     schedulePeriodOption: Minutes
