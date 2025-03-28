@@ -3,7 +3,7 @@ id: b91c4e1d-d099-47c2-a613-c39ea788c105
 name: PROF_CUSTOMER_TEST
 operation:
   config:
-    flagSrcStream: true
+    flagSrcStream: false
     isRowCount: true
     multiStreamBehavior: AND
     predTask: DATA_TRANSFORMATION_ROOT_TASK
