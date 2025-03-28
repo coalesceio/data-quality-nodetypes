@@ -3,9 +3,13 @@ id: f511aee0-915e-4363-b911-d6781d76a570
 name: PROF_CUSTOMER
 operation:
   config:
+    devMode: false
+    flagSrcStream: true
+    insertStrategy: UNION
     isRowCount: true
     isTest: false
     isWhOverride: true
+    multiStreamBehavior: AND
     sampleMode: Sample
     sampleOption: Percentage
     samplePercent: "10"
@@ -13,12 +17,13 @@ operation:
     scheduleCRON: 5 0-23 * * * America/Los_Angeles
     schedulePeriod: "60"
     schedulePeriodOption: Minutes
-    schedulingMode: Warehouse Task
+    schedulingMode: Serverless Task
     serverlessSize: MEDIUM
+    truncateBefore: false
     whName: COMPUTE_WH
     whOverrideName: COMPUTE_WH
   database: ""
-  deployEnabled: true
+  deployEnabled: false
   description: ""
   isMultisource: false
   locationName: TARGET
@@ -80,6 +85,7 @@ operation:
           stepCounter: f511aee0-915e-4363-b911-d6781d76a570
         config:
           isDistinctCount: true
+          isNotNullCount: true
         dataType: VARCHAR(25)
         description: ""
         name: C_NAME
@@ -121,7 +127,8 @@ operation:
         columnReference:
           columnCounter: aa9121ee-4cad-4989-bbe7-9af30747363a
           stepCounter: f511aee0-915e-4363-b911-d6781d76a570
-        config: {}
+        config:
+          isMaxMetric: true
         dataType: VARCHAR(15)
         description: ""
         name: C_PHONE
@@ -139,6 +146,7 @@ operation:
           isAvgMetric: true
           isMaxMetric: true
           isMinMetric: true
+          valStandardDeviation: true
         dataType: NUMBER(12,2)
         description: ""
         name: C_ACCTBAL

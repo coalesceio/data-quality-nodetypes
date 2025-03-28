@@ -1,5 +1,5 @@
 fileVersion: 1
-id: "416"
+id: "453"
 isDisabled: false
 metadata:
   defaultStorageLocation: null
@@ -11,26 +11,33 @@ metadata:
     plural: Node Profilers
 
     deployStrategy: advanced
+    isColumnResyncEnabled: true
 
     config:
     - groupName: Options
       items:
-      - displayName: Schedule Task
-        attributeName: taskSchedule
+      - displayName: Development Mode
+        attributeName: devMode
         type: toggleButton
         isRequired: true
-        default: false
-
+        default: true
+        
+      - type: multisourceToggle
+      - displayName: Multi Source Strategy
+        attributeName: insertStrategy
+        type: dropdownSelector
+        default: UNION
+        options:
+        - "UNION"
+        - "UNION ALL"
+        isRequired: true
+        enableIf: "{% if node.isMultisource %} true {% else %} false {% endif %}"
+        
       - displayName: Truncate Before
         attributeName: truncateBefore
         type: toggleButton
         default: true    
         
-      - displayName: Enable Tests
-        attributeName: testsEnabled
-        type: toggleButton
-        default: false
-
       - displayName: Sample Mode
         attributeName: sampleMode
         type: dropdownSelector
@@ -65,6 +72,46 @@ metadata:
         isRequired: false
         enableIf: "{% if config.sampleMode == 'Sample' and config.sampleOption == 'Percentage' %} true {% else %} false {% endif %}"
 
+    - groupName: Data Profiling Functions and Columns
+      items:
+      - displayName: Data Profiling
+        attributeName: toggleDataProfiling
+        type: toggleButton
+        default: true
+
+      - type: tabular
+        displayName: Data Profiling Columns (**If the column is missing from the dropdown, add it in the text box)
+        attributeName: partitionBy
+        isRequired: false
+      
+        columns:
+        -  type: dropdownSelector
+           displayName: Data Profiling  Function
+           attributeName: dataProfilingFunction
+           default: ''
+           isRequired: false
+           options:
+               - ''
+               - Distinct Count
+               - Null Count
+               - Not Null Count
+               - MAX Value
+               - MIN Value
+               - Average Value
+               - Top 100 Value Distribution
+               - Max Data Length
+               - Min Data Length
+               - Standard Deviation
+
+        - displayName: Column Name
+          type: columnDropdownSelector
+          attributeName: partitionByCol
+          isRequired: false
+      
+        - displayName: Column Name
+          type: textBox
+          attributeName: partitionByColTextBox
+     
     - groupName: Counts
       items:
       - displayName: Row Count
@@ -121,7 +168,7 @@ metadata:
 
      # Schedule mode-specifies whether a warehouse or serverless compute is used to run the task #
 
-      enableIf: "{% if config.taskSchedule == true %} true {% else %} false {% endif %}" 
+      enableIf: "{% if config.devMode == true %} false {% else %} true {% endif %}" 
       items:
        # Schedule mode-specifies whether a warehouse or serverless compute is used to run the task #
       - displayName: Scheduling Mode
@@ -244,5 +291,5 @@ metadata:
       dataType: TIMESTAMP
       placement: end
       attributeName: isSystemCreateDate
-name: Data Profiling
+name: Data Profiling - Column Drop Down
 type: NodeType

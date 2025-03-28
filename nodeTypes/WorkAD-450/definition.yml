@@ -4,30 +4,34 @@ isDisabled: false
 metadata:
   defaultStorageLocation: null
   error: null
-  nodeMetadataSpec: |+
-    capitalized: Work with Task
-    short: TSKWRK
+  nodeMetadataSpec: |
+    capitalized: Work Advanced Deploy
+    short: WRK
     plural: Stages
-    tagColor: "#FF851F"
+    tagColor: '#2EB67D'
 
     deployStrategy: advanced
 
     config:
     - groupName: Options
       items:
-      - displayName: Development Mode
-        attributeName: devMode
-        type: toggleButton
+      - type: materializationSelector
+        default: table
+        options:
+        - table
+        - view
+        - transient table
         isRequired: true
-        default: true
 
-    # Cluster Key-determine if a node is to be clustered or not #
-
+      - type: overrideSQLToggle
+        enableIf: "{% if node.materializationType == 'view' %} true {% else %} false {% endif %}"
+        
       - type: toggleButton
         attributeName: clusterKey
         displayName: Cluster Key
         default: false
-        isRequired: false
+        isRequired: true
+        enableIf: "{% if node.materializationType == 'table' or node.materializationType == 'transient table'  %} true {% else %} false {% endif %}"
 
       - type: toggleButton
         attributeName: clusterKeyExpressions
@@ -60,47 +64,54 @@ metadata:
            isRequired: false
       
         -  type: textBox
-           displayName: Expression(Column name to be enclosed within double quotes)
+           displayName: Expression
            attributeName: sqlExpression
-           default: "ex. trunc(\"<column_name>\", -5)"
+           default: "ex. trunc(<column_name>, -5)"
            isRequired: false
       
         isRequired: false
         enableIf: "{% if (config.clusterKey and config.clusterKeyExpressions) %} true {% else %} false {% endif %}"
 
       - type: multisourceToggle
-
+        enableIf: "{% if node.override.create.enabled %} false {% else %} true {% endif %}" 
+        
       - displayName: Multi Source Strategy
         attributeName: insertStrategy
         type: dropdownSelector
-        default: UNION
+        default: INSERT
         options:
+        - "INSERT"
         - "UNION"
         - "UNION ALL"
         isRequired: true
         enableIf: "{% if node.isMultisource %} true {% else %} false {% endif %}"
-        
+
       - displayName: Truncate Before
         attributeName: truncateBefore
         type: toggleButton
         default: true
+        enableIf: "{% if node.materializationType == 'view' %} false {% else %} true {% endif %}"
 
+      - displayName: Enable Tests
+        attributeName: testsEnabled
+        type: toggleButton
+        default: false
+        enableIf: "{% if node.materializationType == 'view' %} false {% else %} true {% endif %}"
 
-    - groupName: General Options
-      items:
-
-      - type: toggleButton
+      - displayName: Distinct
         attributeName: selectDistinct
-        displayName: Distinct
+        type: toggleButton
         default: false
-        enableIf: "{% if config.groupByAll %} false {% else %} true {% endif %}"
+        enableIf: "{% if config.groupByAll or  node.override.create.enabled %} false {% else %} true {% endif %}"
 
-      - type: toggleButton
+
+      - displayName: Group By All
         attributeName: groupByAll
-        displayName: Group By All
-        enableIf: "{% if config.selectDistinct %} false {% else %} true {% endif %}"
+        type: toggleButton
         default: false
-         
+        enableIf: "{% if config.selectDistinct or  node.override.create.enabled %} false {% else %} true {% endif %}"
+
+
       - displayName: Order By
         attributeName: orderby
         type: toggleButton
@@ -127,121 +138,124 @@ metadata:
         isRequired: true
         enableIf: "{% if config.orderby %} true {% else %} false {% endif %}"
 
-          
-    - groupName: Scheduling Options
+      - displayName: ASOF Join
+        attributeName: asofJoinMain
+        type: toggleButton
+        default: false
 
-     # Schedule mode-specifies whether a warehouse or serverless compute is used to run the task #
 
-      enableIf: "{% if config.devMode == true %} false {% else %} true {% endif %}" 
+      - displayName: Pre-SQL
+        attributeName: preSQL
+        type: textBox
+        syntax: sql
+        isRequired: false
+        enableIf: "{% if node.materializationType == 'view' %} false {% else %} true {% endif %}"
+
+      - displayName: Post-SQL
+        attributeName: postSQL
+        type: textBox
+        syntax: sql
+        isRequired: false
+        enableIf: "{% if node.materializationType == 'view' %} false {% else %} true {% endif %}"
+
+    - groupName: ASOF Join Options
+
       items:
-      - displayName: Scheduling Mode
-        attributeName: schedulingMode
-        type: dropdownSelector
-        default: Warehouse Task
-        options:
-          - Warehouse Task
-          - Serverless Task
-        isRequired: true
-
-      # Checks whether source streams have data before executing a task #
-
-      - displayName: When Source Stream has Data Flag
-        attributeName: flagSrcStream
+      - displayName: Match Condition
+        attributeName: asofJoin
         type: toggleButton
         default: true
-        isRequired: true
-
-      - displayName: Multiple Stream has Data Logic
-        attributeName: multiStreamBehavior
-        type: dropdownSelector
-        default: AND
-        options:
-          - AND
-          - OR
-        isRequired: true
-        enableIf: "{% if config.flagSrcStream == true %} true {% else %} false {% endif %}"
-
-      # Warehouse name you want the task to run #
-      - type: label
-        attributeName: note2
-        displayName: 
-                       "NOTE:
-                       \n
-                       Ensure the parameter targetTaskWarehouse is added in Workspace and 
-                       deployment environment  for successful creation of Steam.  
-                       For more information, refer to the documentation."
-        enableIf: "{%- if (parameters == {} or parameters.targetTaskWarehouse == '' ) and config.schedulingMode == 'Warehouse Task'-%} true {%- else -%} false {%- endif -%}"
-
-      - displayName: Select Warehouse on which to run task
-        attributeName: whName
-        type: textBox
-        default: '<WAREHOUSE_NAME>'
+        enableIf: "{%- if node.materializationType == 'view' -%} false {%- else --%} true {%- endif -%}"
+        
+      - type: toggleButton
+        displayName: On
+        attributeName: asofJoinON
         isRequired: false
-        enableIf: "{% if config.schedulingMode == 'Warehouse Task' %} true {% else %} false {% endif %}"
+        default: false
+        enableIf: "{%- if config.asofJoin and not config.asofJoinUSING -%} true {%- else -%} false {%- endif -%}"
 
-      - displayName: Select initial serverless Warehouse size
-        attributeName: serverlessSize
-        type: dropdownSelector
-        default: 'MEDIUM'
-        options:
-          - XSMALL
-          - SMALL
-          - MEDIUM
-          - LARGE
-          - XLARGE
-          - XXLARGE
+      - type: toggleButton
+        displayName: Using
+        attributeName: asofJoinUSING
         isRequired: false
-        enableIf: "{% if config.schedulingMode == 'Serverless Task' %} true {% else %} false {% endif %}"
+        default: false
+        enableIf: "{%- if config.asofJoin and not config.asofJoinON -%} true {%- else -%} false {%- endif -%}"
 
-      # Way to schedule the task to run #
-
-      - displayName: Task Schedule
-        attributeName: schedulePeriodOption
-        type: dropdownSelector
-        default: Predecessor
-        options:
-          - Minutes
-          - CRON
-          - Predecessor
-        isRequired: true
-
-      - displayName: Enter task schedule using minutes
-        attributeName: schedulePeriod
-        type: textBox
-        default: '60'
+      - type: tabular
+        displayName: 'ASOF column'
+        attributeName: asofColumn
         isRequired: false
-        enableIf: "{% if config.schedulePeriodOption == 'Minutes' %} true {% else %} false {% endif %}"
+        enableIf: "{%- if (config.asofJoin) -%} true {%- else -%} false {%- endif -%}"
+        columns:
 
-      - displayName: Enter task schedule using CRON
-        attributeName: scheduleCRON
-        type: textBox
-        default: '5 0-23 * * * America/Los_Angeles'
-        isRequired: false
-        enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
+        - displayName: 'Right Table Storage Location'
+          attributeName: rightTableSL
+          type: textBox
+          isRequired: false 
+    	  
+        - displayName: Right Table Name
+          attributeName: rightTable
+          type: textBox
+          isRequired: false 
+    	  
+        - displayName: |
+            Match Condition 
+            (e.g TableName.ColumnName >= TableName.ColumnName)
+          attributeName: matchCondition 
+          type: textBox
+          isRequired: false 
 
-      - displayName: Enter predecessor task(s) separated by a comma
-        attributeName: predTask
-        type: textBox
-        default: 'DATA_TRANSFORMATION_ROOT_TASK'
-        isRequired: false
-        enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
+        -  type: textBox
+           displayName:  |
+            ON Condition 
+            (e.g TableName.ColumnName = TableName.ColumnName)
+           attributeName: onCondition
+           isRequired: false
+           enableIf: "{%- if (config.asofJoin and config.asofJoinON) -%} true {%- else -%} false {%- endif -%}"
 
-      - displayName: Enter root task name
-        attributeName: rootTask
-        type: textBox
-        default: 'DATA_TRANSFORMATION_ROOT_TASK'
-        isRequired: false
-        enableIf: "{% if config.schedulePeriodOption == 'Predecessor' %} true {% else %} false {% endif %}"
+        -  type: textBox
+           displayName: Using Column Name
+           attributeName: usingColumnName
+           isRequired: false
+           enableIf: "{%- if (config.asofJoin and config.asofJoinUSING) -%} true {%- else -%} false {%- endif -%}"
+      enableIf: "{%- if config.asofJoinMain -%} true {%- else -%} false {%- endif -%}"
 
-    - groupName: Hidden Config
-      enableIf: "false"
-      items:
-      - displayName: Type
-        type: materializationSelector
-        default: task
-        options:
-        - task
-        isRequired: false
-
+    joinTemplate: |
+     {%- if config.asofJoinMain and config.asofJoin -%} 
+     {%- set tabRSL,tabR,mCond = config.asofColumn.get('items') | map(attribute='rightTableSL') | list,config.asofColumn.get('items') | map(attribute='rightTable') | list,config.asofColumn.get('items') | map(attribute='matchCondition') | list -%}
+     {%- if config.asofJoinON -%} 
+     {%- set onCond = config.asofColumn.get('items') | map(attribute='onCondition') | list -%}
+     {%- endif -%} 
+     {%- if config.asofJoinUSING -%} 
+     {%- set col_USING = config.asofColumn.get('items') | map(attribute='usingColumnName') | list -%}
+     {%- endif -%} 
+      {%- set src = namespace() -%}
+      {%- for dep in sources[0].dependencies -%}
+        {%- if loop.index == 1 %}
+        FROM  {{ ref_raw(dep.node.location.name, dep.node.name) }} "{{ dep.node.name }}"
+        {%- endif -%}
+        {%- set src.name = dep.node.name -%}
+      {%- endfor -%}
+        {%- for mc in mCond %}
+        ASOF JOIN {{ ref_raw(tabRSL[loop.index0],tabR[loop.index0])}} "{{tabR[loop.index0]}}"
+        MATCH_CONDITION ({{mc}} )
+        {%- if config.asofJoinON and onCond[loop.index0] !=None %} 
+        ON  ({{onCond[loop.index0]}} )
+        {%- elif config.asofJoinUSING and col_USING[loop.index0] !=None %} 
+        USING ({{col_USING[loop.index0]}})
+        {%- endif -%}
+        {%- endfor -%}
+     {%- else -%}
+      {%- for dep in sources[0].dependencies -%}
+      {%- if loop.first %} 
+       FROM  {{ ref_raw(dep.node.location.name, dep.node.name) }} {{ dep.node.name }}
+      {%- else %}
+       LEFT JOIN  {{ ref_raw(dep.node.location.name, dep.node.name) }} {{ dep.node.name }}
+      {%- endif -%}
+      {%- if not loop.first %} 
+       ON {{ sources[0].dependencies[loop.index0].node.name }}./*COLUMN*/ = {{ sources[0].dependencies[loop.index0 - 1].node.name }}./*COLUMN*/ 
+      {% endif -%}
+      {% endfor -%}
+     {%- endif -%} 
 name: Work AD
 type: NodeType
