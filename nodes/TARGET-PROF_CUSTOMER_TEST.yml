@@ -17,7 +17,7 @@ operation:
     schedulePeriodOption: Minutes
     schedulingMode: Warehouse Task
     serverlessSize: MEDIUM
-    taskSchedule: true
+    taskSchedule: false
     testsEnabled: false
     truncateBefore: true
     whName: COMPUTE_WH
