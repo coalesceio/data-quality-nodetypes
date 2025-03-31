@@ -1,0 +1,94 @@
+fileVersion: 1
+id: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+name: DMFS_FRUITINVENTORY
+operation:
+  config:
+    addcolumnleveldmfs: true
+    adddmfs:
+      items:
+        - columnNameExpressions:
+            columnCounter: edee6253-1abb-4234-8380-323b1b9b6940
+            stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+          system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: d1ae0ffe-964b-4c95-a0cc-dc5e3d2ce106
+            stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+          system_dmfs: NULL_COUNT
+    adddmfsobject:
+      items:
+        - system_dmfs_object: ROW_COUNT
+    addobjectleveldmfs: true
+    scheduleCRON: ""
+    schedulePeriod: "60"
+    schedulePeriodOption: TRIGGER_ON_CHANGES
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SOURCE
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d339c55f-a04d-4c86-8201-65d540d7b6d7
+          stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: FRUITNAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 32de5fee-2203-40ae-aa6f-08c922e86266
+                stepCounter: a3b954f2-1f4e-4f54-b71b-616a8c50726e
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: edee6253-1abb-4234-8380-323b1b9b6940
+          stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: STOREA
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 8d6eb029-8a8c-4a0b-9476-93cf095e7250
+                stepCounter: a3b954f2-1f4e-4f54-b71b-616a8c50726e
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d1ae0ffe-964b-4c95-a0cc-dc5e3d2ce106
+          stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: STOREB
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: eb9f1901-cb26-43de-8c93-394539e38a0d
+                stepCounter: a3b954f2-1f4e-4f54-b71b-616a8c50726e
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE
+            nodeName: FRUITINVENTORY
+        join:
+          joinCondition: FROM {{ ref('SOURCE', 'FRUITINVENTORY') }} "FRUITINVENTORY"
+        name: DMFS_FRUITINVENTORY
+        noLinkRefs: []
+  name: DMFS_FRUITINVENTORY
+  overrideSQL: false
+  schema: ""
+  sqlType: "448"
+  type: sql
+  version: 1
+type: Node
