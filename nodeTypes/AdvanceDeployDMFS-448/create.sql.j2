@@ -162,4 +162,38 @@ does not permit copying or modification for any other purpose.
             {% endif %}
         {%endfor%}
     {%endif%}
+
+{%elif currentState != undefined and desiredState == undefined %}
+    {%- for dep in currentState.sources[0].dependencies -%}
+        {% if currentState.config.addobjectleveldmfs%}    
+            {% set object_expression = currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
+            {% for r in object_expression %} 
+                {{ stage('Drop Object Level DMF', true, "sql", "create") }}     
+                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
+                ON  () ; 
+            {% endfor %}
+        {% endif %} 
+        {% if currentState.config.addcolumnleveldmfs%}    
+            {% set column, expression = currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, currentState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}
+            {% for r in column %}      
+                {{ stage('Drop Column DMF', true, "sql", "create") }}
+                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
+                ON  ({{ column[loop.index0] }}) ; 
+            {% endfor %}
+        {% endif %} 
+        {% set sourceDatabase = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
+        {% set sourceSchema = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}    
+        {{ stage('Dropping Data quality result view', true, "sql", "create") }}  
+        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }} AS
+        SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
+        FROM snowflake.local.data_quality_monitoring_results
+        where TABLE_DATABASE = '{{sourceDatabase}}'
+        and TABLE_SCHEMA = '{{sourceSchema}}'
+        and TABLE_NAME = '{{dep.node.name}}'
+        ;
+
+    {%endfor%}    
+
 {%endif%}
