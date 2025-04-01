@@ -1,5 +1,5 @@
 fileVersion: 1
-id: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+id: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
 name: DMFS_FRUITINVENTORY
 operation:
   config:
@@ -7,12 +7,12 @@ operation:
     adddmfs:
       items:
         - columnNameExpressions:
-            columnCounter: edee6253-1abb-4234-8380-323b1b9b6940
-            stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+            columnCounter: 1f86da6e-0c06-4973-ac1e-ce8e90be20b4
+            stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
           system_dmfs: NULL_COUNT
         - columnNameExpressions:
-            columnCounter: d1ae0ffe-964b-4c95-a0cc-dc5e3d2ce106
-            stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+            columnCounter: 50951a64-eb58-41be-a6fc-37b6ad1a7262
+            stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
           system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
@@ -32,8 +32,8 @@ operation:
     columns:
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: d339c55f-a04d-4c86-8201-65d540d7b6d7
-          stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+          columnCounter: 8794a8a0-78bf-422e-b9a3-4982106a322e
+          stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -46,8 +46,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: edee6253-1abb-4234-8380-323b1b9b6940
-          stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+          columnCounter: 1f86da6e-0c06-4973-ac1e-ce8e90be20b4
+          stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -60,8 +60,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: d1ae0ffe-964b-4c95-a0cc-dc5e3d2ce106
-          stepCounter: a8bf79d9-1a84-4651-ab57-c619657e6ccf
+          columnCounter: 50951a64-eb58-41be-a6fc-37b6ad1a7262
+          stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
         config: {}
         dataType: NUMBER(38,0)
         description: ""
