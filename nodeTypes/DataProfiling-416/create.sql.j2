@@ -31,9 +31,7 @@ does not permit copying or modification for any other purpose.
 	{% set targetTableSchema = ref_no_link(desiredState.node.location.name, desiredState.node.name).split('.')[1] %} 
 	{% set fullyQualifiedTargetTableName = ref_no_link(desiredState.node.location.name, desiredState.node.name) %}
 	{% set TargetTableName = desiredState.node.name %}
-	{% set fullyQualifiedDataProfilingTableName = fullyQualifiedTargetTableName | replace('"','') + "_DATA_PROFILING" %}
-	{% set DataProfilingTableName = TargetTableName | replace('"','') + "_DATA_PROFILING" %}
-	
+
 	{% set colIsDistinctCount = columns | selectattr(('isDistinctCount'), 'defined') | map(attribute='name') | list %}
 	{% set colIsNullCount = columns | selectattr(('isNullCount'), 'defined') | map(attribute='name') | list %}
 	{% set colIsNotNullCount = columns | selectattr(('isNotNullCount'), 'defined') | map(attribute='name') | list %}
@@ -136,7 +134,7 @@ does not permit copying or modification for any other purpose.
 
 	{% if currentState == undefined or currentState.storageLocations | length == 0%}
 		{{ stage('Create Data Profiling Table', true, "sql", "create") }}
-		CREATE TABLE IF NOT EXISTS {{ fullyQualifiedDataProfilingTableName }}(
+		CREATE TABLE IF NOT EXISTS {{ fullyQualifiedTargetTableName }}(
 			OBJECT_NAME VARCHAR(50),
 			COLUMN_NAME VARCHAR(100),
 			FUNCTION_APPLIED VARCHAR(50),
@@ -253,15 +251,12 @@ does not permit copying or modification for any other purpose.
 {% endif %}
 {% elif currentState != undefined and desiredState == undefined %}
 
-	{# Table or View Name #}
-	{% set targetObjectDatabase = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[0] %} 
-	{% set targetObjectSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
-	{% set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
-	{% set dpTargetTableName =  currentState.node.name | replace('"','') + "_DATA_PROFILING"  %}
-	{% set fullyQualifiedTargetDataProfilingObjectName = ref_no_link(currentState.node.location.name, dpTargetTableName) %}
-		{{ stage('Drop Table', true, "sql", "drop") }}
-		DROP TABLE IF EXISTS {{ fullyQualifiedTargetDataProfilingObjectName }}
+    {% set targetObjectDatabase = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[0] %} 
+    {% set targetObjectSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
+    {% set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
 
+    {{ stage('Drop Table', true, "sql", "drop") }}
+    DROP TABLE IF EXISTS  {{ fullyQualifiedTargetObjectName }}
 {% endif %}
 
 {# Create Task Second #}
@@ -281,7 +276,7 @@ does not permit copying or modification for any other purpose.
 				ALTER TASK {{ fullyQualifiedRootTaskName }} SUSPEND
 			{%- endif -%}
 
-			{{ stage('Create Task', true, "sql", "alter") }}
+			{{ stage('Create Data Profiling Task', true, "sql", "create") }}
 			{# Set Namespace Variables #}
 			{% set nsVariables = namespace(taskWhenRun="") %}
 			{% set nsVariables = namespace(poll="WHEN ") %}
@@ -355,19 +350,32 @@ does not permit copying or modification for any other purpose.
 				{{ nsVariables.taskWhenRun }} 
 				{% if nsVariables.poll != 'WHEN ' %} {{ nsVariables.poll }} {% endif %}
 			AS 
-		  {{ truncateBehavior }} INTO {{ fullyQualifiedDataProfilingTableName }}(
+		  {{ truncateBehavior }} INTO {{ fullyQualifiedTargetTableName }}(
 			OBJECT_NAME,
 			COLUMN_NAME,
 			FUNCTION_APPLIED,
 			RESULT
 		)
+		{%- if desiredState.config.isRowCount %}
+		SELECT 
+			 '{{desiredState.sources[0].dependencies[0].node.name}}' AS OBJECT_NAME,
+			 '*'AS COLUMN_NAME, 
+			 'ROW_COUNT' AS FUNCTION_NAME,
+			 COUNT(*) AS RESULT
+			 {{ sources[0].join }}
+			 UNION ALL
+			 {% endif -%}
 		SELECT * FROM (
 			{%- for colList in testMetrics %}
+			{%- if not loop.first %} 
+			UNION ALL 
+			{% endif -%}
+			{%- for colDetailList in colList[-1] -%}
 			SELECT 
 			 '{{ desiredState.sources[0].dependencies[0].node.name}}' AS OBJECT_NAME,
-			 '{{colList[-1][0]}}'AS COLUMN_NAME, 
+			 '{{colDetailList}}'AS COLUMN_NAME, 
 			 '{{colList[1]}}' AS FUNCTION_NAME,
-			 {{ colList[2]  | replace("col_name",colList[-1][0])  }} AS RESULT
+			 {{ colList[2]  | replace("col_name",colDetailList ) }} AS RESULT
 			{%- if colList[1] != 'Value Distribution' %}
 			 {{ sources[0].join }}
 			{%- if config.sampleMode == 'Sample' %}
@@ -380,14 +388,15 @@ does not permit copying or modification for any other purpose.
 			 )
 			 {%- endif -%}
 			{% endif -%}
-			{%- if not loop.last %} 
+			 {%- if not loop.last %} 
 			UNION ALL 
 			{% endif -%}
+			{%- endfor -%}
 			{% endfor -%}		
 		)CTE
 
 			{%- if desiredState.config.schedulePeriodOption != 'Predecessor' -%} 
-				{{ stage('Resume Task', true, "sql", "alter") }}
+				{{ stage('Resume Task', true, "sql", "create") }}
 				ALTER TASK {{ fullyQualifiedTaskName }} RESUME;
 			{%- endif -%}	   
 		{%- endif -%}

@@ -9,6 +9,8 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Name           : Data Profiling With Task == #}
 {# == Node Type Description    : This node inserts data into a Data Profiling table  == #}
 
+{% if config.taskSchedule == false %}
+
 {# == To run data quality tests before data insertion == #}
  
 	{% for test in node.tests if config.testsEnabled %}
@@ -23,13 +25,12 @@ does not permit copying or modification for any other purpose.
 	{% set targetTableDatabase = ref_no_link(node.location.name, node.name).split('.')[0] %} 
 	{% set targetTableSchema = ref_no_link(node.location.name, node.name).split('.')[1] %} 
 	{% set fullyQualifiedTargetTableName = ref_no_link(node.location.name, node.name) %}
-	{% set fullyQualifiedDataProfilingTableName = fullyQualifiedTargetTableName | replace('"','') + "_DATA_PROFILING" %}
 	
 {# == Truncate data before data insertion  == #}
 
 	{% if config.truncateBefore %}	
 		{{ stage('Truncate Data Profiling Table') }}
-		TRUNCATE IF EXISTS {{ fullyQualifiedDataProfilingTableName }}
+		TRUNCATE IF EXISTS {{ fullyQualifiedTargetTableName }}
 	{% endif %}
 
 {# Data Profiling Table Columns Information and Calculations #}
@@ -136,61 +137,67 @@ does not permit copying or modification for any other purpose.
 
 	{{ stage('INSERT DATA TO  Data Profiling Table', true, "sql", "create") }}
 
-			INSERT INTO {{ fullyQualifiedDataProfilingTableName }}(
+			INSERT INTO {{ fullyQualifiedTargetTableName }}(
 			OBJECT_NAME,
 			COLUMN_NAME,
 			FUNCTION_APPLIED,
 			RESULT
 		)
-		SELECT * FROM (
-			{%- if config.isRowCount %}
-		     SELECT 
+		{%- if  config.isRowCount %}
+		SELECT 
 			 '{{ sources[0].dependencies[0].node.name}}' AS OBJECT_NAME,
 			 '*'AS COLUMN_NAME, 
 			 'ROW_COUNT' AS FUNCTION_NAME,
 			 COUNT(*) AS RESULT
 			 {{ sources[0].join }}
 			 UNION ALL
-			 {%- endif -%}
+			 {% endif -%}
+		SELECT * FROM (
 			{%- for colList in testMetrics %}
+			{%- if not loop.first %} 
+			UNION ALL 
+			{% endif -%}
+			{%- for colDetailList in colList[-1] -%}
 			SELECT 
-			 '{{ sources[0].dependencies[0].node.name}}' AS OBJECT_NAME,
-			 '{{colList[-1][0]}}'AS COLUMN_NAME, 
+			 '{{  sources[0].dependencies[0].node.name}}' AS OBJECT_NAME,
+			 '{{colDetailList}}'AS COLUMN_NAME, 
 			 '{{colList[1]}}' AS FUNCTION_NAME,
-			 {{ colList[2]  | replace("col_name",colList[-1][0])  }} AS RESULT
+			 {{ colList[2]  | replace("col_name",colDetailList ) }} AS RESULT
 			{%- if colList[1] != 'Value Distribution' %}
 			 {{ sources[0].join }}
 			{%- if config.sampleMode == 'Sample' %}
 			 SAMPLE (
-			 {%- if config.sampleOption == 'Percentage' -%}
-			 	{{ config.samplePercent }}
+			 {%- if  config.sampleOption == 'Percentage' -%}
+			 	{{  config.samplePercent }}
 			 {%- else -%}
-			 	{{ config.sampleRows }} ROWS
+			 	{{  config.sampleRows }} ROWS
 			 {%- endif -%}
 			 )
 			 {%- endif -%}
 			{% endif -%}
-			{%- if not loop.last %} 
+			 {%- if not loop.last %} 
 			UNION ALL 
 			{% endif -%}
+			{%- endfor -%}
 			{% endfor -%}		
 		)CTE
 
+{# == To run data quality tests after data insertion == #}
 
-	{# == To run data quality tests after data insertion == #}
+{% if config.testsEnabled %}
+	{% for test in node.tests %}
+		{% if test.runOrder == 'After' %}
+			{{ test_stage(test.name, test.continueOnFailure) }}
+			{{ test.templateString }}
+        {% endif %}
+	{% endfor %}
 
-		{% if config.testsEnabled %}
-			{% for test in node.tests %}
-				{% if test.runOrder == 'After' %}
-					{{ test_stage(test.name, test.continueOnFailure) }}
-					{{ test.templateString }}
-				{% endif %}
-			{% endfor %}
+	{% for column in columns %}
+		{% for test in column.tests %}
+			{{ test_stage(column.name + ": " + test.name) }}
+			{{ test.templateString }}
+		{% endfor %}
+	{% endfor %}
+{% endif %}
 
-			{% for column in columns %}
-				{% for test in column.tests %}
-					{{ test_stage(column.name + ": " + test.name) }}
-					{{ test.templateString }}
-				{% endfor %}
-			{% endfor %}
-		{% endif %}
+{% endif %}
