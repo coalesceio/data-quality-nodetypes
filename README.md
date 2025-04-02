@@ -1,4 +1,4 @@
-# Data-Quality-Nodetypes
+# Data Quality Nodetypes
 
 The Coalesce Data Quality Nodetypes Package includes:
 
