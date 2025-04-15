@@ -115,7 +115,7 @@ The Data Profiling node type has four configuration groups:
 * [Counts](#counts)
 * [Min/Max/Avg](#min-max-avg)
 * [Column Details](#column-details)
-* [Scheduling Options](#scheduling-options)
+* [Scheduling Options](#data-profiling-scheduling-options)
 
 
 <img width="232" alt="image" src="https://github.com/user-attachments/assets/2998538c-a676-4b63-8d69-efebd7bd7e76" />
@@ -168,7 +168,7 @@ The Data Profiling node type has four configuration groups:
 | **Min Data Length** | Add column/columns to get the minimum length of non-null values in the selected column|
 | **Standard Deviation** | Add column/columns to get  the standard deviation of the lengths of non-null selected column values|
 
-#### Scheduling Options
+#### Data Profiling Scheduling Options
 
 ![Task Scheduling Options](https://github.com/user-attachments/assets/2f8bc6c3-117c-4130-9619-45ee50feebef)
 
