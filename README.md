@@ -39,7 +39,7 @@ The Work node type has four configuration groups:
 * [Object Level DMFs](#object-level-dmfs)
 * [Column Level DMFs](#column-level-dmfs)
 
-<img width="456" alt="Screenshot 2025-03-31 at 1 30 49 PM" src="https://github.com/user-attachments/assets/b3a0a8b9-d185-45b3-86b4-e7546505b7ac" />
+![Screenshot 2025-03-31 at 1 30 49 PM](https://github.com/user-attachments/assets/b3a0a8b9-d185-45b3-86b4-e7546505b7ac)
 
 #### Node Properties
 
