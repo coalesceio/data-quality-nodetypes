@@ -106,6 +106,7 @@ The Data Profiling node type will create the Data Profiling table with the follo
 The Coalesce Mapping grid will display the source column list; however, the Data Profiling table created in Snowflake will maintain a fixed column structure.
 
 The node name in Coalesce will be used as the name of the Snowflake Data Profiling table.
+
 ### Data Profiling Node Configuration
 
 The Data Profiling node type has four configuration groups:
@@ -120,9 +121,7 @@ The Data Profiling node type has four configuration groups:
 
 <img width="232" alt="image" src="https://github.com/user-attachments/assets/2998538c-a676-4b63-8d69-efebd7bd7e76" />
 
-
 #### Node Properties
-
 
 | **Option** | **Description** |
 |----------|-------------|
