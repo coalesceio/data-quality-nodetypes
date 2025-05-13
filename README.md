@@ -4,7 +4,7 @@ The Coalesce Data Quality Nodetypes Package includes:
 
 * [DMF](#DMF)
 * [Data Profiling](#data-profiling)
-* [Code](#Code)
+* [Code](#code)
 
 ---
 
