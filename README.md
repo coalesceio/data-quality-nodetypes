@@ -10,7 +10,7 @@ The Coalesce Data Quality Nodetypes Package includes:
 
 ### DMF
 
-The Coalesce DMF node allows you to to monitor the state and integrity of your data. You can use DMFs to measure key metrics, such as, but not limited to, freshness and counts that measure duplicates, NULLs, rows, and unique values.
+The Coalesce DMF node allows you to to monitor the state and integrity of your data. You can use DMFs to measure key metrics, such as, but not limited to, freshness and counts that measure duplicates, NULLs, rows, and unique values.This is based on Data Metric functions concept in Snowflake.For more information on roles and privileges refer [docs](https://docs.snowflake.com/en/user-guide/data-quality-intro#about-data-quality-and-dmfs).
 
 You can set a DMF on the following kinds of table objects:
 * Dynamic table
@@ -28,8 +28,8 @@ You can set a DMF on the following kinds of table objects:
 * Setting a DMF on an object tag is not supported.
 * You cannot set a DMF on objects in a reader account.
 * Trial accounts do not support this feature.
-
-
+* In coalesce,this node cannot be used as part of a pipeline.This node can be added at the end of the pipeline to infer Data Metrics
+  
 ### DMF Node Configuration
 
 The Work node type has four configuration groups:
