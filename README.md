@@ -131,7 +131,6 @@ The Data Profiling node type has four configuration groups:
 | **Description** | A description of the node's purpose |
 | **Deploy Enabled** | If TRUE the node will be deployed / redeployed when changes are detected<br/> If FALSE the node will not be deployed or will be dropped during redeployment |
 
-
 #### Options
 
 | **Option** | **Description** |
@@ -221,6 +220,9 @@ For example, with the below setting for the parameter in a QA environment, the t
     "targetTaskWarehouse": "compute_wh"
 }
 ```
+The parameter is to be added in the Workspace settings and Environment settings for deployment
+
+![image](https://github.com/user-attachments/assets/1a360cec-2517-4748-9a81-650d06f96850)
 
 #### Data Profiling  With Task Initial Deployment
 
