@@ -1,11 +1,11 @@
 fileVersion: 1
-id: "448"
+id: "479"
 isDisabled: false
 metadata:
   defaultStorageLocation: null
   error: null
   nodeMetadataSpec: |-
-    capitalized: Advance Deploy DMFS
+    capitalized: Advance Deploy Custom DMFS
     short: DMFS
     tagColor: gray
     plural: New Types
@@ -166,5 +166,5 @@ metadata:
 
         isRequired: false
         enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
-name: DMFS
+name: Custom DMFS
 type: NodeType

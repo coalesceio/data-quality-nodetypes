@@ -1,0 +1,81 @@
+fileVersion: 1
+id: 13690669-50f3-4c3b-8aa9-65ae1d5a1512
+name: STG_FRUITINVENTORY
+operation:
+  config:
+    insertStrategy: INSERT
+    postSQL: ""
+    preSQL: ""
+    testsEnabled: true
+    truncateBefore: true
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SOURCE
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 616c7857-f4de-44d7-b73b-39da5c556cd6
+          stepCounter: 13690669-50f3-4c3b-8aa9-65ae1d5a1512
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: FRUITNAME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 8794a8a0-78bf-422e-b9a3-4982106a322e
+                stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: b9e5ddb8-85ca-40f2-a84b-2b6f69716496
+          stepCounter: 13690669-50f3-4c3b-8aa9-65ae1d5a1512
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: STOREA
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 1f86da6e-0c06-4973-ac1e-ce8e90be20b4
+                stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: cd97335c-f8dd-46eb-906a-22fb2c5db613
+          stepCounter: 13690669-50f3-4c3b-8aa9-65ae1d5a1512
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: STOREB
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 50951a64-eb58-41be-a6fc-37b6ad1a7262
+                stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases: {}
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE
+            nodeName: DMFS_FRUITINVENTORY
+        join:
+          joinCondition: FROM {{ ref('SOURCE', 'DMFS_FRUITINVENTORY') }} "DMFS_FRUITINVENTORY"
+        name: STG_FRUITINVENTORY
+        noLinkRefs: []
+  name: STG_FRUITINVENTORY
+  overrideSQL: false
+  schema: ""
+  sqlType: Stage
+  type: sql
+  version: 1
+type: Node

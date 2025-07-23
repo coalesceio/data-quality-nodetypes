@@ -3,15 +3,13 @@ id: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
 name: DMFS_FRUITINVENTORY
 operation:
   config:
+    addCustomcolumnleveldmfs: false
+    addCustomobjectleveldmfs: false
     addcolumnleveldmfs: true
     adddmfs:
       items:
         - columnNameExpressions:
             columnCounter: 1f86da6e-0c06-4973-ac1e-ce8e90be20b4
-            stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
-          system_dmfs: NULL_COUNT
-        - columnNameExpressions:
-            columnCounter: 50951a64-eb58-41be-a6fc-37b6ad1a7262
             stepCounter: 512a30ed-1e7a-4ea2-9ced-6146a2904fb2
           system_dmfs: NULL_COUNT
     adddmfsobject:
