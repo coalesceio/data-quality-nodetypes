@@ -16,7 +16,7 @@ does not permit copying or modification for any other purpose.
 	{% if currentState == undefined %}
 
         {%- for dep in desiredState.sources[0].dependencies -%}
-            {{ stage('Add DMFs Schedule', true, "sql", "create") }}     
+            {{ stage('Add DMFs Schedule') }}     
             ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
             {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
             SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
@@ -29,7 +29,7 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addobjectleveldmfs%}    
                 {% set object_expression = desiredState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
                 {% for r in object_expression %} 
-                    {{ stage('Add Object Level DMF', true, "sql", "create") }}     
+                    {{ stage('Add Object Level DMF') }}     
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
                     ON  () ; 
@@ -39,7 +39,7 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addcolumnleveldmfs%}    
                 {% set column, expression = desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, desiredState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}
                 {% for r in column %}      
-                    {{ stage('Add Column DMF', true, "sql", "create") }}
+                    {{ stage('Add Column DMF') }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
                     ON  ({{ column[loop.index0] }}) ; 
@@ -69,7 +69,7 @@ does not permit copying or modification for any other purpose.
 
         {%- for dep in desiredState.sources[0].dependencies -%}
             {% if nsVariables.nsCurrentschedulePeriodOption != nsVariables.nsDesiredschedulePeriodOption %}
-                {{ stage('Add DMFs Schedule', true, "sql", "create") }}
+                {{ stage('Add DMFs Schedule') }}
                 ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                 {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
                 SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
@@ -85,7 +85,7 @@ does not permit copying or modification for any other purpose.
             {% if not desiredState.config.addobjectleveldmfs%}  
                 {% set  expression_currentState =  currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
                 {% for r in expression_currentState %}   
-                    {{ stage('Dropping Object Level DMF ', true, "sql", "create") }}
+                    {{ stage('Dropping Object Level DMF ') }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
                     ON  ();  
@@ -97,12 +97,12 @@ does not permit copying or modification for any other purpose.
                 {% set expression_currentState =  currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
 
                 {% if ( expression_currentState == [] and expression != expression_currentState) %}
-                    {{ stage('Adding New Object Level DMF ', true, "sql", "create") }}
+                    {{ stage('Adding New Object Level DMF') }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
                     ON  ();  
                 {% elif ( expression == [] and expression != expression_currentState) %}
-                    {{ stage('Drop existing Object Level DMF ', true, "sql", "create") }}
+                    {{ stage('Drop existing Object Level DMF') }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
                     ON  ();  
@@ -115,7 +115,7 @@ does not permit copying or modification for any other purpose.
             {% if not desiredState.config.addcolumnleveldmfs%}  
                 {% set  column_currentState, expression_currentState = currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, currentState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}   
                 {% for r in column_currentState %}   
-                    {{ stage('Dropping Column DMF ', true, "sql", "create") }}
+                    {{ stage('Dropping Column DMF ') }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
                     ON  ({{ column_currentState[loop.index0] }});  
@@ -130,7 +130,7 @@ does not permit copying or modification for any other purpose.
                 {% for r in column %}   
                     {% set singleid = id[loop.index0] %}
                     {% if singleid not in currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') %}
-                        {{ stage('Adding New Column DMF ', true, "sql", "create") }}
+                        {{ stage('Adding New Column DMF ') }}
 
                         ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                         ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
