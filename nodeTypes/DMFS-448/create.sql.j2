@@ -186,13 +186,7 @@ does not permit copying or modification for any other purpose.
         {% set sourceDatabase = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
         {% set sourceSchema = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}    
         {{ stage('Dropping Data quality result view', true, "sql", "create") }}  
-        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }} AS
-        SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
-        FROM snowflake.local.data_quality_monitoring_results
-        where TABLE_DATABASE = '{{sourceDatabase}}'
-        and TABLE_SCHEMA = '{{sourceSchema}}'
-        and TABLE_NAME = '{{dep.node.name}}'
-        ;
+        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
     {%endfor%}    
 
