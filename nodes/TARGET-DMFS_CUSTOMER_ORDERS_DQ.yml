@@ -18,6 +18,10 @@ operation:
             columnCounter: 87bdbe05-2a15-46b2-a980-b2166714cafe
             stepCounter: fa363b0a-7921-4e04-9a26-9a6137e4bf1d
           system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: e3318f6b-b157-4545-9206-6d307c40cbca
+            stepCounter: fa363b0a-7921-4e04-9a26-9a6137e4bf1d
+          system_dmfs: BLANK_COUNT
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
