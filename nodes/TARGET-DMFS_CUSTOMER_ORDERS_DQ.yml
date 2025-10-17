@@ -11,7 +11,7 @@ operation:
       items:
         - {}
     addCustomobjectleveldmfs: false
-    addcolumnleveldmfs: true
+    addcolumnleveldmfs: false
     adddmfs:
       items:
         - columnNameExpressions:
