@@ -21,7 +21,7 @@ operation:
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
-    addobjectleveldmfs: false
+    addobjectleveldmfs: true
     scheduleCRON: ""
     schedulePeriod: "60"
     schedulePeriodOption: TRIGGER_ON_CHANGES
