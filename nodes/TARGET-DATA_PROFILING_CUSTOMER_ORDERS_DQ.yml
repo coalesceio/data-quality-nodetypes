@@ -63,7 +63,8 @@ operation:
         columnReference:
           columnCounter: ee546c22-d0d9-4b66-a99d-8e4b3d3afa05
           stepCounter: abf5465f-0ae2-4233-adf9-f5c8c044a493
-        config: {}
+        config:
+          isDistinctCount: true
         dataType: VARCHAR(16777216)
         description: ""
         name: CUSTOMER_NAME
