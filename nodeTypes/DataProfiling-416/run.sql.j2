@@ -199,5 +199,10 @@ does not permit copying or modification for any other purpose.
 		{% endfor %}
 	{% endfor %}
 {% endif %}
-
+{% else %}
+{{ stage('Task Scheduling Enabled - Nothing to do.') }}
+	--Task scheduling is enabled — no manual scheduling actions required.
+    -- Manual Run is only available when taskSchedule is disabled
+    -- To execute this task, wait for the scheduled run or manually execute: EXECUTE TASK {{node.name + '_TASK'}}
+    SELECT 1 AS INFO_MESSAGE WHERE FALSE
 {% endif %}
