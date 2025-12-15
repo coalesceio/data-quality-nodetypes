@@ -2,14 +2,11 @@
     Copyright (c) 2023 Coalesce. All rights reserved.
 This script and its associated documentation are confidential and proprietary to Coalesce.
 Unauthorized reproduction, distribution, or disclosure of this material is strictly prohibited.
-Coalesce permits you to copy and modify this script for the purposes of using with Coalsce but
+Coalesce permits you to copy and modify this script for the purposes of using with Coalesce but
 does not permit copying or modification for any other purpose.  
 #}
-{# == Node Type Version        : 1  == #}
 {# == Node Type Name           : DMFs == #}
 {# == Node Type Description    : This node creates DMFs == #}
-
-
 
 {% if desiredState %}
 
@@ -29,7 +26,7 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addobjectleveldmfs%}    
                 {% set object_expression = desiredState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
                 {% for r in object_expression %} 
-                    {{ stage('Add Object Level DMF') }}     
+                    {{ stage('Add Object Level DMF - ' + r) }}     
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
                     ON  () ; 
@@ -39,19 +36,45 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addcolumnleveldmfs%}    
                 {% set column, expression = desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, desiredState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}
                 {% for r in column %}      
-                    {{ stage('Add Column DMF') }}
+                    {{ stage('Add Column DMF - ' + expression[loop.index0]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
                     ON  ({{ column[loop.index0] }}) ; 
                 {% endfor %}
             {% endif %}
 
+            {# Custom Object Level DMF Functions #}
+            {# ------------------------------------------------------------
+            {% if desiredState.config.addCustomObjectLevelDMFs%}
+
+                {% for item in desiredState.config.customObjectDMFsConfig.get('items') %}
+                    {{ stage('Add Custom Object Level DMF') }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    ADD DATA METRIC FUNCTION {{ item.customObjDMFName }}
+                    ON  ({{ item.customObjDMFArgs }})
+                {% endfor %}
+
+            {% endif %}
+            ------------------------------------------------------------ #}
+
+            {# Custom DMF Functions #}
+            {% if desiredState.config.addCustomDMFs%}
+
+                {% for item in desiredState.config.customDMFsConfig.get('items') %}
+                    {{ stage('Add Custom DMF - ' + item.customDMFName) }}
+                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    ADD DATA METRIC FUNCTION {{ item.customDMFName }}
+                    ON  ({{ item.customDMFArgs }})
+                {% endfor %}
+
+            {% endif %}
+
             {% set sourceDatabase = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
             {% set sourceSchema = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
 
-            {{ stage('creating Data quality result view', true, "sql", "create") }}  
+            {{ stage('Create Data Quality Result View', true, "sql", "create") }}  
             CREATE OR REPLACE VIEW {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} AS
-            SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
+            SELECT SCHEDULED_TIME, TABLE_DATABASE, TABLE_SCHEMA, TABLE_NAME, METRIC_NAME, ARGUMENT_TYPES, ARGUMENT_NAMES, VALUE
             FROM snowflake.local.data_quality_monitoring_results
             where TABLE_DATABASE = '{{sourceDatabase}}'
             and TABLE_SCHEMA = '{{sourceSchema}}'
@@ -80,12 +103,11 @@ does not permit copying or modification for any other purpose.
                 {% endif%}
             {% endif%}
 
-            {# object level logic#}
-
+            {# object level logic #}
             {% if not desiredState.config.addobjectleveldmfs%}  
                 {% set  expression_currentState =  currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
                 {% for r in expression_currentState %}   
-                    {{ stage('Dropping Object Level DMF ') }}
+                    {{ stage('Drop Object DMF - ' + expression_currentState[loop.index0]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
                     ON  ();  
@@ -97,12 +119,12 @@ does not permit copying or modification for any other purpose.
                 {% set expression_currentState =  currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}   
 
                 {% if ( expression_currentState == [] and expression != expression_currentState) %}
-                    {{ stage('Adding New Object Level DMF') }}
+                    {{ stage('Add Object DMF - ' + expression[loop.index0]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
                     ON  ();  
                 {% elif ( expression == [] and expression != expression_currentState) %}
-                    {{ stage('Drop existing Object Level DMF') }}
+                    {{ stage('Drop Object DMF - ' + expression_currentState[loop.index0]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
                     ON  ();  
@@ -110,12 +132,11 @@ does not permit copying or modification for any other purpose.
 
             {% endif %}
 
-            {# column level logic#}
-
+            {# column level logic #}
             {% if not desiredState.config.addcolumnleveldmfs%}  
                 {% set  column_currentState, expression_currentState = currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, currentState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}   
                 {% for r in column_currentState %}   
-                    {{ stage('Dropping Column DMF ') }}
+                    {{ stage('Drop Column DMF - ' + expression_currentState[loop.index0]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
                     ON  ({{ column_currentState[loop.index0] }});  
@@ -130,7 +151,7 @@ does not permit copying or modification for any other purpose.
                 {% for r in column %}   
                     {% set singleid = id[loop.index0] %}
                     {% if singleid not in currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') %}
-                        {{ stage('Adding New Column DMF ') }}
+                        {{ stage('Add Column DMF - ' + expression[loop.index0]) }}
 
                         ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                         ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
@@ -141,7 +162,7 @@ does not permit copying or modification for any other purpose.
                 {% for r in column_currentState %}   
                     {% set singleid = id_currentState[loop.index0] %}
                     {% if singleid not in desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.id') %}
-                        {{ stage('Dropping Column DMF ', true, "sql", "create") }}
+                        {{ stage('Drop Column DMF - ' + expression_currentState[loop.index0], true, "sql", "create") }}
 
                         ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                         DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression_currentState[loop.index0] }}
@@ -149,17 +170,61 @@ does not permit copying or modification for any other purpose.
                     {% endif %}    
                 {% endfor %}
 
+                {# Custom DMF Functions #}
+                {% if desiredState.config.addCustomDMFs or (desiredState.config.addCustomDMFs == false and currentState.config.addCustomDMFs) %}
+
+                    {% set desired_items = desiredState.config.customDMFsConfig.get('items', []) %}
+                    {% set current_items = currentState.config.customDMFsConfig.get('items', []) %}
+
+                    {% for dItem in desired_items %}
+                        {% set found = false %}
+
+                        {% for cItem in current_items %}
+                            {% if cItem.customDMFName == dItem.customDMFName
+                                and cItem.customDMFArgs == dItem.customDMFArgs %}
+                            {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not found %}
+                            {{ stage('Add Custom DMF - ' + dItem.customDMFName) }}
+                            ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}}
+                            ADD DATA METRIC FUNCTION {{ dItem.customDMFName }}
+                            ON ({{ dItem.customDMFArgs }})
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for cItem in current_items %}
+                        {% set found = false %}
+
+                        {% for dItem in desired_items %}
+                            {% if dItem.customDMFName == cItem.customDMFName
+                                and dItem.customDMFArgs == cItem.customDMFArgs %}
+                            {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if not found %}
+                            {{ stage('Drop Custom DMF - ' + cItem.customDMFName) }}
+                            ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}}
+                            DROP DATA METRIC FUNCTION {{ cItem.customDMFName }}
+                            ON ({{ cItem.customDMFArgs }})
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+
             {% set sourceDatabase = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
             {% set sourceSchema = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
 
-            {{ stage('creating Data quality result view', true, "sql", "create") }}  
+            {{ stage('Create Data Quality Result View', true, "sql", "create") }}  
             CREATE OR REPLACE VIEW {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} AS
             SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
             FROM snowflake.local.data_quality_monitoring_results
             where TABLE_DATABASE = '{{sourceDatabase}}'
             and TABLE_SCHEMA = '{{sourceSchema}}'
-            and TABLE_NAME = '{{dep.node.name}}';
-            {% endif %}
+            and TABLE_NAME = '{{dep.node.name}}'
+
         {%endfor%}
     {%endif%}
 
@@ -168,7 +233,7 @@ does not permit copying or modification for any other purpose.
         {% if currentState.config.addobjectleveldmfs%}    
             {% set object_expression = currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
             {% for r in object_expression %} 
-                {{ stage('Drop Object Level DMF', true, "sql", "create") }}     
+                {{ stage('Drop Object Level DMF - ' + r, true, "sql", "create") }}     
                 ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                 DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
                 ON  () ; 
@@ -177,22 +242,27 @@ does not permit copying or modification for any other purpose.
         {% if currentState.config.addcolumnleveldmfs%}    
             {% set column, expression = currentState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, currentState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}
             {% for r in column %}      
-                {{ stage('Drop Column DMF', true, "sql", "create") }}
+                {{ stage('Drop Column DMF - ' + expression[loop.index0], true, "sql", "create") }}
                 ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                 DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
                 ON  ({{ column[loop.index0] }}) ; 
             {% endfor %}
-        {% endif %} 
+        {% endif %}
+
+        {# Drop - Custom DMF Functions -#}
+        {% if currentState.config.addCustomDMFs %}
+            {% for cItem in currentState.config.customDMFsConfig.get('items', []) %}
+                {{ stage('Drop Custom DMF - ' + cItem.customDMFName) }}
+                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}}
+                DROP DATA METRIC FUNCTION {{ cItem.customDMFName }}
+                ON ({{ cItem.customDMFArgs }})
+            {% endfor %}
+        {% endif %}
+
         {% set sourceDatabase = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
         {% set sourceSchema = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}    
-        {{ stage('Dropping Data quality result view', true, "sql", "create") }}  
-        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }} AS
-        SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
-        FROM snowflake.local.data_quality_monitoring_results
-        where TABLE_DATABASE = '{{sourceDatabase}}'
-        and TABLE_SCHEMA = '{{sourceSchema}}'
-        and TABLE_NAME = '{{dep.node.name}}'
-        ;
+        {{ stage('Drop Data Quality Result View', true, "sql", "create") }}  
+        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
     {%endfor%}    
 

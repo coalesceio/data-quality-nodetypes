@@ -16,7 +16,7 @@ metadata:
     - groupName: Scheduling Options
       items:
      
-    # Way to schedule the task to run #
+        # Way to schedule the task to run #
      
       - displayName: Schedule Options
         attributeName: schedulePeriodOption
@@ -41,6 +41,84 @@ metadata:
         placeholder: '5 0-23 * * * America/Los_Angeles'
         isRequired: false
         enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
+
+    - groupName: Universal DMFs
+      items:
+
+        # packageConfiguration - Edit package configuration to set default values #
+
+      - type: toggleButton
+        attributeName: universalDmfs
+        displayName: 'Enable Universal DMFs'
+        default: true
+        isRequired: false
+
+      - type: toggleButton
+        attributeName: universalObjectDmfs
+        displayName: 'Enable Universal Object Level DMFs'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: Object Level DMFs List
+        attributeName: universalObjectDmfsList
+        type: textBox
+        default: "{{ packageConfiguration.universalObjectDmfs }}"
+        isRequired: false
+        enableIf: "{% if config.universalObjectDmfs and config.universalDmfs %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: universalColumnDmfs
+        displayName: 'Enable Universal Column Level DMFs'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs %} true {% else %} false {% endif %}"
+
+        # Apply Null Count DMF to selected columns #
+
+      - type: toggleButton
+        attributeName: universalColumnNullCountDMF
+        displayName: 'Apply Null Count DMF'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - type: columnSelector
+        displayName: Choose columns for Null Count DMF
+        attributeName: universalColumnNullCountDMFList
+        isRequired: false
+        enableIf: "{% if config.universalDmfs
+                        and config.universalColumnDmfs
+                        and config.universalColumnNullCountDMF %} true {% else %} false {% endif %}"
+
+      - displayName: Choose columns for Null Count DMF
+        attributeName: universalColumnNullCountDMFList1
+        type: textBox
+        default: "{{ packageConfiguration.nullCountUniversalColumns }}"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullCountDMF %} true {% else %} false {% endif %}"
+
+        # Apply Null Percent DMF to selected columns #
+
+      - type: toggleButton
+        attributeName: universalColumnNullPercentDMF
+        displayName: Apply Null Percent DMF
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - type: columnSelector
+        displayName: Choose columns for Null Percent DMF
+        attributeName: universalColumnNullPercentDMFList
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullPercentDMF %} true {% else %} false {% endif %}"
+
+      - displayName: Choose columns for Null Percent DMF
+        attributeName: universalColumnNullPercentDMFList1
+        type: textBox
+        default: "{{ packageConfiguration.nullPercentUniversalColumns }}"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullPercentDMF %} true {% else %} false {% endif %}"
 
     - groupName: Object Level DMFs
       items:
@@ -113,58 +191,96 @@ metadata:
       items:
 
       - type: toggleButton
-        attributeName: addCustomobjectleveldmfs
-        displayName: 'Add Custom Object Level DMFs'
+        attributeName: addCustomObjectLevelDMFs
+        displayName: 'Add Object Level DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
-        displayName: 'Custom DMF Functions'
-        attributeName: addCustomdmfsobject
+        displayName: 'CustomDMF Functions'
+        attributeName: customObjectDMFsConfig
         columns:
 
-        - displayName: System DMFs
-          attributeName: custom_dmfs_object
-          type: dropdownSelector
-          default: "NULL_COUNT"
-          options:
-          - "MISSING_SCENARIO_SNAPSHOT_CHECK"
+        - type: textBox
+          displayName: Function Name
+          attributeName: customObjDMFName
           isRequired: false
-          enableIf: "{% if config.addCustomobjectleveldmfs %} true {% else %} false {% endif %}"
+
+        - type: textBox
+          displayName: Arguments
+          attributeName: customObjDMFArgs
+          isRequired: false
 
         isRequired: false
-        enableIf: "{% if config.addCustomobjectleveldmfs %} true {% else %} false {% endif %}"
+        enableIf: "{% if config.addCustomObjectLevelDMFs %} true {% else %} false {% endif %}"
 
-    - groupName: Custom Column Level DMFs
+      enableIf: 'false'
+
+    - groupName: Custom DMFs
       items:
 
       - type: toggleButton
-        attributeName: addCustomcolumnleveldmfs
-        displayName: 'Add Column Level DMFs'
+        attributeName: addCustomDMFs
+        displayName: 'Add Custom DMFs'
         default: false
         isRequired: true
 
       - type: tabular
         displayName: 'CustomDMF Functions'
-        attributeName: addCustomdmfs
+        attributeName: customDMFsConfig
         columns:
 
-        - type: columnDropdownSelector
-          displayName: Column Name
-          attributeName: columnCustomNameExpressions
+        - type: textBox
+          displayName: Function Name
+          attributeName: customDMFName
           isRequired: false
-          enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
 
-        - displayName: Custom DMFs
-          attributeName: custom_dmfs
-          type: dropdownSelector
-          default: "NULL_COUNT"
-          options:
-          - "DMF_PA_VALID_DTS_CHK"
+        - type: textBox
+          displayName: Arguments
+          attributeName: customDMFArgs
           isRequired: false
-          enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
 
         isRequired: false
-        enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
+        enableIf: "{% if config.addCustomDMFs %} true {% else %} false {% endif %}"
+
+    - groupName: Alerting Options
+      items:
+     
+      - type: toggleButton
+        attributeName: emailAlertToggle
+        displayName: 'Enable Email Alert'
+        default: false
+        isRequired: false
+
+      - type: toggleButton
+        attributeName: overrideEmailAlertToggle
+        displayName: 'Enable Override Email Alert'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Notification Integration Name
+        attributeName: notfIntegrationName
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Email recipient List(Ex. email1, email2)
+        attributeName: emailList
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Check Warehouse Name
+        attributeName: alertWarehouse
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Check Frequency
+        attributeName: alertFrequency
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 name: DMFS
 type: NodeType

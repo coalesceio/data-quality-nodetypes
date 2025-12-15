@@ -1,0 +1,245 @@
+fileVersion: 1
+id: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+name: DMFS_TEST_TABLE_DMF
+operation:
+  config:
+    addCustomColumnlLevelDMFs: true
+    addCustomDMFs: true
+    addCustomObjectLevelDMFs: false
+    addcolumnleveldmfs: true
+    adddmfs:
+      items:
+        - columnNameExpressions:
+            columnCounter: 01cd69ca-2466-406f-a421-f5f8cfdc82fa
+            stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+          system_dmfs: AVG
+        - columnNameExpressions:
+            columnCounter: 01cd69ca-2466-406f-a421-f5f8cfdc82fa
+            stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+          system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: 54983c46-543b-48a4-87f3-4096465ed716
+            stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+          system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: 54983c46-543b-48a4-87f3-4096465ed716
+            stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+          system_dmfs: BLANK_PERCENT
+    adddmfsobject:
+      items:
+        - system_dmfs_object: ROW_COUNT
+    addobjectleveldmfs: true
+    alertFrequency: ""
+    alertWarehouse: ""
+    customColumnDMFsConfig:
+      items:
+        - customColDMFArgs: ""
+          customColDMFName: ""
+    customDMFsConfig:
+      items:
+        - customDMFArgs: ORDER_ID
+          customDMFName: TANVI_DEV.SOURCE.ROW_NULL_COUNT
+        - customDMFArgs: ID, AMOUNT, QUANTITY
+          customDMFName: TANVI_DEV.SOURCE.count_positive_numbers
+    customObjectDMFsConfig:
+      items:
+        - {}
+    emailAlertToggle: false
+    emailList: ""
+    notfIntegrationName: ""
+    overrideEmailAlertToggle: false
+    scheduleCRON: ""
+    schedulePeriod: "60"
+    schedulePeriodOption: Minutes
+    universalColumnDmfs: true
+    universalColumnNullCountDMF: true
+    universalColumnNullCountDMFList1: "{{ packageConfiguration.nullCountUniversalColumns }}"
+    universalColumnNullPercentDMF: false
+    universalColumnNullPercentDMFList1: "{{ packageConfiguration.nullPercentUniversalColumns }}"
+    universalDmfs: true
+    universalObjectDmfs: true
+    universalObjectDmfsList: "{{ packageConfiguration.universalObjectDmfs }}"
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: TARGET
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 01cd69ca-2466-406f-a421-f5f8cfdc82fa
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 1cf27453-4d07-409a-898a-4bed91845a8d
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 54983c46-543b-48a4-87f3-4096465ed716
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: ORDER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 9a20c2fe-651f-422d-813a-f3c5b1adbd96
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 113d5d45-96fb-4ee3-b078-2e074511f557
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: CUSTOMER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: a9464e0a-aedb-4566-87ee-a28d9a16ee84
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: c791222b-2153-4ace-9e97-4adb85e6fc65
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: EMAIL
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: c85a9858-a40f-4936-b34b-5b15c8fd8b6f
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: af48c2c3-e7c2-4cef-93b7-56dd967fdf02
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: STATUS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: d03578f7-26ac-472d-a503-5346ab8aede5
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 994a1931-6726-4d1c-92ac-ae138008c5e5
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: NUMBER(10,2)
+        description: ""
+        name: AMOUNT
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: b505d2c2-9294-4fe8-8af8-4f61e48929df
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: f5256df6-cb56-471d-8d3b-70604680a7c0
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: QUANTITY
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 43e4380e-22b2-491d-a816-7c5375961ed0
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: f7d5e63d-015e-4f65-aef7-52bdacc3c05c
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: DATE
+        description: ""
+        name: CREATED_DATE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 33f6daa0-a14b-472f-8612-72ade3b46e12
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 1e73cb63-6d4e-4e46-a721-545938e4e9b9
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: CREATED_TS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: bb4c91d3-539f-4438-be68-4ccb69399407
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 6d64073a-ba96-4117-9973-b11923890ca5
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: UPDATED_TS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: d5bad7b7-5d9f-416b-9f17-36cd738c1014
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 7a070413-1f1f-438d-806d-405051029880
+          stepCounter: f3fa5c22-36bd-4399-8be0-f81ee5dd911e
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: COUNTRY_CODE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 100fe622-8385-48ed-8128-7b92a621de04
+                stepCounter: 5724e348-cfdc-4898-8bd7-13734f73b74b
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          TEST_TABLE_DMF: 5724e348-cfdc-4898-8bd7-13734f73b74b
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE
+            nodeName: TEST_TABLE_DMF
+        join:
+          joinCondition: FROM {{ ref('SOURCE', 'TEST_TABLE_DMF') }} "TEST_TABLE_DMF"
+        name: DMFS_TEST_TABLE_DMF
+        noLinkRefs: []
+  name: DMFS_TEST_TABLE_DMF
+  overrideSQL: false
+  schema: ""
+  sqlType: "448"
+  type: sql
+  version: 1
+type: Node
