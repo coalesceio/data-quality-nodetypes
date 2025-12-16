@@ -106,7 +106,10 @@ does not permit copying or modification for any other purpose.
                         AND TABLE_NAME = '{{dep.node.name}}'
                         AND metric_name = 'NULL_COUNT'
                         AND value > 0
-                        AND measurement_time > DATEADD('hour', -1, CURRENT_TIMESTAMP())
+                        AND measurement_time > COALESCE(
+                        SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME(), 
+                        DATEADD('hour', -24, CURRENT_TIMESTAMP()) -- Fallback for the first run
+                    )
                 ))
                 THEN
                 CALL SYSTEM$SEND_EMAIL(
