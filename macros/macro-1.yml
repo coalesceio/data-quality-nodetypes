@@ -177,5 +177,44 @@ macroString: |-
       {{ nsVariables.ibcoldatatype }}
    
   {% endmacro %}
+
+  {# --------------------------------------------------------------------------------
+    Builds email alert settings for DMF notifications.
+
+    Behavior:
+    - Runs only when emailAlertToggle is enabled
+    - Uses config values when overrideEmailAlertToggle is true and values are provided
+    - Falls back to workspace / environment parameters otherwise
+
+    Expected parameters:
+    - DMF_ALERT_INTEGRATION
+    - DMF_ALERT_EMAIL
+    - DMF_ALERT_WAREHOUSE
+    - DMF_ALERT_SCHEDULE
+  ---------------------------------------------------------------------------------- #}
+  {% macro buildEmailSettings(ns) %}
+
+      {% if config.emailAlertToggle %}
+      
+          {% set use_override = config.overrideEmailAlertToggle %}
+
+          {% set ns.notfIntegrationName =
+              (config.notfIntegrationName if use_override and config.notfIntegrationName | trim
+                  else parameters.DMF_ALERT_INTEGRATION) %}
+
+          {% set ns.emailList =
+              (config.emailList if use_override and config.emailList | trim
+                  else parameters.DMF_ALERT_EMAIL) %}
+
+          {% set ns.alertWarehouse =
+              (config.alertWarehouse if use_override and config.alertWarehouse | trim
+                  else parameters.DMF_ALERT_WAREHOUSE) %}
+
+          {% set ns.alertFrequency =
+              (config.alertFrequency if use_override and config.alertFrequency | trim
+                  else parameters.DMF_ALERT_SCHEDULE) %}
+      {% endif %}
+
+  {% endmacro %}
 name: macro
 type: Macro

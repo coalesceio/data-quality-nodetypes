@@ -137,7 +137,7 @@ metadata:
         - displayName: System DMFs
           attributeName: system_dmfs_object
           type: dropdownSelector
-          default: "NULL_COUNT"
+          default: "ROW_COUNT"
           options:
           - "ROW_COUNT"
           isRequired: false
@@ -252,6 +252,11 @@ metadata:
         default: false
         isRequired: false
 
+      - type: label
+        attributeName: paramLabel
+        displayName: "⚠ Note: Make sure the following parameters are defined in both the workspace and deployment environment - DMF_ALERT_INTEGRATION, DMF_ALERT_EMAIL, DMF_ALERT_WAREHOUSE, DMF_ALERT_SCHEDULE"
+        enableIf: "{%- if config.overrideEmailAlertToggle == false and (parameters == {} or parameters.DMF_ALERT_INTEGRATION == '' or parameters.DMF_ALERT_EMAIL == '' or parameters.DMF_ALERT_WAREHOUSE == '' or parameters.DMF_ALERT_SCHEDULE == '') -%} true {%- else -%} false {%- endif -%}"
+
       - type: toggleButton
         attributeName: overrideEmailAlertToggle
         displayName: 'Enable Override Email Alert'
@@ -282,5 +287,12 @@ metadata:
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: nullCntTrigger
+        displayName: 'Trigger on Null Count'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
 name: DMFS
 type: NodeType

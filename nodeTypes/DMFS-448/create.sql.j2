@@ -26,7 +26,7 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addobjectleveldmfs%}    
                 {% set object_expression = desiredState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
                 {% for r in object_expression %} 
-                    {{ stage('Add Object Level DMF - ' + r) }}     
+                    {{ stage('Add Object DMF - ' + r) }}     
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
                     ON  () ; 
@@ -48,7 +48,7 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addCustomObjectLevelDMFs%}
 
                 {% for item in desiredState.config.customObjectDMFsConfig.get('items') %}
-                    {{ stage('Add Custom Object Level DMF') }}
+                    {{ stage('Add Custom Object DMF') }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION {{ item.customObjDMFName }}
                     ON  ({{ item.customObjDMFArgs }})
@@ -61,7 +61,7 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addCustomDMFs%}
 
                 {% for item in desiredState.config.customDMFsConfig.get('items') %}
-                    {{ stage('Add Custom DMF - ' + item.customDMFName) }}
+                    {{ stage('Add Custom DMF - ' + item.customDMFName.split('.')[-1]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION {{ item.customDMFName }}
                     ON  ({{ item.customDMFArgs }})
@@ -79,20 +79,54 @@ does not permit copying or modification for any other purpose.
             where TABLE_DATABASE = '{{sourceDatabase}}'
             and TABLE_SCHEMA = '{{sourceSchema}}'
             and TABLE_NAME = '{{dep.node.name}}'
-            ;
+
+            {# Create Email Alter If Enabled #}
+            {% if desiredState.config.emailAlertToggle and (desiredState.config.nullCntTrigger) %}
+
+                {% set emailAttributes = namespace(
+                    notfIntegrationName='',
+                    emailList='',
+                    alertWarehouse='',
+                    alertFrequency=''
+                ) %}
+
+                {{ buildEmailSettings(emailAttributes) }}
+
+                {% set alertName = desiredState.node.name + '_ALERT' %}
+                {% set fullyQualifiedAlertName = ref_no_link(desiredState.node.location.name, alertName) %}
+
+                {{ stage('Create Data Quality Email Alert') }}
+                CREATE OR REPLACE ALERT {{ fullyQualifiedAlertName }}
+                WAREHOUSE = {{ emailAttributes.alertWarehouse }}
+                SCHEDULE = '{{ emailAttributes.alertFrequency }}'
+                IF (EXISTS (
+                        SELECT value FROM SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS
+                        WHERE TABLE_DATABASE = '{{sourceDatabase}}'
+                        AND TABLE_SCHEMA = '{{sourceSchema}}'
+                        AND TABLE_NAME = '{{dep.node.name}}'
+                        AND metric_name = 'NULL_COUNT'
+                        AND value > 0
+                        AND measurement_time > DATEADD('hour', -1, CURRENT_TIMESTAMP())
+                ))
+                THEN
+                CALL SYSTEM$SEND_EMAIL(
+                    '{{ emailAttributes.notfIntegrationName }}',
+                    '{{ emailAttributes.emailList }}',
+                    'Data Quality Notification: Metric Threshold Exceeded',
+                    'A monitored data quality metric for {{ ref_raw(dep.node.location.name, dep.node.name) }} has moved outside of its expected range. Please review the Data Quality Monitoring Results View - {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} for details.'
+                )
+
+                {{ stage('Resume Data Quality Email Alert') }}
+                ALTER ALERT {{ fullyQualifiedAlertName }} RESUME
+            {% endif %}
  
         {%endfor%}
 
     {%elif currentState != undefined and desiredState!=currentState %}
-        {% set nsVariables = namespace(nsCurrentschedulePeriodOption="") %}
-        {% set nsVariables = namespace(nsDesiredschedulePeriodOption="") %}
-
-        {% set nsVariables.nsCurrentschedulePeriodOption = currentState.config.schedulePeriodOption  %}
-        {% set nsVariables.nsDesiredschedulePeriodOption = desiredState.config.schedulePeriodOption  %}
 
         {%- for dep in desiredState.sources[0].dependencies -%}
-            {% if nsVariables.nsCurrentschedulePeriodOption != nsVariables.nsDesiredschedulePeriodOption %}
-                {{ stage('Add DMFs Schedule') }}
+            {% if currentState.config.schedulePeriodOption != desiredState.config.schedulePeriodOption %}
+                {{ stage('Alter DMFs Schedule') }}
                 ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                 {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
                 SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
@@ -177,17 +211,17 @@ does not permit copying or modification for any other purpose.
                     {% set current_items = currentState.config.customDMFsConfig.get('items', []) %}
 
                     {% for dItem in desired_items %}
-                        {% set found = false %}
+                        {% set dItemExists = namespace(inList=false) %}
 
                         {% for cItem in current_items %}
-                            {% if cItem.customDMFName == dItem.customDMFName
+                            {% if cItem.customDMFName | trim == dItem.customDMFName | trim
                                 and cItem.customDMFArgs == dItem.customDMFArgs %}
-                            {% set found = true %}
+                                {% set dItemExists.inList = true %}
                             {% endif %}
                         {% endfor %}
 
-                        {% if not found %}
-                            {{ stage('Add Custom DMF - ' + dItem.customDMFName) }}
+                        {% if (desiredState.config.addCustomDMFs and not dItemExists.inList) or ((desiredState.config.addCustomDMFs and currentState.config.addCustomDMFs == false)) %}
+                            {{ stage('Add Custom DMF - ' + dItem.customDMFName.split('.')[-1]) }}
                             ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}}
                             ADD DATA METRIC FUNCTION {{ dItem.customDMFName }}
                             ON ({{ dItem.customDMFArgs }})
@@ -195,17 +229,17 @@ does not permit copying or modification for any other purpose.
                     {% endfor %}
 
                     {% for cItem in current_items %}
-                        {% set found = false %}
+                        {% set cItemExists = namespace(inList=false) %}
 
                         {% for dItem in desired_items %}
                             {% if dItem.customDMFName == cItem.customDMFName
                                 and dItem.customDMFArgs == cItem.customDMFArgs %}
-                            {% set found = true %}
+                                {% set cItemExists.inList = true %}
                             {% endif %}
                         {% endfor %}
 
-                        {% if not found %}
-                            {{ stage('Drop Custom DMF - ' + cItem.customDMFName) }}
+                        {% if (desiredState.config.addCustomDMFs and not cItemExists.inList) or ((desiredState.config.addCustomDMFs == false and currentState.config.addCustomDMFs)) %}
+                            {{ stage('Drop Custom DMF - ' + cItem.customDMFName.split('.')[-1]) }}
                             ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}}
                             DROP DATA METRIC FUNCTION {{ cItem.customDMFName }}
                             ON ({{ cItem.customDMFArgs }})
@@ -217,7 +251,7 @@ does not permit copying or modification for any other purpose.
             {% set sourceDatabase = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
             {% set sourceSchema = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
 
-            {{ stage('Create Data Quality Result View', true, "sql", "create") }}  
+            {{ stage('Create Data Quality Result View', true, "sql", "create") }}
             CREATE OR REPLACE VIEW {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} AS
             SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
             FROM snowflake.local.data_quality_monitoring_results
@@ -233,7 +267,7 @@ does not permit copying or modification for any other purpose.
         {% if currentState.config.addobjectleveldmfs%}    
             {% set object_expression = currentState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
             {% for r in object_expression %} 
-                {{ stage('Drop Object Level DMF - ' + r, true, "sql", "create") }}     
+                {{ stage('Drop Object DMF - ' + r, true, "sql", "create") }}     
                 ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                 DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
                 ON  () ; 
@@ -259,11 +293,24 @@ does not permit copying or modification for any other purpose.
             {% endfor %}
         {% endif %}
 
+        {{ stage('Unset DMFs Schedule') }}
+        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+        UNSET DATA_METRIC_SCHEDULE
+
         {% set sourceDatabase = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
-        {% set sourceSchema = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}    
+        {% set sourceSchema = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
+
         {{ stage('Drop Data Quality Result View', true, "sql", "create") }}  
         DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
-    {%endfor%}    
+        {# Create Email Alter If Enabled #}
+        {% if currentState.config.emailAlertToggle and (currentState.config.nullCntTrigger) %}
+            {% set alertName = currentState.node.name + '_ALERT' %}
+            {% set fullyQualifiedAlertName = ref_no_link(currentState.node.location.name, alertName) %}
 
+            {{ stage('Drop Data Quality Email Alert') }}
+            DROP ALERT IF EXISTS {{ fullyQualifiedAlertName }};
+        {% endif %}
+
+    {%endfor%}
 {%endif%}
