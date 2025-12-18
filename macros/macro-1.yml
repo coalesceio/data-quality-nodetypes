@@ -1,14 +1,14 @@
 fileVersion: 1
 id: "1"
 macroString: |-
-  {% set packageConfiguration = namespace(universalObjectDmfs=['ROW_COUNT', 'FRESHNESS'], 
-                                          nullCountUniversalColumns=['ID', 'ORDER_ID'], 
-                                          nullPercentUniversalColumns=['ID', 'ORDER_ID'],
-                                          blankCountUniversalColumns=['ID', 'ORDER_ID'],
-                                          blankPercentUniversalColumns=['ID', 'ORDER_ID'],
-                                          duplicateCountUniversalColumns=['ID', 'ORDER_ID'],
-                                          uniqueCountUniversalColumns=['ID', 'ORDER_ID'],
-                                          freshnessUniversalColumns=['ID', 'ORDER_ID']) %}
+  {% set packageConfiguration = namespace(universalObjectDmfs=['FRESHNESS'], 
+                                          nullCountUniversalColumns=[], 
+                                          nullPercentUniversalColumns=[],
+                                          blankCountUniversalColumns=[],
+                                          blankPercentUniversalColumns=[],
+                                          duplicateCountUniversalColumns=[],
+                                          uniqueCountUniversalColumns=[],
+                                          freshnessUniversalColumns=[]) %}
 
   {%- macro ref_raw(location_name, node_name) -%}
       {%- raw -%}{{ ref('{% endraw %}{{- location_name }}{% raw %}', '{% endraw %}{{ node_name }}{% raw %}') }}{% endraw %}

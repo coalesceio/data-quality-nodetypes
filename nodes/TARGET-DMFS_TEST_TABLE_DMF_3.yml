@@ -168,7 +168,7 @@ operation:
           columnCounter: a49d6413-9545-48ff-a021-ad0a4a75cb7e
           stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
-        dataType: TIMESTAMP_NTZ(9)
+        dataType: DATE
         description: ""
         name: CREATED_TS
         nullable: true
