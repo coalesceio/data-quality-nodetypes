@@ -118,6 +118,17 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addCustomDMFs%}
 
                 {% for item in desiredState.config.customDMFsConfig.get('items') %}
+                    {% set ns = namespace(objects=[]) %}
+
+                    {% for line in item.customDMFArgs.split('\n') %}
+                        {% if 'object:' in line %}
+                            {% set obj = line.replace('object:', '').replace('-', '').strip() %}
+                            {% set ns.objects = ns.objects + [obj] %}
+                        {% endif %}
+                    {% endfor %}
+                    {{stage('0')}}
+                    {{ ns.objects }}
+
                     {{ stage('Add Custom DMF - ' + item.customDMFName.split('.')[-1]) }}
                     ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
                     ADD DATA METRIC FUNCTION {{ item.customDMFName }}

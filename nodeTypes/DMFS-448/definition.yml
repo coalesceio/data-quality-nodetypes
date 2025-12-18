@@ -225,7 +225,7 @@ metadata:
         attributeName: addobjectleveldmfs
         displayName: 'Add Object Level DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
         displayName: 'DMF Functions'
@@ -252,7 +252,7 @@ metadata:
         attributeName: addcolumnleveldmfs
         displayName: 'Add Column Level DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
         displayName: 'DMF Functions'
@@ -309,8 +309,13 @@ metadata:
         - type: textBox
           displayName: Arguments
           attributeName: customDMFArgs
-          isRequired: false
-
+          syntax: sql
+          default: |
+            elements:
+            - object: <fullpath.table_name1>
+              args:
+                - col: <col_name1>
+                - col: <col_name2>
         isRequired: false
         enableIf: "{% if config.addCustomDMFs %} true {% else %} false {% endif %}"
 

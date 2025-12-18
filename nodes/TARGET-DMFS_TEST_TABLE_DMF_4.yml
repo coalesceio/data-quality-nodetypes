@@ -1,6 +1,6 @@
 fileVersion: 1
-id: 3814b98d-eadf-45b0-9474-a0da2cedb785
-name: DMFS_TEST_TABLE_DMF_3
+id: e1ea54da-aeab-4e9a-8b7f-92b17d791669
+name: DMFS_TEST_TABLE_DMF_4
 operation:
   config:
     addCustomDMFs: true
@@ -18,10 +18,10 @@ operation:
       items:
         - customDMFArgs: |
             elements:
-            - object: "<fullpath.table_name1>"
-                args:
-                  - col: "<col_name1>"
-                  - col: "<col_name2>"
+            - object: <fullpath.table_name1>
+              args:
+                - col: <col_name1>
+                - col: <col_name2>
           customDMFName: ""
     emailAlertToggle: false
     emailList: ""
@@ -31,17 +31,42 @@ operation:
     scheduleCRON: ""
     schedulePeriod: "60"
     schedulePeriodOption: Minutes
+    universalColumnBlankCountDMF: false
+    universalColumnBlankCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.blankCountUniversalColumns[]
+    universalColumnBlankPercentDMF: false
+    universalColumnBlankPercentDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.blankPercentUniversalColumns[]
     universalColumnDmfs: true
+    universalColumnDuplicateCountDMF: true
+    universalColumnDuplicateCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.duplicateCountUniversalColumns[]
+    universalColumnFreshnessDMF: true
+    universalColumnFreshnessDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.freshnessUniversalColumns[]
     universalColumnNullCountDMF: true
     universalColumnNullCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
-       -- To edit, update the below Config
+       -- To edit, update the below Config in Package Configuration.
        packageConfiguration.nullCountUniversalColumns[]
     universalColumnNullPercentDMF: false
     universalColumnNullPercentDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
-       -- To edit, update the below Config
+       -- To edit, update the below Config in Package Configuration.
        packageConfiguration.nullPercentUniversalColumns[]
+    universalColumnUniqueCountDMF: false
+    universalColumnUniqueCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.uniqueCountUniversalColumns[]
     universalDmfs: true
     universalObjectDmfs: true
     universalObjectDmfsList: |2-
@@ -59,8 +84,8 @@ operation:
     columns:
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: a62a5c79-bfa7-422d-a563-69ab03784cbf
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: f8322302-da3e-45b7-a750-5d91cd47248e
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -73,8 +98,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 18b4738b-8f73-42dc-851e-1e3d796a5256
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: 59a321e4-68db-4d39-87f9-b8d29e50ce6e
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -87,8 +112,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 3f7c7314-d044-4811-b9e9-c3d1ce986122
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: 75efa6e3-b1ca-4224-a1f7-4008d64a2ca5
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -101,8 +126,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 906c5efa-0c0d-416c-9538-5ef7e53ebb41
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: 9e8c5c58-96d7-4ec6-8712-e16e3ac27d58
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -115,8 +140,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: ad6d3eb3-1f9b-405b-a8a0-561c6add9467
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: e1deec42-6930-4283-ad80-406dbbdd01ef
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -129,8 +154,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 6d4b2251-0e55-4661-adc1-56c805ff83bf
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: 03043b3b-e332-410c-9acf-85a12f9d568f
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: NUMBER(10,2)
         description: ""
@@ -143,8 +168,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: f7c407aa-14d9-4627-a5ab-6e6bb136db08
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: 5bac49b2-1fc8-4b98-a8cd-7dddf25afe0b
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -157,8 +182,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 418daded-9a4d-4e3d-8406-f8dacec7a8ec
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: c403b278-87d1-4b87-9cc5-39ec19708740
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: DATE
         description: ""
@@ -171,10 +196,10 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: a49d6413-9545-48ff-a021-ad0a4a75cb7e
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: a7ce0fde-ef1e-47e8-901d-699bba2d461c
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
-        dataType: DATE
+        dataType: TIMESTAMP_NTZ(9)
         description: ""
         name: CREATED_TS
         nullable: true
@@ -185,8 +210,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: df57ea57-4f15-4b34-ab4c-62dfa358d18e
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: 1519687e-df65-4e3e-b82b-ec3416fd1996
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
@@ -199,8 +224,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 9691fae1-8f00-4f8e-8cfc-74e0ee5910d7
-          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+          columnCounter: f8b15bf4-f913-40c5-bdbc-87abd9e534d3
+          stepCounter: e1ea54da-aeab-4e9a-8b7f-92b17d791669
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -223,9 +248,9 @@ operation:
             nodeName: TEST_TABLE_DMF_3
         join:
           joinCondition: FROM {{ ref('SOURCE', 'TEST_TABLE_DMF_3') }} "TEST_TABLE_DMF_3"
-        name: DMFS_TEST_TABLE_DMF_3
+        name: DMFS_TEST_TABLE_DMF_4
         noLinkRefs: []
-  name: DMFS_TEST_TABLE_DMF_3
+  name: DMFS_TEST_TABLE_DMF_4
   overrideSQL: false
   schema: ""
   sqlType: "448"
