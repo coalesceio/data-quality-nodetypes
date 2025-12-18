@@ -63,8 +63,12 @@ metadata:
       - displayName: Object Level DMFs List
         attributeName: universalObjectDmfsList
         type: textBox
-        default: "{{ packageConfiguration.universalObjectDmfs }}"
+        default: "
+          -- This field is auto-populated from the Package Configuration.\n
+          -- To edit, update the below Config\n
+          packageConfiguration.universalObjectDmfs[]"
         isRequired: false
+        syntax: sql
         enableIf: "{% if config.universalObjectDmfs and config.universalDmfs %} true {% else %} false {% endif %}"
 
       - type: toggleButton
@@ -74,51 +78,145 @@ metadata:
         isRequired: false
         enableIf: "{% if config.universalDmfs %} true {% else %} false {% endif %}"
 
-        # Apply Null Count DMF to selected columns #
+        #-------- Apply NULL_COUNT DMF to selected columns ---------#
 
       - type: toggleButton
         attributeName: universalColumnNullCountDMF
-        displayName: 'Apply Null Count DMF'
+        displayName: 'Apply NULL_COUNT'
         default: true
         isRequired: false
         enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
 
-      - type: columnSelector
-        displayName: Choose columns for Null Count DMF
+      - displayName: NULL_COUNT Column List
         attributeName: universalColumnNullCountDMFList
-        isRequired: false
-        enableIf: "{% if config.universalDmfs
-                        and config.universalColumnDmfs
-                        and config.universalColumnNullCountDMF %} true {% else %} false {% endif %}"
-
-      - displayName: Choose columns for Null Count DMF
-        attributeName: universalColumnNullCountDMFList1
         type: textBox
-        default: "{{ packageConfiguration.nullCountUniversalColumns }}"
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.nullCountUniversalColumns[]"
         isRequired: false
         enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullCountDMF %} true {% else %} false {% endif %}"
 
-        # Apply Null Percent DMF to selected columns #
+        #-------- Apply NULL_PERCENT DMF to selected columns --------#
 
       - type: toggleButton
         attributeName: universalColumnNullPercentDMF
-        displayName: Apply Null Percent DMF
+        displayName: Apply NULL_PERCENT
         default: false
         isRequired: false
         enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
 
-      - type: columnSelector
-        displayName: Choose columns for Null Percent DMF
+      - displayName: NULL_PERCENT Column List
         attributeName: universalColumnNullPercentDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.nullPercentUniversalColumns[]"
         isRequired: false
         enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullPercentDMF %} true {% else %} false {% endif %}"
 
-      - displayName: Choose columns for Null Percent DMF
-        attributeName: universalColumnNullPercentDMFList1
-        type: textBox
-        default: "{{ packageConfiguration.nullPercentUniversalColumns }}"
+        #-------- Apply BLANK_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnBlankCountDMF
+        displayName: 'Apply BLANK_COUNT'
+        default: false
         isRequired: false
-        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullPercentDMF %} true {% else %} false {% endif %}"
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: BLANK_COUNT Column List
+        attributeName: universalColumnBlankCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.blankCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnBlankCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply BLANK_PERCENT DMF to selected columns --------#
+
+      - type: toggleButton
+        attributeName: universalColumnBlankPercentDMF
+        displayName: Apply BLANK_PERCENT
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: BLANK_PERCENT Column List
+        attributeName: universalColumnBlankPercentDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.blankPercentUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnBlankPercentDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply DUPLICATE_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnDuplicateCountDMF
+        displayName: 'Apply DUPLICATE_COUNT'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: DUPLICATE_COUNT Column List
+        attributeName: universalColumnDuplicateCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.duplicateCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnDuplicateCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply UNIQUE_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnUniqueCountDMF
+        displayName: 'Apply UNIQUE_COUNT'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: UNIQUE_COUNT Column List
+        attributeName: universalColumnUniqueCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.uniqueCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnUniqueCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply FRESHNESS  DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnFreshnessDMF
+        displayName: 'Apply FRESHNESS'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: FRESHNESS  Column List
+        attributeName: universalColumnFreshnessDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.freshnessUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnFreshnessDMF %} true {% else %} false {% endif %}"
 
     - groupName: Object Level DMFs
       items:
@@ -140,6 +238,7 @@ metadata:
           default: "ROW_COUNT"
           options:
           - "ROW_COUNT"
+          - "FRESHNESS"
           isRequired: false
           enableIf: "{% if config.addobjectleveldmfs %} true {% else %} false {% endif %}"
 
@@ -186,35 +285,6 @@ metadata:
 
         isRequired: false
         enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
-
-    - groupName: Custom Object Level DMFs
-      items:
-
-      - type: toggleButton
-        attributeName: addCustomObjectLevelDMFs
-        displayName: 'Add Object Level DMFs'
-        default: false
-        isRequired: false
-
-      - type: tabular
-        displayName: 'CustomDMF Functions'
-        attributeName: customObjectDMFsConfig
-        columns:
-
-        - type: textBox
-          displayName: Function Name
-          attributeName: customObjDMFName
-          isRequired: false
-
-        - type: textBox
-          displayName: Arguments
-          attributeName: customObjDMFArgs
-          isRequired: false
-
-        isRequired: false
-        enableIf: "{% if config.addCustomObjectLevelDMFs %} true {% else %} false {% endif %}"
-
-      enableIf: 'false'
 
     - groupName: Custom DMFs
       items:

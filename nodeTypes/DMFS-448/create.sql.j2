@@ -16,22 +16,31 @@ does not permit copying or modification for any other purpose.
             {{ stage('Add DMFs Schedule') }}     
             ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
             {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
-            SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
+                SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
             {% elif desiredState.config.schedulePeriodOption == 'CRON'%}
-            SET DATA_METRIC_SCHEDULE = 'USING CRON {{desiredState.config.scheduleCRON}}'
+                SET DATA_METRIC_SCHEDULE = 'USING CRON {{desiredState.config.scheduleCRON}}'
             {% elif desiredState.config.schedulePeriodOption == 'TRIGGER_ON_CHANGES'%}
-            SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
+                SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
             {% endif%}
 
+            {% set object_expression = [] %}
             {% if desiredState.config.addobjectleveldmfs%}    
-                {% set object_expression = desiredState.config.adddmfsobject.get('items') | map(attribute='system_dmfs_object') | list  %}
-                {% for r in object_expression %} 
-                    {{ stage('Add Object DMF - ' + r) }}     
-                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
-                    ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
-                    ON  () ; 
-                {% endfor %}
+                {% set object_expression = desiredState.config.adddmfsobject.get('items')
+                                            | map(attribute='system_dmfs_object')
+                                            | list  %}
             {% endif %}
+            {% set combinedObjectDMFs = (object_expression + 
+                                        (packageConfiguration.universalObjectDmfs 
+                                            if packageConfiguration.universalObjectDmfs is defined
+                                            else []))
+                                        | unique
+                                        | list %}
+            {% for r in combinedObjectDMFs if combinedObjectDMFs %} 
+                {{ stage('Add Object DMF - ' + r) }}     
+                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
+                ON  () ; 
+            {% endfor %}
 
             {% if desiredState.config.addcolumnleveldmfs%}    
                 {% set column, expression = desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, desiredState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}

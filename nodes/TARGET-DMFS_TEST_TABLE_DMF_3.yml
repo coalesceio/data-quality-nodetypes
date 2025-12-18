@@ -1,50 +1,47 @@
 fileVersion: 1
-id: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+id: 3814b98d-eadf-45b0-9474-a0da2cedb785
 name: DMFS_TEST_TABLE_DMF_3
 operation:
   config:
-    addCustomDMFs: true
-    addCustomObjectLevelDMFs: false
-    addcolumnleveldmfs: true
+    addCustomDMFs: false
+    addcolumnleveldmfs: false
     adddmfs:
       items:
-        - columnNameExpressions:
-            columnCounter: c3fcf080-eebb-4904-975c-83c5b89cafb3
-            stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
-          system_dmfs: NULL_COUNT
-        - columnNameExpressions:
-            columnCounter: add01665-c3d0-4ed5-a1a1-e35696933fef
-            stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
-          system_dmfs: NULL_COUNT
+        - {}
     adddmfsobject:
       items:
-        - system_dmfs_object: ROW_COUNT
-    addobjectleveldmfs: true
+        - {}
+    addobjectleveldmfs: false
     alertFrequency: ""
     alertWarehouse: ""
     customDMFsConfig:
       items:
-        - customDMFArgs: ORDER_ID
-          customDMFName: TANVI_DEV.SOURCE.ROW_NULL_COUNT
-    customObjectDMFsConfig:
-      items:
         - {}
-    emailAlertToggle: true
+    emailAlertToggle: false
     emailList: ""
     notfIntegrationName: ""
-    nullCntTrigger: true
+    nullCntTrigger: false
     overrideEmailAlertToggle: false
     scheduleCRON: ""
     schedulePeriod: "60"
-    schedulePeriodOption: TRIGGER_ON_CHANGES
+    schedulePeriodOption: Minutes
     universalColumnDmfs: true
     universalColumnNullCountDMF: true
-    universalColumnNullCountDMFList1: "{{ packageConfiguration.nullCountUniversalColumns }}"
+    universalColumnNullCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config
+       packageConfiguration.nullCountUniversalColumns[]
     universalColumnNullPercentDMF: false
-    universalColumnNullPercentDMFList1: "{{ packageConfiguration.nullPercentUniversalColumns }}"
+    universalColumnNullPercentDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config
+       packageConfiguration.nullPercentUniversalColumns[]
     universalDmfs: true
     universalObjectDmfs: true
-    universalObjectDmfsList: "{{ packageConfiguration.universalObjectDmfs }}"
+    universalObjectDmfsList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- To edit, update the below Config
+       packageConfiguration.universalObjectDmfs[]
   database: ""
   deployEnabled: true
   description: ""
@@ -56,8 +53,8 @@ operation:
     columns:
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: c3fcf080-eebb-4904-975c-83c5b89cafb3
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: a62a5c79-bfa7-422d-a563-69ab03784cbf
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -70,8 +67,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: add01665-c3d0-4ed5-a1a1-e35696933fef
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: 18b4738b-8f73-42dc-851e-1e3d796a5256
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -84,8 +81,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: ff0ca0ba-0a55-45f9-a1f0-050cb107e95e
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: 3f7c7314-d044-4811-b9e9-c3d1ce986122
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -98,10 +95,9 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: f478bd35-614b-4a55-8416-be0eb7733f33
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
-        config:
-          universalColumnNullCountDMFList: true
+          columnCounter: 906c5efa-0c0d-416c-9538-5ef7e53ebb41
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+        config: {}
         dataType: VARCHAR(16777216)
         description: ""
         name: EMAIL
@@ -113,10 +109,9 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: cc795a7b-dade-447a-b896-753abfa0ee1a
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
-        config:
-          universalColumnNullCountDMFList: true
+          columnCounter: ad6d3eb3-1f9b-405b-a8a0-561c6add9467
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+        config: {}
         dataType: VARCHAR(16777216)
         description: ""
         name: STATUS
@@ -128,10 +123,9 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 8a67d083-d89c-40a0-94b1-1542f2bd209b
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
-        config:
-          universalColumnNullCountDMFList: true
+          columnCounter: 6d4b2251-0e55-4661-adc1-56c805ff83bf
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
+        config: {}
         dataType: NUMBER(10,2)
         description: ""
         name: AMOUNT
@@ -143,8 +137,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 3ec1c73e-2225-401d-8ad2-0fdc6c4a6d3b
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: f7c407aa-14d9-4627-a5ab-6e6bb136db08
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -157,8 +151,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: a9a793d8-7cc8-452a-9e42-18dfb9dde101
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: 418daded-9a4d-4e3d-8406-f8dacec7a8ec
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: DATE
         description: ""
@@ -171,8 +165,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: b0133b4b-0f9d-4de4-a91b-524bb0b02450
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: a49d6413-9545-48ff-a021-ad0a4a75cb7e
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
@@ -185,8 +179,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 025b0a79-404e-4363-b6b2-382654175e1e
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: df57ea57-4f15-4b34-ab4c-62dfa358d18e
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
@@ -199,8 +193,8 @@ operation:
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 4ca292b7-07af-465a-abdc-41570c3ab12a
-          stepCounter: 998c319e-69fc-4bfd-b4fb-eeddf41090e6
+          columnCounter: 9691fae1-8f00-4f8e-8cfc-74e0ee5910d7
+          stepCounter: 3814b98d-eadf-45b0-9474-a0da2cedb785
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
