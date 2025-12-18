@@ -10,6 +10,21 @@ does not permit copying or modification for any other purpose.
 
 {% if desiredState %}
 
+    {% set nsDMFVariables = namespace(  tableColumns=desiredState.config.adddmfs.get('items')
+                                            | map(attribute='columnNameExpressions.name')
+                                            | list,
+                                        DMFColumnMap = {
+                                            'NULL_COUNT': packageConfiguration.nullCountUniversalColumns,
+                                            'NULL_PERCENT': packageConfiguration.nullPercentUniversalColumns,
+                                            'BLANK_COUNT': packageConfiguration.blankCountUniversalColumns,
+                                            'BLANK_PERCENT': packageConfiguration.blankPercentUniversalColumns,
+                                            'DUPLICATE_COUNT': packageConfiguration.duplicateCountUniversalColumns,
+                                            'UNIQUE_COUNT': packageConfiguration.uniqueCountUniversalColumns,
+                                            'FRESHNESS': packageConfiguration.freshnessUniversalColumns },
+                                        combinedColumnDMFs = [],
+                                        validColumns = []
+                                    ) %}
+
 	{% if currentState == undefined %}
 
         {%- for dep in desiredState.sources[0].dependencies -%}
@@ -23,34 +38,79 @@ does not permit copying or modification for any other purpose.
                 SET DATA_METRIC_SCHEDULE = 'TRIGGER_ON_CHANGES'
             {% endif%}
 
-            {% set object_expression = [] %}
-            {% if desiredState.config.addobjectleveldmfs%}    
-                {% set object_expression = desiredState.config.adddmfsobject.get('items')
-                                            | map(attribute='system_dmfs_object')
-                                            | list  %}
-            {% endif %}
-            {% set combinedObjectDMFs = (object_expression + 
-                                        (packageConfiguration.universalObjectDmfs 
-                                            if packageConfiguration.universalObjectDmfs is defined
-                                            else []))
-                                        | unique
-                                        | list %}
-            {% for r in combinedObjectDMFs if combinedObjectDMFs %} 
-                {{ stage('Add Object DMF - ' + r) }}     
-                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+            {# ----- Object Level DMFs -------------------#}
+
+            {# 1. Group (UI-selected) object DMFs #}
+            {% set groupObjectDMF =
+                desiredState.config.adddmfsobject.get('items')
+                | map(attribute='system_dmfs_object')
+                | select('defined')
+                | list
+                if desiredState.config.addobjectleveldmfs
+                else []
+            %}
+
+            {# 2. Universal object DMFs from package config #}
+            {% set universalObjectDMF =
+                packageConfiguration.universalObjectDmfs
+                if desiredState.config.universalObjectDmfs
+                and desiredState.config.universalDmfs
+                and packageConfiguration.universalObjectDmfs is defined
+                else []
+            %}
+
+            {# 3. Combine and dedupe #}
+            {% set combinedObjectDMFs =
+                (groupObjectDMF + universalObjectDMF)
+                | unique
+                | list
+            %}
+
+            {# 4. Apply DMFs #}
+            {% for r in combinedObjectDMFs if combinedObjectDMFs %}
+                {{ stage('Add Object DMF - ' + r) }}
+                ALTER TABLE {{ ref_raw(dep.node.location.name, dep.node.name) }}
                 ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ r }}
-                ON  () ; 
+                ON ()
             {% endfor %}
 
-            {% if desiredState.config.addcolumnleveldmfs%}    
+            {# ----- Column Level DMFs -------------------#}
+
+            {% set items = desiredState.config.adddmfs.get('items') or [] %}
+            {% set ColDMFList = items | map(attribute='system_dmfs') | select('defined') | unique | list %}
+            {% set result = namespace(data=[]) %}
+
+            {% for dmf in ColDMFList %}
+                {% set cols =
+                    items
+                    | selectattr('system_dmfs', 'equalto', dmf)
+                    | map(attribute='columnNameExpressions.name')
+                    | select('defined')
+                    | unique
+                    | list
+                %}
+
+                {% if cols %}
+                    {% set result.data = result.data + [{
+                        'DMF': dmf,
+                        'COLUMNS': cols
+                    }] %}
+                {% endif %}
+            {% endfor %}
+
+            {{stage('0')}}
+            {{result}}
+
+            {% if desiredState.config.addcolumnleveldmfs %}    
                 {% set column, expression = desiredState.config.adddmfs.get('items') | map(attribute='columnNameExpressions.name') | list, desiredState.config.adddmfs.get('items') | map(attribute='system_dmfs') | list  %}
-                {% for r in column %}      
-                    {{ stage('Add Column DMF - ' + expression[loop.index0]) }}
-                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
-                    ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
-                    ON  ({{ column[loop.index0] }}) ; 
-                {% endfor %}
             {% endif %}
+            {% for r in column %}      
+                {{ stage('Add Column DMF - ' + expression[loop.index0]) }}
+                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ expression[loop.index0] }}
+                ON  ({{ column[loop.index0] }})
+            {% endfor %}
+            
 
             {# Custom Object Level DMF Functions #}
             {# ------------------------------------------------------------

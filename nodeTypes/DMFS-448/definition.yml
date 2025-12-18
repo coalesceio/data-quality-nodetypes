@@ -270,16 +270,17 @@ metadata:
           type: dropdownSelector
           default: "NULL_COUNT"
           options:
-          - "BLANK_COUNT"
-          - "BLANK_PERCENT"
-          - "NULL_COUNT"
-          - "AVG"
-          - "MAX"
-          - "MIN"
-          - "STDDEV"
-          - "DUPLICATE_COUNT"
-          - "UNIQUE_COUNT"
-          - "FRESHNESS"
+            - "NULL_COUNT"
+            - "NULL_PERCENT"
+            - "BLANK_COUNT"
+            - "BLANK_PERCENT"
+            - "DUPLICATE_COUNT"
+            - "UNIQUE_COUNT"
+            - "FRESHNESS"
+            - "AVG"
+            - "MAX"
+            - "MIN"
+            - "STDDEV"
           isRequired: false
           enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
 

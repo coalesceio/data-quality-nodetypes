@@ -2,7 +2,7 @@ fileVersion: 1
 id: "1"
 macroString: |-
   {% set packageConfiguration = namespace(universalObjectDmfs=['ROW_COUNT', 'FRESHNESS'], 
-                                          nullCountUniversalColumns=['ID'], 
+                                          nullCountUniversalColumns=['ID', 'ORDER_ID'], 
                                           nullPercentUniversalColumns=['ID', 'ORDER_ID'],
                                           blankCountUniversalColumns=['ID', 'ORDER_ID'],
                                           blankPercentUniversalColumns=['ID', 'ORDER_ID'],
