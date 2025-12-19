@@ -181,7 +181,7 @@ macroString: |-
    
   {% endmacro %}
 
-  {# --------------------------------------------------------------------------------
+  {# ==========================================================================--
     Builds email alert settings for DMF notifications.
 
     Behavior:
@@ -194,8 +194,8 @@ macroString: |-
     - DMF_ALERT_EMAIL
     - DMF_ALERT_WAREHOUSE
     - DMF_ALERT_SCHEDULE
-  ---------------------------------------------------------------------------------- #}
-  {% macro buildEmailSettings(ns) %}
+  ==========================================================================---- #}
+  {% macro buildEmailSettings(ns, fullyQualifiedBaseTableName, fullyQualifiedViewName) %}
 
       {% if config.emailAlertToggle %}
       
@@ -209,6 +209,15 @@ macroString: |-
               (config.emailList if use_override and config.emailList | trim
                   else parameters.DMF_ALERT_EMAIL) %}
 
+          {% set ns.emailSubject =
+              (parameters.DMF_EMAIL_SUBJECT if parameters.DMF_EMAIL_SUBJECT is defined and parameters.DMF_EMAIL_SUBJECT | trim | length > 0 else 'Data Quality Notification: Metric Threshold Exceeded') %}
+
+          {% if parameters.DMF_EMAIL_BODY is defined and parameters.DMF_EMAIL_BODY | trim | length > 0 %}
+              {% set ns.emailBody = parameters.DMF_EMAIL_BODY %}
+          {% else %}
+               {% set ns.emailBody = 'A monitored data quality metric for ' ~ fullyQualifiedBaseTableName ~ ' has moved outside of its expected range. Please review the Data Quality Monitoring Results View - ' ~ fullyQualifiedViewName ~ ' for details.' %}
+          {% endif %}
+
           {% set ns.alertWarehouse =
               (config.alertWarehouse if use_override and config.alertWarehouse | trim
                   else parameters.DMF_ALERT_WAREHOUSE) %}
@@ -216,8 +225,78 @@ macroString: |-
           {% set ns.alertFrequency =
               (config.alertFrequency if use_override and config.alertFrequency | trim
                   else parameters.DMF_ALERT_SCHEDULE) %}
+
+          {% if config.nullCntTrigger %}
+              {% set ns.metricCondition = ns.metricCondition + ["(metric_name = 'NULL_COUNT' AND value > 0)"] %}
+          {% endif %}
+
+          {% if config.nullPrcntTrigger %}
+              {% set ns.metricCondition = ns.metricCondition + [
+                  "(metric_name = 'NULL_PERCENT' AND value > " ~ config.nullPrcntThreshold ~ ")"
+              ] %}
+          {% endif %}
+
+          {% if config.blankCntTrigger %}
+              {% set ns.metricCondition = ns.metricCondition + ["(metric_name = 'BLANK_COUNT' AND value > 0)"] %}
+          {% endif %}
+
+          {% if config.blankPrcntTrigger %}
+              {% set ns.metricCondition = ns.metricCondition + [
+                  "(metric_name = 'BLANK_PERCENT' AND value > " ~ config.blankPrcntThreshold ~ ")"
+              ] %}
+          {% endif %}
+
+          {% if config.dupCntTrigger %}
+              {% set ns.metricCondition = ns.metricCondition + ["(metric_name = 'DUPLICATE_COUNT' AND value > 0)"] %}
+          {% endif %}
+
+          {% if config.freshTrigger %}
+              {% set ns.metricCondition = ns.metricCondition + [
+                  "(metric_name = 'FRESHNESS' AND value > " ~ config.freshThreshold ~ " * 3600 )"
+              ] %}
+          {% endif %}
       {% endif %}
 
+  {% endmacro %}
+
+  {# ==========================================================================--
+   Renders the argument list for a Data Metric Function (DMF).
+
+   - Supports both column-only arguments and table-based arguments.
+   - If `object` is provided and not '<>', arguments are wrapped as:
+         TABLE ( <object> ( <col1>, <col2>, ... ) )
+   - If `object` is empty or '<>', columns are rendered directly.
+   - Ensures correct comma placement between argument groups.
+
+   Input structure:
+     elements = [
+       { object: 'TABLE_NAME', cols: ['COL1', 'COL2'] },
+       { object: '<>', cols: ['COL3'] }
+     ]
+  ==========================================================================---- #}
+  {% macro renderCustomDMFArgs(elements) %}
+      (
+      {% for elem in elements %}
+          {% set obj = elem.object.replace('<', '').replace('>', '') | trim %}
+
+          {% if obj and obj != '<>' %}
+              TABLE (
+              {{ obj }}
+              (
+          {% endif %}
+
+          {% for col in elem.cols %}
+              {{ col.replace('<', '').replace('>', '') }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+
+          {% if obj and obj != '<>' %}
+              )
+              )
+          {% endif %}
+
+          {% if not loop.last %}, {% endif %}
+      {% endfor %}
+      )
   {% endmacro %}
 name: macro
 type: Macro

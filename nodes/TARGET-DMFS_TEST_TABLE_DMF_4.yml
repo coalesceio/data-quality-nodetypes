@@ -14,19 +14,27 @@ operation:
     addobjectleveldmfs: false
     alertFrequency: ""
     alertWarehouse: ""
+    blankCntTrigger: true
+    blankPrcntThreshold: "5"
+    blankPrcntTrigger: true
     customDMFsConfig:
       items:
         - customDMFArgs: |
             elements:
             - object: 
-              args:
-                - col: <col_name1>
-                - col: <col_name2>
-          customDMFName: ROW_NULL_COUNT
+            args:
+                - col: <ORDER_ID>
+          customDMFName: |
+            {{ref('<SOURCE>', '<ROW_NULL_COUNT>')}}
+    dupCntTrigger: true
     emailAlertToggle: true
     emailList: ""
+    freshThreshold: "24"
+    freshTrigger: true
     notfIntegrationName: ""
     nullCntTrigger: true
+    nullPrcntThreshold: "5"
+    nullPrcntTrigger: true
     overrideEmailAlertToggle: false
     scheduleCRON: ""
     schedulePeriod: "60"

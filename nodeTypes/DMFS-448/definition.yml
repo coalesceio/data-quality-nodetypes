@@ -304,16 +304,20 @@ metadata:
         - type: textBox
           displayName: Function Name
           attributeName: customDMFName
+          default: |
+            {{ref('<storage_loc>', '<custom_dmf>')}}
           isRequired: false
 
         - type: textBox
-          displayName: Arguments
+          displayName: >
+            Arguments (Note:
+            Leave table name empty to use the base table)
           attributeName: customDMFArgs
           syntax: sql
           default: |
             elements:
-            - object: <fullpath.table_name1>
-              args:
+            - object: {{ref('<storage_loc>', '<table_name>')}}
+            args:
                 - col: <col_name1>
                 - col: <col_name2>
         isRequired: false
@@ -423,7 +427,7 @@ metadata:
 
       - type: toggleButton
         attributeName: freshTrigger
-        displayName: 'Trigger on FRESHNESS (Threshold - FRESHNESS > 0)'
+        displayName: 'Trigger on FRESHNESS'
         default: true
         isRequired: false
         enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
