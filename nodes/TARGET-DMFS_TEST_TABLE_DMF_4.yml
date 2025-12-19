@@ -25,7 +25,25 @@ operation:
             args:
                 - col: <ORDER_ID>
           customDMFName: |
-            {{ref('<SOURCE>', '<ROW_NULL_COUNT>')}}
+            {{ref_no_quotes('<SOURCE>', '<ROW_NULL_COUNT>')}}
+        - customDMFArgs: |
+            elements:
+            - object: 
+            args:
+                - col: <ID>
+            - object: {{ref('<SOURCE>', '<PRODUCTS>')}}
+            args:
+                - col: <product_id>
+          customDMFName: |
+            {{ref_no_quotes('<SOURCE>', '<check_open_products>')}}
+        - customDMFArgs: |
+            elements:
+            - object: {{ref('<storage_loc>', '<table_name>')}}
+            args:
+                - col: <col_name1>
+                - col: <col_name2>
+          customDMFName: |
+            {{ref_no_quotes('<storage_loc>', '<custom_dmf>')}}
     dupCntTrigger: true
     emailAlertToggle: true
     emailList: ""

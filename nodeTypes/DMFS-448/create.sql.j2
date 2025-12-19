@@ -233,7 +233,7 @@ does not permit copying or modification for any other purpose.
                                     DATEADD('hour', -24, CURRENT_TIMESTAMP())
                             )
                             AND (
-                                {{ emailAttributes.metricCondition | join('\n    OR ') }}
+                                {{ emailAttributes.metricCondition | join('\n OR') }}
                             )
                         )
                     )
