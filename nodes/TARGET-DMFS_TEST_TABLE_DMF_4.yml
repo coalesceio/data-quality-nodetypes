@@ -18,15 +18,15 @@ operation:
       items:
         - customDMFArgs: |
             elements:
-            - object: <fullpath.table_name1>
+            - object: 
               args:
                 - col: <col_name1>
                 - col: <col_name2>
-          customDMFName: ""
-    emailAlertToggle: false
+          customDMFName: ROW_NULL_COUNT
+    emailAlertToggle: true
     emailList: ""
     notfIntegrationName: ""
-    nullCntTrigger: false
+    nullCntTrigger: true
     overrideEmailAlertToggle: false
     scheduleCRON: ""
     schedulePeriod: "60"

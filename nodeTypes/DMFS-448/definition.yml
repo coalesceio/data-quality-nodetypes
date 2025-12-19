@@ -364,11 +364,75 @@ metadata:
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 
+        # ------------- Trigger Configs - NULL ------------------------#
+
       - type: toggleButton
         attributeName: nullCntTrigger
-        displayName: 'Trigger on Null Count'
+        displayName: 'Trigger on NULL_COUNT (Threshold - NULL_COUNT > 0)'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: nullPrcntTrigger
+        displayName: 'Trigger on NULL_PERCENT'
         default: false
         isRequired: false
         enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: textBox
+        attributeName: nullPrcntThreshold
+        displayName: 'Null Percent Threshold (%)'
+        default: 5
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.nullPrcntTrigger %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - BLANK ------------------------#
+
+      - type: toggleButton
+        attributeName: blankCntTrigger
+        displayName: 'Trigger on BLANK_COUNT (Threshold - BLANK_COUNT > 0)'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: blankPrcntTrigger
+        displayName: 'Trigger on BLANK_PERCENT'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: textBox
+        attributeName: blankPrcntThreshold
+        displayName: 'BLANK_PERCENT Threshold (%)'
+        default: 5
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.blankPrcntTrigger %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - DUPLICATE ------------------------#
+
+      - type: toggleButton
+        attributeName: dupCntTrigger
+        displayName: 'Trigger on DUPLICATE_COUNT (Threshold - DUPLICATE_COUNT > 0)'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - FRESHNESS ------------------------#
+
+      - type: toggleButton
+        attributeName: freshTrigger
+        displayName: 'Trigger on FRESHNESS (Threshold - FRESHNESS > 0)'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: textBox
+        attributeName: freshThreshold
+        displayName: 'BLANK_PERCENT Threshold (%)'
+        default: 24
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.freshTrigger %} true {% else %} false {% endif %}"
 name: DMFS
 type: NodeType

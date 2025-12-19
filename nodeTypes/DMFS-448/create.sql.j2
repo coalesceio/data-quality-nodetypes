@@ -118,21 +118,61 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addCustomDMFs%}
 
                 {% for item in desiredState.config.customDMFsConfig.get('items') %}
-                    {% set ns = namespace(objects=[]) %}
+                    {% set ns = namespace(elements=[], current_element=None)%}
 
                     {% for line in item.customDMFArgs.split('\n') %}
-                        {% if 'object:' in line %}
-                            {% set obj = line.replace('object:', '').replace('-', '').strip() %}
-                            {% set ns.objects = ns.objects + [obj] %}
+                        {% set l = line.strip() %}
+
+                        {# Build Object List #}
+                        {% if l.startswith('- object:') %}
+                            {% if ns.current_element %}
+                                {% set ns.elements = ns.elements + [ns.current_element] %}
+                            {% endif %}
+
+                            {% set obj = l.replace('- object:', '').replace('"', '').strip() %}
+                            {% set ns.current_element = {
+                                'object': obj,
+                                'args': []
+                            } %}
+                        {% endif %}
+
+                        {# Build Column List #}
+                        {% if l.startswith('- col:') and ns.current_element %}
+                            {% set col = l.replace('- col:', '').replace('"', '').strip() %}
+                            {% set ns.current_element = {
+                                'object': ns.current_element.object,
+                                'args': ns.current_element.args + [{'col': col}]
+                            } %}
                         {% endif %}
                     {% endfor %}
-                    {{stage('0')}}
-                    {{ ns.objects }}
+
+                    {# push last element #}
+                    {% if ns.current_element %}
+                        {% set ns.elements = ns.elements + [ns.current_element] %}
+                    {% endif %}
 
                     {{ stage('Add Custom DMF - ' + item.customDMFName.split('.')[-1]) }}
-                    ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                    ALTER TABLE {{ ref_raw(dep.node.location.name, dep.node.name) }}
                     ADD DATA METRIC FUNCTION {{ item.customDMFName }}
-                    ON  ({{ item.customDMFArgs }})
+                    ON
+                    (
+                        {% for elem in ns.elements %}
+                            {% if elem.object | trim | length > 0 and elem.object | trim != '<>' %}
+                                TABLE (
+                                {{ elem.object }}
+                                (
+                            {% endif %}
+                            {% for arg in elem.args %}
+                                {{ arg.col }}
+                                {% if not loop.last %}, {% endif %}
+                            {% endfor %}
+                            {% if elem.object | trim | length > 0 and elem.object | trim != '<>' %}
+                                )
+                                    )
+                            {% endif %}
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    )
                 {% endfor %}
 
             {% endif %}
