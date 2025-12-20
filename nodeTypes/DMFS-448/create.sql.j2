@@ -166,10 +166,10 @@ does not permit copying or modification for any other purpose.
             {% if desiredState.config.addCustomDMFs%}
 
                 {% for dmf in nsDMFVariables.customColumnDMFList %}
-                    {{ stage('Add Custom DMF - ' + dmf.DMF.split('.')[-1]) }}
-
+                    {{ stage('Add Custom DMF - ' + dmf.DMF.split("'")[3]) }}
+                    {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
                     ALTER TABLE {{ fullyQualifiedBaseTableName }}
-                    ADD DATA METRIC FUNCTION {{ dmf.DMF }}
+                    ADD DATA METRIC FUNCTION {{ fullyQualifiedFunctionName }}
                     ON {{ renderCustomDMFArgs(dmf.COLUMNS) }}
                 {% endfor %}
 

@@ -302,39 +302,22 @@ macroString: |-
   {#----------------------------------------------------------------------------------------
   Macro: ref_no_quotes
 
-  Purpose:
-  Resolves a fully qualified object reference (database.schema.object) without double quotes
-  around any part of the name.
+  Purpose: Resolves a ref()-style argument into a fully qualified database object name by mapping the location and node name using nodeMetadata.
 
-  Why this exists:
-  Certain Snowflake objects, such as Data Metric Functions that accept TABLE(...) arguments,
-  do not resolve correctly when the function name is quoted. Standard ref/ref_no_link macros
-  always return fully quoted identifiers, which causes failures in these cases.
+  Arguments: arg - A string containing a reference in the format ref('LOCATION_NAME', 'NODE_NAME').
 
-  This macro:
-  - Looks up the database and schema from nodeMetadata.mapping for the given location
-  - Constructs a fully qualified reference in the form: database.schema.object
-  - Avoids quoting so the reference can be used for executable objects like TABLE-based DMFs
-
-  Usage notes:
-  - Intended for Snowflake environments where identifiers are uppercase and contain no
-    special characters
-  - Should not be used for objects that require quoted identifiers
-  - Prefer this macro only when quoted refs are known to cause resolution issues
-
+  Returns: A fully qualified object name in the format: "database"."schema".NODE_NAME based on the matching locationName in nodeMetadata.mapping.
   -----------------------------------------------------------------------------------#}
-  {%- macro ref_no_quotes(location_name, node_name) -%}
-      {%- set foundMapping = { 'flag': false } -%}
+  {%- macro ref_no_quotes(arg) -%}
+
+      {% set location_name = arg.split("'")[1] %}
+      {% set node_name = arg.split("'")[3] %}
+
       {%- for storage in nodeMetadata.mapping -%}
-          {%- if nodeMetadata.mapping[storage].locationName ==  location_name -%}
-              {%- if foundMapping.update({'flag': true}) -%}{%- endif -%}
-  }}
+          {%- if nodeMetadata.mapping[storage].locationName == location_name -%}
               {{- nodeMetadata.mapping[storage].database -}}.{{- nodeMetadata.mapping[storage].schema -}}.{{- node_name -}}
           {%- endif -%}
       {%- endfor -%}
-      {%- if not foundMapping.flag -%}
-  }
-      {%- endif -%}
   {%- endmacro -%}
 name: macro
 type: Macro

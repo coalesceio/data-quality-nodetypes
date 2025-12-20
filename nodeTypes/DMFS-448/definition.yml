@@ -305,7 +305,7 @@ metadata:
           displayName: Function Name
           attributeName: customDMFName
           default: |
-            {{ref('<storage_loc>', '<custom_dmf>')}}
+            ref('<storage_loc>', '<custom_dmf>')
           isRequired: false
 
         - type: textBox
