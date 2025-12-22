@@ -188,7 +188,7 @@ does not permit copying or modification for any other purpose.
 
             {{ stage('Create Data Quality Result View', true, "sql", "create") }}  
             CREATE OR REPLACE VIEW {{ fullyQualifiedViewName }} AS
-            SELECT SCHEDULED_TIME, TABLE_DATABASE, TABLE_SCHEMA, TABLE_NAME, METRIC_NAME, ARGUMENT_TYPES, ARGUMENT_NAMES, VALUE
+            SELECT SCHEDULED_TIME, MEASUREMENT_TIME, TABLE_DATABASE, TABLE_SCHEMA, TABLE_NAME, METRIC_NAME, ARGUMENT_TYPES, ARGUMENT_NAMES, VALUE
             FROM snowflake.local.data_quality_monitoring_results
             where TABLE_DATABASE = '{{sourceDatabase}}'
             and TABLE_SCHEMA = '{{sourceSchema}}'
@@ -242,14 +242,13 @@ does not permit copying or modification for any other purpose.
                         '{{ emailAttributes.notfIntegrationName }}',
                         '{{ emailAttributes.emailList }}',
                         '{{ emailAttributes.emailSubject }}',
-                        '{{ emailAttributes.emailBody }}'
+                        $${{ emailAttributes.emailBody }}$$
                     )
 
                     {{ stage('Resume Data Quality Email Alert') }}
                     ALTER ALERT {{ fullyQualifiedAlertName }} RESUME
                 {% endif %}
             {% endif %}
- 
         {%endfor%}
 
     {% elif currentState != undefined and desiredState != currentState %}
@@ -383,7 +382,7 @@ does not permit copying or modification for any other purpose.
 
             {{ stage('Create Data Quality Result View', true, "sql", "create") }}
             CREATE OR REPLACE VIEW {{ fullyQualifiedViewName }} AS
-            SELECT SCHEDULED_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
+            SELECT SCHEDULED_TIME, MEASUREMENT_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
             FROM snowflake.local.data_quality_monitoring_results
             where TABLE_DATABASE = '{{sourceDatabase}}'
             and TABLE_SCHEMA = '{{sourceSchema}}'
@@ -427,13 +426,10 @@ does not permit copying or modification for any other purpose.
         ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
         UNSET DATA_METRIC_SCHEDULE
 
-        {% set sourceDatabase = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
-        {% set sourceSchema = currentState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
-
         {{ stage('Drop Data Quality Result View', true, "sql", "create") }}  
         DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
-        {# Create Email Alter If Enabled #}
+        {# Drop Email Alert #}
         {% if currentState.config.emailAlertToggle and (currentState.config.nullCntTrigger) %}
             {% set alertName = currentState.node.name + '_ALERT' %}
             {% set fullyQualifiedAlertName = ref_no_link(currentState.node.location.name, alertName) %}

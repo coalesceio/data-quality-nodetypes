@@ -8,7 +8,7 @@ metadata:
     capitalized: Advance Deploy DMFS
     short: DMFS
     tagColor: gray
-    plural: New Types
+    plural: Data Metric Functions
     deployStrategy: advanced
 
     config:
@@ -294,10 +294,10 @@ metadata:
         attributeName: addCustomDMFs
         displayName: 'Add Custom DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
-        displayName: 'CustomDMF Functions'
+        displayName: 'CustomDMF Functions (Note: Use valid inputs to avoid errors)'
         attributeName: customDMFsConfig
         columns:
 
@@ -344,26 +344,26 @@ metadata:
         isRequired: false
         enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
 
-      - displayName: Notification Integration Name
+      - displayName: Alert Integration Name
         attributeName: notfIntegrationName
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 
-      - displayName: Email recipient List(Ex. email1, email2)
-        attributeName: emailList
-        type: textBox
-        isRequired: false
-        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
-
-      - displayName: Alert Check Warehouse Name
+      - displayName: Alert Warehouse Name
         attributeName: alertWarehouse
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 
-      - displayName: Alert Check Frequency
+      - displayName: Alert Frequency in Minutes (Ex. 60)
         attributeName: alertFrequency
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Email Recipient List(Ex. email1, email2)
+        attributeName: emailList
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
@@ -372,7 +372,7 @@ metadata:
 
       - type: toggleButton
         attributeName: nullCntTrigger
-        displayName: 'Trigger on NULL_COUNT (Threshold - NULL_COUNT > 0)'
+        displayName: 'Trigger on NULL_COUNT (> 0)'
         default: true
         isRequired: false
         enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
@@ -395,7 +395,7 @@ metadata:
 
       - type: toggleButton
         attributeName: blankCntTrigger
-        displayName: 'Trigger on BLANK_COUNT (Threshold - BLANK_COUNT > 0)'
+        displayName: 'Trigger on BLANK_COUNT (> 0)'
         default: false
         isRequired: false
         enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
@@ -418,7 +418,7 @@ metadata:
 
       - type: toggleButton
         attributeName: dupCntTrigger
-        displayName: 'Trigger on DUPLICATE_COUNT (Threshold - DUPLICATE_COUNT > 0)'
+        displayName: 'Trigger on DUPLICATE_COUNT (> 0)'
         default: true
         isRequired: false
         enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
@@ -434,7 +434,7 @@ metadata:
 
       - type: textBox
         attributeName: freshThreshold
-        displayName: 'BLANK_PERCENT Threshold (%)'
+        displayName: 'BLANK_PERCENT Threshold in Hours'
         default: 24
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.freshTrigger %} true {% else %} false {% endif %}"
