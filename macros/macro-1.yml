@@ -3,7 +3,7 @@ id: "1"
 macroString: |-
   {% set packageConfiguration = namespace(universalObjectDmfs=['FRESHNESS'], 
                                           nullCountUniversalColumns=['ID'], 
-                                          nullPercentUniversalColumns=[],
+                                          nullPercentUniversalColumns=['ID'],
                                           blankCountUniversalColumns=[],
                                           blankPercentUniversalColumns=[],
                                           duplicateCountUniversalColumns=[],
