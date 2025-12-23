@@ -2,10 +2,10 @@ fileVersion: 1
 id: "535"
 mappingDefinitions:
   SOURCE:
-    database: ANANDHIS_DEV
-    schema: SOURCE_DATA
+    database: TANVI_DEV
+    schema: SOURCE
   TARGET:
-    database: ANANDHIS_DEV
-    schema: TARGET_DEV
+    database: TANVI_DEV
+    schema: TARGET
 name: QA_Test
 type: Environment
