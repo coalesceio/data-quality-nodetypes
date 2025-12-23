@@ -7,14 +7,10 @@ operation:
     addcolumnleveldmfs: true
     adddmfs:
       items:
-        - columnNameExpressions:
-            columnCounter: 1203350e-b949-4c9c-8429-ab1f40ff4ed8
-            stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+        - columnNameExpressions: null
           system_dmfs: NULL_COUNT
-        - columnNameExpressions:
-            columnCounter: 1203350e-b949-4c9c-8429-ab1f40ff4ed8
-            stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
-          system_dmfs: NULL_PERCENT
+        - columnNameExpressions: null
+          system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
