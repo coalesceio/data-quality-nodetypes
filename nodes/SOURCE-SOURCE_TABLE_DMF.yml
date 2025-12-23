@@ -1,6 +1,6 @@
 fileVersion: 1
-id: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
-name: TEST_TABLE_DMF_2
+id: b9e109fd-d23f-45f7-b2ad-1184ea751155
+name: SOURCE_TABLE_DMF
 operation:
   database: ""
   deployEnabled: true
@@ -13,8 +13,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 50a1fa4f-4be5-4806-9c6a-f8afe742976a
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: c147c60a-0d33-4071-a2ab-ba3ccdb60c4c
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: NUMBER(38,0)
         defaultValue: ""
@@ -32,8 +32,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: cc020866-4b1b-4d0f-b232-2b4af098eadd
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: be05843e-e8e8-45ad-a1e3-bcae0c33808b
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: VARCHAR(16777216)
         defaultValue: ""
@@ -51,8 +51,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 041e91e6-83e8-4f4b-9328-4aee7adfed5f
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: 6bece8aa-81c4-4b83-8c5d-5c846a8c064b
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: VARCHAR(16777216)
         defaultValue: ""
@@ -70,8 +70,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 58a8ed7c-9654-48a7-bfee-54347cd56a6e
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: b728fc5f-36e0-43f2-bac9-c648519e728a
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: VARCHAR(16777216)
         defaultValue: ""
@@ -89,8 +89,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 840976b1-d364-4216-865b-18e397b4f31f
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: 2814fdd8-0a5f-4617-a95f-068096aa2cd3
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: VARCHAR(16777216)
         defaultValue: ""
@@ -108,8 +108,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: ccb4ffab-0238-40ab-9b41-6fd6db321612
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: aceb69be-907e-45f3-9728-b5d0638a4d0c
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: NUMBER(10,2)
         defaultValue: ""
@@ -127,8 +127,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 6a0f3875-b48f-4257-b65e-9de067392849
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: 7a908fba-f822-4260-b1dd-abde83489e7b
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: NUMBER(38,0)
         defaultValue: ""
@@ -146,8 +146,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: db215260-7d93-4d31-9888-f5480c242376
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: b4a6ce73-81a4-44ce-9294-b265f419111d
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: DATE
         defaultValue: ""
@@ -165,8 +165,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: c3a6c4a1-ce6f-4378-8be1-c338e446d54c
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: 445eca63-1d44-4d56-bc1b-79c1d3600986
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         defaultValue: ""
@@ -184,8 +184,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 5583d3db-e8e0-4646-943b-26c2c1154bfd
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: c4a8632b-1663-4fdc-833e-6ef30a7acef5
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         defaultValue: ""
@@ -203,8 +203,8 @@ operation:
           values: []
         appliedColumnTests: {}
         columnReference:
-          columnCounter: 4c8e3d4c-3a2a-42ab-a7ff-90769f3f4bd8
-          stepCounter: 56bb7eb1-2dea-4af2-a913-7e3f06f690dc
+          columnCounter: 029511a0-5f0e-41c8-9b13-90f9a74517ee
+          stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
         config: {}
         dataType: VARCHAR(16777216)
         defaultValue: ""
@@ -217,7 +217,7 @@ operation:
             transform: ""
         transform: ""
         uniqueKey: false
-  name: TEST_TABLE_DMF_2
+  name: SOURCE_TABLE_DMF
   schema: ""
   sqlType: Source
   type: sourceInput

@@ -32,7 +32,6 @@ does not permit copying or modification for any other purpose.
 {% if currentState %}
 
     {% set nsCurrentDMFVariables = namespace(objectDMFList=[], columnDMFList=[], customColumnDMFList=[]) %}
-    {% set fullyQualifiedCurrentViewName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
 
     {#------ Build Dictionary of All Object Level DMF -------#}
 
@@ -292,9 +291,9 @@ does not permit copying or modification for any other purpose.
             CREATE OR REPLACE VIEW {{ fullyQualifiedDesiredViewName }} AS
             SELECT SCHEDULED_TIME, MEASUREMENT_TIME, TABLE_DATABASE, TABLE_SCHEMA, TABLE_NAME, METRIC_NAME, ARGUMENT_TYPES, ARGUMENT_NAMES, VALUE
             FROM snowflake.local.data_quality_monitoring_results
-            where TABLE_DATABASE = '{{sourceDatabase}}'
-            and TABLE_SCHEMA = '{{sourceSchema}}'
-            and TABLE_NAME = '{{dep.node.name}}'
+            WHERE TABLE_DATABASE = '{{sourceDatabase}}'
+            AND TABLE_SCHEMA = '{{sourceSchema}}'
+            AND TABLE_NAME = '{{dep.node.name}}'
 
             {# Create Email Alter If Enabled #}
             {% if desiredState.config.emailAlertToggle %}
@@ -488,9 +487,9 @@ does not permit copying or modification for any other purpose.
             CREATE OR REPLACE VIEW {{ fullyQualifiedDesiredViewName }} AS
             SELECT SCHEDULED_TIME, MEASUREMENT_TIME, TABLE_DATABASE,TABLE_SCHEMA,TABLE_NAME,METRIC_NAME,ARGUMENT_TYPES,ARGUMENT_NAMES,VALUE
             FROM snowflake.local.data_quality_monitoring_results
-            where TABLE_DATABASE = '{{sourceDatabase}}'
-            and TABLE_SCHEMA = '{{sourceSchema}}'
-            and TABLE_NAME = '{{dep.node.name}}'
+            WHERE TABLE_DATABASE = '{{sourceDatabase}}'
+            AND TABLE_SCHEMA = '{{sourceSchema}}'
+            AND TABLE_NAME = '{{dep.node.name}}'
 
         {%endfor%}
     {%endif%}
@@ -541,7 +540,7 @@ does not permit copying or modification for any other purpose.
         UNSET DATA_METRIC_SCHEDULE
 
         {{ stage('Drop Data Quality Result View', true, "sql", "create") }}  
-        DROP VIEW IF EXISTS {{ fullyQualifiedCurrentViewName }}
+        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
         {# Drop Email Alert #}
         {% if currentState.config.emailAlertToggle %}
