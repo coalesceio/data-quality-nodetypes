@@ -1,0 +1,170 @@
+fileVersion: 1
+id: "608"
+isDisabled: false
+metadata:
+  defaultStorageLocation: null
+  error: null
+  nodeMetadataSpec: |-
+    capitalized: Original Advance Deploy DMFS
+    short: ORG_DMFS
+    tagColor: gray
+    plural: New Types
+    deployStrategy: advanced
+
+    config:
+
+    - groupName: Scheduling Options
+      items:
+     
+    # Way to schedule the task to run #
+     
+      - displayName: Schedule Options
+        attributeName: schedulePeriodOption
+        type: dropdownSelector
+        default: Minutes
+        options:
+          - Minutes
+          - CRON
+          - TRIGGER_ON_CHANGES
+        isRequired: true
+     
+      - displayName: Enter task schedule using minutes
+        attributeName: schedulePeriod
+        type: textBox
+        default: '60'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'Minutes' %} true {% else %} false {% endif %}"
+     
+      - displayName: Enter task schedule using CRON
+        attributeName: scheduleCRON
+        type: textBox
+        placeholder: '5 0-23 * * * America/Los_Angeles'
+        isRequired: false
+        enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
+
+    - groupName: Object Level DMFs
+      items:
+
+      - type: toggleButton
+        attributeName: addobjectleveldmfs
+        displayName: 'Add Object Level DMFs'
+        default: false
+        isRequired: true
+
+      - type: tabular
+        displayName: 'DMF Functions'
+        attributeName: adddmfsobject
+        columns:
+
+        - displayName: System DMFs
+          attributeName: system_dmfs_object
+          type: dropdownSelector
+          default: "NULL_COUNT"
+          options:
+          - "ROW_COUNT"
+          isRequired: false
+          enableIf: "{% if config.addobjectleveldmfs %} true {% else %} false {% endif %}"
+
+        isRequired: false
+        enableIf: "{% if config.addobjectleveldmfs %} true {% else %} false {% endif %}"
+
+    - groupName: Column Level DMFs
+      items:
+
+      - type: toggleButton
+        attributeName: addcolumnleveldmfs
+        displayName: 'Add Column Level DMFs'
+        default: false
+        isRequired: true
+
+      - type: tabular
+        displayName: 'DMF Functions'
+        attributeName: adddmfs
+        columns:
+
+        - type: columnDropdownSelector
+          displayName: Column Name
+          attributeName: columnNameExpressions
+          isRequired: false
+          enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
+
+        - displayName: System DMFs
+          attributeName: system_dmfs
+          type: dropdownSelector
+          default: "NULL_COUNT"
+          options:
+          - "BLANK_COUNT"
+          - "BLANK_PERCENT"
+          - "NULL_COUNT"
+          - "AVG"
+          - "MAX"
+          - "MIN"
+          - "STDDEV"
+          - "DUPLICATE_COUNT"
+          - "UNIQUE_COUNT"
+          - "FRESHNESS"
+          isRequired: false
+          enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
+
+        isRequired: false
+        enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
+
+    - groupName: Custom Object Level DMFs
+      items:
+
+      - type: toggleButton
+        attributeName: addCustomobjectleveldmfs
+        displayName: 'Add Custom Object Level DMFs'
+        default: false
+        isRequired: true
+
+      - type: tabular
+        displayName: 'Custom DMF Functions'
+        attributeName: addCustomdmfsobject
+        columns:
+
+        - displayName: System DMFs
+          attributeName: custom_dmfs_object
+          type: dropdownSelector
+          default: "NULL_COUNT"
+          options:
+          - "MISSING_SCENARIO_SNAPSHOT_CHECK"
+          isRequired: false
+          enableIf: "{% if config.addCustomobjectleveldmfs %} true {% else %} false {% endif %}"
+
+        isRequired: false
+        enableIf: "{% if config.addCustomobjectleveldmfs %} true {% else %} false {% endif %}"
+
+    - groupName: Custom Column Level DMFs
+      items:
+
+      - type: toggleButton
+        attributeName: addCustomcolumnleveldmfs
+        displayName: 'Add Column Level DMFs'
+        default: false
+        isRequired: true
+
+      - type: tabular
+        displayName: 'CustomDMF Functions'
+        attributeName: addCustomdmfs
+        columns:
+
+        - type: columnDropdownSelector
+          displayName: Column Name
+          attributeName: columnCustomNameExpressions
+          isRequired: false
+          enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
+
+        - displayName: Custom DMFs
+          attributeName: custom_dmfs
+          type: dropdownSelector
+          default: "NULL_COUNT"
+          options:
+          - "DMF_PA_VALID_DTS_CHK"
+          isRequired: false
+          enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
+
+        isRequired: false
+        enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
+name: ORG DMFS
+type: NodeType

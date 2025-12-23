@@ -3,15 +3,16 @@ id: 17085f26-1d24-4e88-b8f3-1bb468c1b758
 name: DMFS_DMF_EMAILSCHEDULE_TEST
 operation:
   config:
-    addCustomDMFs: false
-    addcolumnleveldmfs: false
+    addCustomDMFs: true
+    addcolumnleveldmfs: true
     adddmfs:
       items:
-        - {}
+        - columnNameExpressions: null
+          system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
-        - {}
-    addobjectleveldmfs: false
+        - system_dmfs_object: ROW_COUNT
+    addobjectleveldmfs: true
     alertFrequency: ""
     alertWarehouse: ""
     blankCntTrigger: false
@@ -19,7 +20,13 @@ operation:
     blankPrcntTrigger: false
     customDMFsConfig:
       items:
-        - {}
+        - customDMFArgs: |-
+            elements:
+            - object: 
+            args:
+                - col: <ORDER_ID>
+          customDMFName: |
+            ref('<SOURCE>', '<ROW_NULL_COUNT>')
     dupCntTrigger: true
     emailAlertToggle: true
     emailList: ""

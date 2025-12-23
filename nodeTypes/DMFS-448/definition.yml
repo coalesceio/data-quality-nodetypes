@@ -315,7 +315,6 @@ metadata:
           attributeName: customDMFArgs
           syntax: sql
           default: |
-            elements:
             - object: {{ref('<storage_loc>', '<table_name>')}}
             args:
                 - col: <col_name1>

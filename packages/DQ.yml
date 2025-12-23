@@ -1,0 +1,16 @@
+config:
+  entities:
+    nodeTypes:
+      "416":
+        defaultStorageLocation: null
+        isDisabled: false
+      "448":
+        defaultStorageLocation: null
+        isDisabled: false
+  packageVariables: ""
+fileVersion: 1
+id: "@coalesce/snowflake/data-quality"
+name: DQ
+packageID: "@coalesce/snowflake/data-quality"
+releaseID: 5cc442e1-1730-408b-b37d-436e3fe10829
+type: Package
