@@ -440,11 +440,11 @@ does not permit copying or modification for any other purpose.
                 ) %}
 
                 {% set alertWarehouse = (desiredState.config.alertWarehouse
-                                            if config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
+                                            if desiredState.config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
                                             else parameters.DMF_ALERT_WAREHOUSE) %}
 
-                {% set alertFrequency = (config.alertFrequency + ' MINUTE'
-                                            if use_override and config.alertFrequency | trim
+                {% set alertFrequency = (desiredState.config.alertFrequency | string + ' MINUTE'
+                                            if desiredState.config.overrideEmailAlertToggle and desiredState.config.alertFrequency | trim
                                             else parameters.DMF_ALERT_SCHEDULE) %}
 
                 {{ buildEmailSettings(emailAttributes, desiredState, fullyQualifiedBaseTableName, fullyQualifiedDesiredViewName) }}
@@ -624,11 +624,11 @@ does not permit copying or modification for any other purpose.
                 {% set fullyQualifiedAlertName = ref_no_link(desiredState.node.location.name, alertName) %}
                 {% set resumeAlert = false %}
                 {% set alertWarehouse = (desiredState.config.alertWarehouse
-                                            if config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
+                                            if desiredState.config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
                                             else parameters.DMF_ALERT_WAREHOUSE) %}
 
-                {% set alertFrequency = (config.alertFrequency + ' MINUTE'
-                                            if use_override and config.alertFrequency | trim
+                {% set alertFrequency = (desiredState.config.alertFrequency | string + ' MINUTE'
+                                            if desiredState.config.overrideEmailAlertToggle and desiredState.config.alertFrequency | trim
                                             else parameters.DMF_ALERT_SCHEDULE) %}
 
                 {% set locationTest = desiredState.node.location.name == currentState.node.location.name
@@ -691,11 +691,11 @@ does not permit copying or modification for any other purpose.
                                                 if currentState.config.overrideEmailAlertToggle and currentState.config.alertWarehouse | trim 
                                                 else currentState.parameters.DMF_ALERT_WAREHOUSE) %}
 
-                    {% set desiredAlertFrequency = (config.alertFrequency + ' MINUTE'
-                                                if desiredState.config.overrideEmailAlertToggle and config.alertFrequency | trim
+                    {% set desiredAlertFrequency = (desiredState.config.alertFrequency | string + ' MINUTE'
+                                                if desiredState.config.overrideEmailAlertToggle and desiredState.config.alertFrequency | trim
                                                 else parameters.DMF_ALERT_SCHEDULE) %}
 
-                    {% set currentAlertFrequency = (currentState.config.alertFrequency + ' MINUTE'
+                    {% set currentAlertFrequency = (currentState.config.alertFrequency | string + ' MINUTE'
                                                 if currentState.config.overrideEmailAlertToggle and currentState.config.alertFrequency | trim
                                                 else currentState.parameters.DMF_ALERT_SCHEDULE) %}
 

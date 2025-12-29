@@ -343,7 +343,7 @@ metadata:
 
       - type: label
         attributeName: paramLabel
-        displayName: "⚠ Note: Make sure the following parameters are defined in both the workspace and deployment environment - DMF_ALERT_INTEGRATION, DMF_ALERT_EMAIL, DMF_ALERT_WAREHOUSE, DMF_ALERT_SCHEDULE"
+        displayName: "⚠️Note: Make sure the following parameters are defined in both the workspace and deployment environment - DMF_ALERT_INTEGRATION, DMF_ALERT_EMAIL, DMF_ALERT_WAREHOUSE, DMF_ALERT_SCHEDULE. Alternatively, use the override option."
         enableIf: "{%- if config.overrideEmailAlertToggle == false and (parameters == {} or parameters.DMF_ALERT_INTEGRATION == '' or parameters.DMF_ALERT_EMAIL == '' or parameters.DMF_ALERT_WAREHOUSE == '' or parameters.DMF_ALERT_SCHEDULE == '') -%} true {%- else -%} false {%- endif -%}"
 
       - type: toggleButton

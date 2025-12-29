@@ -13,7 +13,7 @@ operation:
         - {}
     addobjectleveldmfs: false
     alertFrequency: 60
-    alertWarehouse: ""
+    alertWarehouse: COMPUTE_WH
     blankCntTrigger: false
     blankPrcntThreshold: 5
     blankPrcntTrigger: false
@@ -22,17 +22,17 @@ operation:
         - {}
     dupCntTrigger: true
     emailAlertToggle: true
-    emailList: ""
+    emailList: tanvi.kamat.contractor@coalesce.io
     freshThreshold: 24
     freshTrigger: true
-    notfIntegrationName: ""
+    notfIntegrationName: my_email_integration
     nullCntTrigger: true
     nullPrcntThreshold: 5
     nullPrcntTrigger: false
     overrideEmailAlertToggle: false
     scheduleCRON: ""
     schedulePeriod: "60"
-    schedulePeriodOption: Minutes
+    schedulePeriodOption: TRIGGER_ON_CHANGES
     universalColumnBlankCountDMF: false
     universalColumnBlankCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
