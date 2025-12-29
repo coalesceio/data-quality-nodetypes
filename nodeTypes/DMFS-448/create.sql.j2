@@ -486,7 +486,7 @@ does not permit copying or modification for any other purpose.
                     )
 
                     {{ stage('Resume Data Quality Email Alert') }}
-                    ALTER ALERT {{ fullyQualifiedAlertName }} RESUME
+                    ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} RESUME
                 {% endif %}
             {% endif %}
         {%endfor%}
@@ -651,7 +651,7 @@ does not permit copying or modification for any other purpose.
                     {% if emailAttributes.metricCondition | length > 0 %}
 
                         {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT {{ fullyQualifiedAlertName }} SUSPEND
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
 
                         {{ stage('Create Data Quality Email Alert') }}
                         CREATE OR REPLACE ALERT {{ fullyQualifiedAlertName }}
@@ -705,7 +705,7 @@ does not permit copying or modification for any other purpose.
                     {% if desiredAlertWarehouse != currentAlertWarehouse or desiredAlertFrequency != currentAlertFrequency %}
 
                         {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT {{ fullyQualifiedAlertName }} SUSPEND
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
 
                         {{ stage('Alter DMF Email Alert - Set Warehouse/Schedule') }}
                         ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
@@ -726,7 +726,7 @@ does not permit copying or modification for any other purpose.
                     {% if desiredEmailAttributes.metricCondition != currentEmailAttributes.metricCondition %}
 
                         {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT {{ fullyQualifiedAlertName }} SUSPEND
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
 
                         {{ stage('Alter DMF Email Alert - Modify Condition') }}
                         ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
@@ -756,7 +756,7 @@ does not permit copying or modification for any other purpose.
                         or desiredEmailAttributes.emailBody != currentEmailAttributes.emailBody %}
 
                         {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT {{ fullyQualifiedAlertName }} SUSPEND
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
 
                         {{ stage('Alter DMF Email Alert - Modify Action') }}
                         ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
@@ -774,7 +774,7 @@ does not permit copying or modification for any other purpose.
 
                 {% if resumeAlert %}
                     {{ stage('Resume Data Quality Email Alert') }}
-                    ALTER ALERT {{ fullyQualifiedAlertName }} RESUME
+                    ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} RESUME
                 {% endif %}
             {% elif currentState.config.emailAlertToggle %}
                 {% set alertName = desiredState.node.name + '_ALERT' %}
