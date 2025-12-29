@@ -29,15 +29,19 @@ You can set a DMF on the following kinds of table objects:
 * You cannot set a DMF on objects in a reader account.
 * Trial accounts do not support this feature.
 * In coalesce,this node cannot be used as part of a pipeline.This node can be added at the end of the pipeline to infer Data Metrics
+* Package DMF settings are static once defined and deployed. Redeployment behavior is driven only by universal enable or disable toggles, not by changes to package configuration values.
   
 ### DMF Node Configuration
 
-The Work node type has four configuration groups:
+The Work node type has seven configuration groups:
 
 * [Node Properties](#node-properties)
 * [Scheduling Options](#scheduling-options)
+* [Universal DMFs](#universal-dmfs)
 * [Object Level DMFs](#object-level-dmfs)
 * [Column Level DMFs](#column-level-dmfs)
+* [Custom DMFs](#custom-DMFs)
+* [Alerting Options](#alerting-options)
 
 ![Screenshot 2025-03-31 at 1 30 49 PM](https://github.com/user-attachments/assets/b3a0a8b9-d185-45b3-86b4-e7546505b7ac)
 
@@ -56,6 +60,41 @@ You can create DMF run schedule to automate the data quality measurements on a t
 | **Option** | **Description** |
 |------------|----------------|
 | **Schedule Options** | Choose schedule type:<br/>- **Minutes** - Specify interval in minutes. Enter a whole number from 1 to 11520 which represents the number of minutes between DMF runs.<br/>- **Cron** - Uses [Cron expressions](https://docs.coalesce.io/docs/reference/cron-reference/). Specifies a cron expression and time zone for periodically running the DMF. Supports a subset of standard cron utility syntax.<br/>- **TRIGGER_ON_CHANGES** - Set the data metric function to run when a general DML operation, such as inserting a new row, modifies the table |
+
+#### Universal DMFs
+
+Package Config-driven defaults that apply common DMF patterns across all DMFS nodes, with per-node toggle controls covering all Snowflake system DMFs suitable for universal application
+
+When the universal toggle and the object-level universal toggle are enabled, package DMF settings are applied at the **table level.**
+
+When the universal toggle and the column-level universal toggle are enabled, package DMF settings are applied to the corresponding **columns**.
+
+**Package Config Settings:**
+
+<img width="592" height="271" alt="PackageConfig" src="https://github.com/user-attachments/assets/1f804857-cf9d-48ac-9906-c5898ef95389" />
+
+<img width="597" height="492" alt="universalDMF" src="https://github.com/user-attachments/assets/813d6edc-40c8-4804-9916-bb5c594fcf11" />
+
+| **Property** | **Description** |
+|----------|-------------|
+| **Enable Universal DMFs** | Master toggle for Universal DMFs section. `Default: true` |
+| **Apply Universal Object Level DMFs** | Enable object-level DMFs. `Default: true` |
+| **Object Level DMFs** | TextBox for DMFs to apply at table level. Defaults from Package Config universalObjectDmfs. Visible when toggle is true |
+| **Apply Null Count DMF** | Enable NULL_COUNT on specified columns. `Default: true` |
+| **Null Count Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+| **Apply Null Percent DMF** | Enable NULL_PERCENT on specified columns. `Default: false` |
+| **Null Percent Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+| **Apply Blank Count DMF** | Enable BLANK_COUNT on specified columns. `Default: false` |
+| **Blank Count Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+| **Apply Blank Percent DMF** | Enable BLANK_PERCENT on specified columns. `Default: false` |
+| **Blank Percent Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+| **Apply Duplicate Count DMF** | Enable DUPLICATE_COUNT on specified columns. `Default: true` |
+| **Duplicate Count Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+| **Apply Unique Count DMF** | Enable UNIQUE_COUNT on specified columns. `Default: false` |
+| **Unique Count Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+| **Apply Freshness DMF** | Enable FRESHNESS on specified columns. `Default: true` |
+| **Freshness Columns** | Comma-separated column names. Defaults from Package Config. Visible when toggle is true |
+
 
 #### Object Level DMFs
 
@@ -77,6 +116,54 @@ You can create DMF run schedule to automate the data quality measurements on a t
 | **Add Column Level DMF** | Enable this to add object level DMF |
 | **DMF Function** | Select the Column name and DMF function to use |
 
+#### Custom DMFs
+
+Custom DMFs in Snowflake allow you to define your own data quality checks using SQL logic and apply them to tables or columns based on your requirements. For more info on **Custom DMFs** [please refer this documentation](https://docs.snowflake.com/en/user-guide/data-quality-custom-dmfs)
+
+**Edit the placeholders shown here to reflect your own table and column references.**
+
+<img width="727" height="456" alt="custom" src="https://github.com/user-attachments/assets/2a4aaf65-b049-4b6c-a98f-ce51abe25116" />
+
+**Example input for only base table columns**
+
+<img width="722" height="377" alt="1 table" src="https://github.com/user-attachments/assets/086e2024-1086-4aa1-9841-a41f68666069" />
+
+**Example input for reference table columns**
+
+<img width="726" height="296" alt="ex - 2 tables" src="https://github.com/user-attachments/assets/51942a6c-5ee0-4267-9d68-f1c4e0b637d9" />
+
+#### Alerting Options
+
+Optional Snowflake ALERT creation that sends notifications when data quality issues are detected. More abouit Alerting [please refer this documentation.](https://docs.snowflake.com/en/guides-overview-alerts)
+
+| **Property** | **Description** |
+|----------|-------------|
+| **Enable Email Alerts** | Master toggle for alerting. `Default: false` |
+| **Override Global Parameters** | If enabled, use node config values instead of deployment parameters. `Default: false`. Visible when Enable Email Alerts is true |
+| **Notification Integration Name** | Snowflake notification integration name. Defaults to parameter DMF_ALERT_INTEGRATION. Visible when Enable Email Alerts is true |
+| **Alert Email Address** | Email recipient for alerts. Defaults to parameter DMF_ALERT_EMAIL. Visible when Enable Email Alerts is true |
+| **Warehouse for Alert** | Warehouse to execute alert checks. Defaults to parameter DMF_ALERT_WAREHOUSE. Visible when Enable Email Alerts is true |
+| **Alert Check Frequency (Minutes)** | How often to check for issues. `Default: 60`. Defaults to parameter DMF_ALERT_SCHEDULE. Visible when Enable Email Alerts is true |
+| **Trigger on Null Count** | Alert when NULL_COUNT > 0. `Default: true`. Visible when Enable Email Alerts is true |
+| **Trigger on Null Percent** | Alert when NULL_PERCENT exceeds threshold. `Default: false`. Visible when Enable Email Alerts is true 
+| **Null Percent Threshold (%)** | Alert if null percentage exceeds this value. `Default: 5`. Visible when Trigger on Null Percent is true |
+| **Trigger on Blank Count** | Alert when BLANK_COUNT > 0. `Default: false`. Visible when Enable Email Alerts is true |
+| **Trigger on Blank Percent** | Alert when BLANK_PERCENT exceeds threshold. `Default: false`. Visible when Enable Email Alerts is true |
+| **Blank Percent Threshold (%)** | Alert if blank percentage exceeds this value. `Default: 5`. Visible when Trigger on Blank Percent is true |
+| **Trigger on Duplicates** | Alert when DUPLICATE_COUNT > 0. `Default: true`. Visible when Enable Email Alerts is true |
+| **Trigger on Freshness** | Alert when FRESHNESS exceeds threshold. `Default: true`. Visible when Enable Email Alerts is true |
+| **Freshness Threshold (Hours)** | Alert if data older than this many hours. `Default: 24`. Visible when Trigger on Freshness is true |
+
+**Email Alerting Options**
+
+<img width="596" height="600" alt="Alerting" src="https://github.com/user-attachments/assets/c7e11ec9-3e06-4723-b8ad-362cc46affa8" />
+
+**Override Options**
+
+<img width="727" height="516" alt="Overrdide" src="https://github.com/user-attachments/assets/4cd57613-a663-4986-b3db-05c4fb61bdd8" />
+
+**Override Parameters**
+<img width="1087" height="257" alt="override-parameter" src="https://github.com/user-attachments/assets/75c37421-2ed4-46f4-901d-42ad5a8add9a" />
 
 ### DMF Deployment
 
