@@ -7,7 +7,16 @@ config:
       "448":
         defaultStorageLocation: null
         isDisabled: false
-  packageVariables: ""
+  packageVariables: |-
+    {% set packageConfiguration = namespace(
+        universalObjectDmfs=['FRESHNESS'], 
+        nullCountUniversalColumns=[''], 
+        nullPercentUniversalColumns=['ORDER_ID'],
+        blankCountUniversalColumns=['ORDER_ID'],
+        blankPercentUniversalColumns=['ORDER_ID'],
+        duplicateCountUniversalColumns=['ORDER_ID'],
+        uniqueCountUniversalColumns=['ORDER_ID'],
+        freshnessUniversalColumns=['CREATED_DATE']) %}
 fileVersion: 1
 id: "@coalesce/snowflake/data-quality"
 name: DQ

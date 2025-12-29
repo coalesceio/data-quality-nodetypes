@@ -1,98 +1,87 @@
 fileVersion: 1
-id: 9f5bb928-c047-4c43-80d8-6c0cab85b241
-name: DMFS_SOURCE_TABLE_DMF
+id: 5ac7066a-8011-4965-9309-68050f5d56f6
+name: DMFS_FINAL_TEST_DMF
 operation:
   config:
-    addCustomDMFs: true
-    addcolumnleveldmfs: true
+    addCustomDMFs: false
+    addcolumnleveldmfs: false
     adddmfs:
       items:
-        - columnNameExpressions:
-            columnCounter: 499aef74-83a5-41ac-9208-9a26ddf06472
-            stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
-          system_dmfs: NULL_COUNT
-        - columnNameExpressions:
-            columnCounter: 1203350e-b949-4c9c-8429-ab1f40ff4ed8
-            stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
-          system_dmfs: BLANK_PERCENT
+        - {}
     adddmfsobject:
       items:
-        - system_dmfs_object: ROW_COUNT
-    addobjectleveldmfs: true
-    alertFrequency: "60"
-    alertWarehouse: dev_wh_xs
-    blankCntTrigger: true
+        - {}
+    addobjectleveldmfs: false
+    alertFrequency: 60
+    alertWarehouse: ""
+    blankCntTrigger: false
     blankPrcntThreshold: 5
-    blankPrcntTrigger: true
+    blankPrcntTrigger: false
     customDMFsConfig:
       items:
-        - customDMFArgs: |-
-            - table (Required): 
-                - column: ORDER_ID
-          customDMFName: |
-            ref('SOURCE', 'ROW_NULL_COUNT')
-        - customDMFArgs: |-
-            - table (Required): 
-                - column: <ID>
-
-            - table (Optional): {{ref('<SOURCE>', '<PRODUCTS>')}}
-                - column: <PRODUCT_ID>
-          customDMFName: |
-            ref('<TARGET>', '<check_open_products>')
+        - {}
     dupCntTrigger: true
     emailAlertToggle: true
     emailList: ""
     freshThreshold: 24
     freshTrigger: true
-    notfIntegrationName: my_email_integration_new
+    notfIntegrationName: ""
     nullCntTrigger: true
     nullPrcntThreshold: 5
-    nullPrcntTrigger: true
+    nullPrcntTrigger: false
     overrideEmailAlertToggle: false
     scheduleCRON: ""
     schedulePeriod: "60"
-    schedulePeriodOption: TRIGGER_ON_CHANGES
+    schedulePeriodOption: Minutes
     universalColumnBlankCountDMF: false
     universalColumnBlankCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.blankCountUniversalColumns[]
     universalColumnBlankPercentDMF: false
     universalColumnBlankPercentDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.blankPercentUniversalColumns[]
     universalColumnDmfs: true
-    universalColumnDuplicateCountDMF: false
+    universalColumnDuplicateCountDMF: true
     universalColumnDuplicateCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.duplicateCountUniversalColumns[]
-    universalColumnFreshnessDMF: false
+    universalColumnFreshnessDMF: true
     universalColumnFreshnessDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.freshnessUniversalColumns[]
     universalColumnNullCountDMF: true
     universalColumnNullCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.nullCountUniversalColumns[]
     universalColumnNullPercentDMF: false
     universalColumnNullPercentDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.nullPercentUniversalColumns[]
     universalColumnUniqueCountDMF: false
     universalColumnUniqueCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.uniqueCountUniversalColumns[]
     universalDmfs: true
     universalObjectDmfs: true
     universalObjectDmfsList: |2-
        -- This field is auto-populated from the Package Configuration.
-       -- To edit, update the below Config 
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
        packageConfiguration.universalObjectDmfs[]
   database: ""
   deployEnabled: true
@@ -105,8 +94,8 @@ operation:
     columns:
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 499aef74-83a5-41ac-9208-9a26ddf06472
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 926191b9-59ec-46e8-aa64-2949258bb1a3
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -114,13 +103,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: c147c60a-0d33-4071-a2ab-ba3ccdb60c4c
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 764b8a9a-3a56-430f-a81e-b379658559ca
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 1203350e-b949-4c9c-8429-ab1f40ff4ed8
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 492e97ad-bb01-4057-afef-6d1b16c45045
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -128,13 +117,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: be05843e-e8e8-45ad-a1e3-bcae0c33808b
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 530722fb-7350-445a-aeef-6e0a3216d889
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 33146de7-20a8-4a3b-9f05-0e5f75b65e57
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 7267b501-e017-41db-9a2c-bd40454e32e6
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -142,13 +131,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: 6bece8aa-81c4-4b83-8c5d-5c846a8c064b
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 98aebcde-1483-4729-aa6a-8ebe55d23b2f
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 462f1b68-99e9-409b-92ad-39880b030bf8
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 150687cb-a4f0-4312-a42f-ad4f123f0ccd
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -156,13 +145,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: b728fc5f-36e0-43f2-bac9-c648519e728a
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: cb5bc9dc-2d8a-4c3a-bd95-b1d55748a415
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 9611a6f5-06b5-4b86-a2b8-60fcfc1d64fe
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 58c29305-ca6e-4462-979a-263df1e615e6
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -170,13 +159,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: 2814fdd8-0a5f-4617-a95f-068096aa2cd3
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 79df81ec-38e4-4f1d-ae92-f6962dfef871
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 3d0196f6-21f4-4b36-9ee2-fe36aace99fe
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 642b625a-d27d-4067-a585-cde83c7865b5
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: NUMBER(10,2)
         description: ""
@@ -184,13 +173,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: aceb69be-907e-45f3-9728-b5d0638a4d0c
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 12e6d9e0-d88f-476a-a10c-6ff69083f3a0
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: bbee28d0-5bfa-4870-af12-43c4b74b5f65
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 319a596f-c2b4-409c-ac81-c034eec48b0a
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: NUMBER(38,0)
         description: ""
@@ -198,13 +187,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: 7a908fba-f822-4260-b1dd-abde83489e7b
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 592b1d1b-85b9-4f0a-b3f5-34e9486dbd42
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: cdeff776-513f-45d0-9e7d-0134095ade00
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 24a1de41-8278-4954-ad9e-e024d0ff32a5
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: DATE
         description: ""
@@ -212,13 +201,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: b4a6ce73-81a4-44ce-9294-b265f419111d
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 5bccd3bd-aefd-4f46-875c-a18c117caced
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: dfaed767-b08d-4559-b8de-c61a9dfc465e
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: 77d1c5e6-2a4e-43e3-94a6-7259acd60b13
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
@@ -226,13 +215,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: 445eca63-1d44-4d56-bc1b-79c1d3600986
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 3c4c3f3e-3863-4345-b2bf-e21d4c961c39
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: 384e862c-ac40-49c5-955b-9b4d9dbef63a
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: ec12526d-52ca-400c-8662-f54ba2c2ecd8
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: TIMESTAMP_NTZ(9)
         description: ""
@@ -240,13 +229,13 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: c4a8632b-1663-4fdc-833e-6ef30a7acef5
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: a508df23-efeb-4e68-8978-c6cc2d874f21
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
       - appliedColumnTests: {}
         columnReference:
-          columnCounter: d4f53c9c-6fb3-48fa-b5c9-6d3ac8eaa904
-          stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
+          columnCounter: d9f730c4-f2f8-4480-ac83-e0961d152b38
+          stepCounter: 5ac7066a-8011-4965-9309-68050f5d56f6
         config: {}
         dataType: VARCHAR(16777216)
         description: ""
@@ -254,24 +243,24 @@ operation:
         nullable: true
         sourceColumnReferences:
           - columnReferences:
-              - columnCounter: 029511a0-5f0e-41c8-9b13-90f9a74517ee
-                stepCounter: b9e109fd-d23f-45f7-b2ad-1184ea751155
+              - columnCounter: 42da55ec-de42-42ca-8faa-551669dc9a07
+                stepCounter: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
             transform: ""
     cteString: ""
     enabledColumnTestIDs: []
     sourceMapping:
       - aliases:
-          SOURCE_TABLE_DMF: b9e109fd-d23f-45f7-b2ad-1184ea751155
+          FINAL_TEST_DMF: cc8f5184-7c0d-4fd9-a2ba-ab94e716e87d
         customSQL:
           customSQL: ""
         dependencies:
           - locationName: SOURCE
-            nodeName: SOURCE_TABLE_DMF
+            nodeName: FINAL_TEST_DMF
         join:
-          joinCondition: FROM {{ ref('SOURCE', 'SOURCE_TABLE_DMF') }} "SOURCE_TABLE_DMF"
-        name: DMFS_SOURCE_TABLE_DMF
+          joinCondition: FROM {{ ref('SOURCE', 'FINAL_TEST_DMF') }} "FINAL_TEST_DMF"
+        name: DMFS_FINAL_TEST_DMF
         noLinkRefs: []
-  name: DMFS_SOURCE_TABLE_DMF
+  name: DMFS_FINAL_TEST_DMF
   overrideSQL: false
   schema: ""
   sqlType: "448"
