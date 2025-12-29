@@ -3,50 +3,70 @@ id: 9f5bb928-c047-4c43-80d8-6c0cab85b241
 name: DMFS_SOURCE_TABLE_DMF
 operation:
   config:
-    addCustomDMFs: true
+    addCustomDMFs: false
     addcolumnleveldmfs: true
     adddmfs:
       items:
-        - columnNameExpressions: null
+        - columnNameExpressions:
+            columnCounter: 499aef74-83a5-41ac-9208-9a26ddf06472
+            stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
           system_dmfs: NULL_COUNT
-        - columnNameExpressions: null
+        - columnNameExpressions:
+            columnCounter: 1203350e-b949-4c9c-8429-ab1f40ff4ed8
+            stepCounter: 9f5bb928-c047-4c43-80d8-6c0cab85b241
           system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT
-    addobjectleveldmfs: true
-    alertFrequency: ""
-    alertWarehouse: ""
-    blankCntTrigger: false
+    addobjectleveldmfs: false
+    alertFrequency: "60"
+    alertWarehouse: dev_wh_xs
+    blankCntTrigger: true
     blankPrcntThreshold: 5
-    blankPrcntTrigger: false
+    blankPrcntTrigger: true
     customDMFsConfig:
       items:
-        - customDMFArgs: |
-            - object: 
-            args:
-                - col: <ORDER_ID>
+        - customDMFArgs: |-
+            - table (Required): 
+                - column: ORDER_ID
           customDMFName: |
-            ref('<SOURCE>', '<ROW_NULL_COUNT>')
+            ref('SOURCE', 'ROW_NULL_COUNT')
+        - customDMFArgs: |-
+            - table (Required): 
+                - column: <ID>
+
+            - table (Optional): {{ref('<SOURCE>', '<PRODUCTS>')}}
+                - column: <PRODUCT_ID>
+          customDMFName: |
+            ref('<TARGET>', '<check_open_products>')
+        - customDMFArgs: |
+            - table (Required): 
+                - column: <col_name1>
+                - column: <col_name2>
+                
+            - table (Optional): {{ref('<storage_loc>', '<table_or_view_name>')}}
+                - column: <col_name1>
+                - column: <col_name2>
+          customDMFName: ref('<storage_loc>', '<custom_dmf_name>')
     dupCntTrigger: true
     emailAlertToggle: true
     emailList: ""
     freshThreshold: 24
     freshTrigger: true
-    notfIntegrationName: ""
+    notfIntegrationName: my_email_integration_new
     nullCntTrigger: true
     nullPrcntThreshold: 5
     nullPrcntTrigger: true
-    overrideEmailAlertToggle: false
+    overrideEmailAlertToggle: true
     scheduleCRON: ""
     schedulePeriod: "60"
     schedulePeriodOption: TRIGGER_ON_CHANGES
-    universalColumnBlankCountDMF: false
+    universalColumnBlankCountDMF: true
     universalColumnBlankCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.blankCountUniversalColumns[]
-    universalColumnBlankPercentDMF: false
+    universalColumnBlankPercentDMF: true
     universalColumnBlankPercentDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
        -- To edit, update the below Config in Package Configuration.
@@ -72,13 +92,13 @@ operation:
        -- This field is auto-populated from the Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.nullPercentUniversalColumns[]
-    universalColumnUniqueCountDMF: false
+    universalColumnUniqueCountDMF: true
     universalColumnUniqueCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.uniqueCountUniversalColumns[]
-    universalDmfs: true
-    universalObjectDmfs: true
+    universalDmfs: false
+    universalObjectDmfs: false
     universalObjectDmfsList: |2-
        -- This field is auto-populated from the Package Configuration.
        -- To edit, update the below Config

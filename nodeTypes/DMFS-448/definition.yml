@@ -304,21 +304,23 @@ metadata:
         - type: textBox
           displayName: Function Name
           attributeName: customDMFName
-          default: |
-            ref('<storage_loc>', '<custom_dmf>')
+          syntax: sql
+          default: ref('<storage_loc>', '<custom_dmf_name>')
           isRequired: false
 
         - type: textBox
           displayName: >
-            Arguments (Note:
-            Leave table name empty to use the base table)
+            Arguments (Note: Remove optional objects if not required)
           attributeName: customDMFArgs
           syntax: sql
           default: |
-            - object: {{ref('<storage_loc>', '<table_name>')}}
-            args:
-                - col: <col_name1>
-                - col: <col_name2>
+            - table (Required): 
+                - column: <col_name1>
+                - column: <col_name2>
+                
+            - table (Optional): {{ref('<storage_loc>', '<table_or_view_name>')}}
+                - column: <col_name1>
+                - column: <col_name2>
         isRequired: false
         enableIf: "{% if config.addCustomDMFs %} true {% else %} false {% endif %}"
 
@@ -355,9 +357,10 @@ metadata:
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 
-      - displayName: Alert Frequency in Minutes (Ex. 60)
+      - displayName: Alert Frequency (Minutes)
         attributeName: alertFrequency
         type: textBox
+        default: 60
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 
@@ -433,7 +436,7 @@ metadata:
 
       - type: textBox
         attributeName: freshThreshold
-        displayName: 'BLANK_PERCENT Threshold in Hours'
+        displayName: 'BLANK_PERCENT Threshold (Hours)'
         default: 24
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.freshTrigger %} true {% else %} false {% endif %}"

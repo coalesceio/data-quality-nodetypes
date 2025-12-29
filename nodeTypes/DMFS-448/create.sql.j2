@@ -9,24 +9,6 @@ does not permit copying or modification for any other purpose.
 {# == Node Type Description    : This node creates DMFs == #}
 {# ================================================================================================#}
 
-{#------ Build Dictionary of Package Object Level DMF -------#}
-
-{% set universalObjectDMF = packageConfiguration.universalObjectDmfs
-                            if packageConfiguration.universalObjectDmfs is defined
-                            else [] %}
-
-{#------ Build Dictionary of Package Column Level DMF -------#}
-
-{% set universalCoulmnDMF = [
-    { 'DMF': 'NULL_COUNT',      'COLUMNS': packageConfiguration.nullCountUniversalColumns      | default([]) },
-    { 'DMF': 'NULL_PERCENT',    'COLUMNS': packageConfiguration.nullPercentUniversalColumns    | default([]) },
-    { 'DMF': 'BLANK_COUNT',     'COLUMNS': packageConfiguration.blankCountUniversalColumns     | default([]) },
-    { 'DMF': 'BLANK_PERCENT',   'COLUMNS': packageConfiguration.blankPercentUniversalColumns   | default([]) },
-    { 'DMF': 'DUPLICATE_COUNT', 'COLUMNS': packageConfiguration.duplicateCountUniversalColumns | default([]) },
-    { 'DMF': 'UNIQUE_COUNT',    'COLUMNS': packageConfiguration.uniqueCountUniversalColumns    | default([]) },
-    { 'DMF': 'FRESHNESS',       'COLUMNS': packageConfiguration.freshnessUniversalColumns      | default([]) }
-] %}
-
 {#------ Build Dictionary of CurrentState DMFs -------#}
 
 {% if currentState %}
@@ -42,7 +24,7 @@ does not permit copying or modification for any other purpose.
                             if currentState.config.addobjectleveldmfs
                             else [] %}
 
-    {% set nsCurrentDMFVariables.objectDMFList = currentGroupObjectDMF + universalObjectDMF | unique | list %}
+    {% set nsCurrentDMFVariables.objectDMFList = currentGroupObjectDMF | unique | list %}
 
     {#------ Build Dictionary of All Column Level DMF -------#}
 
@@ -65,7 +47,7 @@ does not permit copying or modification for any other purpose.
         {% endif %}
     {% endfor %}
 
-    {% set combinedDuplicateColumnDMFs = currentGroupColumnDMF.data + universalCoulmnDMF %}
+    {% set combinedDuplicateColumnDMFs = currentGroupColumnDMF.data %}
 
     {% for dmf in combinedDuplicateColumnDMFs | map(attribute='DMF') | unique %}
         {% set cols = combinedDuplicateColumnDMFs
@@ -91,23 +73,23 @@ does not permit copying or modification for any other purpose.
             {% for line in item.customDMFArgs.split('\n') %}
                 {% set l = line.strip() %}
 
-                {% if l.startswith('- object:') %}
+                {% if l.startswith('- table') %}
                     {% if args.current %}
                         {% set args.elements = args.elements + [args.current] %}
                     {% endif %}
 
-                    {% set obj = l.replace('- object:', '').replace('"', '').strip() %}
+                    {% set obj = l.split(':')[1].replace('"', '').strip() %}
                     {% set args.current = {
-                        'object': obj,
-                        'cols': []
+                        'table': obj,
+                        'column': []
                     } %}
                 {% endif %}
 
-                {% if l.startswith('- col:') and args.current %}
-                    {% set col = l.replace('- col:', '').replace('"', '').strip() %}
+                {% if l.startswith('- column:') and args.current %}
+                    {% set col = l.split(':')[1].replace('"', '').strip() %}
                     {% set args.current = {
-                        'object': args.current.object,
-                        'cols': args.current.cols + [col]
+                        'table': args.current.table,
+                        'column': (args.current.column | default([])) + [col]
                     } %}
                 {% endif %}
             {% endfor %}
@@ -128,12 +110,91 @@ does not permit copying or modification for any other purpose.
 {% if desiredState %}
 
     {#------ Build Dictionary of DesiredState DMFs -------#}
-
-    {% set nsDesiredDMFVariables = namespace(objectDMFList=[], columnDMFList=[], customColumnDMFList=[]) %}
+    {% set nsDesiredDMFVariables = namespace(universalObjectDMF=[],
+                                            universalCoulmnDMF=[],
+                                            objectDMFList=[],
+                                            columnDMFList=[],
+                                            customColumnDMFList=[]) %}
     {% set fullyQualifiedDesiredViewName = ref_no_link(desiredState.node.location.name, desiredState.node.name) %}
 
-    {#------ Build Dictionary of All Object Level DMF -------#}
+    {#------ Build Dictionary of Package Object Level DMF -------#}
+    {% set nsDesiredDMFVariables.universalObjectDMF = packageConfiguration.universalObjectDmfs
+                                if packageConfiguration.universalObjectDmfs is defined 
+                                    and currentState == undefined 
+                                    and desiredState.config.universalDmfs 
+                                    and desiredState.config.universalObjectDmfs
+                                else [] %}
 
+    {#------ Build Dictionary of Package Column Level DMF -------#}
+    {% set nsDesiredDMFVariables.universalCoulmnDMF =
+        (
+            [
+                {
+                'DMF': 'NULL_COUNT',
+                'COLUMNS': packageConfiguration.nullCountUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnNullCountDMF else []
+        )
+        +
+        (
+            [
+                {
+                'DMF': 'NULL_PERCENT',
+                'COLUMNS': packageConfiguration.nullPercentUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnNullPercentDMF else []
+        )
+        +
+        (
+            [
+                {
+                'DMF': 'BLANK_COUNT',
+                'COLUMNS': packageConfiguration.blankCountUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnBlankCountDMF else []
+        )
+        +
+        (
+            [
+                {
+                'DMF': 'BLANK_PERCENT',
+                'COLUMNS': packageConfiguration.blankPercentUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnBlankPercentDMF else []
+        )
+        +
+        (
+            [
+                {
+                'DMF': 'DUPLICATE_COUNT',
+                'COLUMNS': packageConfiguration.duplicateCountUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnDuplicateCountDMF else []
+        )
+        +
+        (
+            [
+                {
+                'DMF': 'UNIQUE_COUNT',
+                'COLUMNS': packageConfiguration.uniqueCountUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnUniqueCountDMF else []
+        )
+        +
+        (
+            [
+                {
+                'DMF': 'FRESHNESS',
+                'COLUMNS': packageConfiguration.freshnessUniversalColumns | default([])
+                }
+            ] if desiredState.config.universalColumnFreshnessDMF else []
+        )
+    if currentState == undefined
+        and desiredState.config.universalDmfs
+        and desiredState.config.universalColumnDmfs
+    else [] %}
+
+    {#------ Build Dictionary of All Object Level DMF -------#}
     {% set desiredGroupObjectDMF = desiredState.config.adddmfsobject.get('items')
                             | map(attribute='system_dmfs_object')
                             | select('defined')
@@ -141,28 +202,30 @@ does not permit copying or modification for any other purpose.
                             if desiredState.config.addobjectleveldmfs
                             else [] %}
 
-    {% set nsDesiredDMFVariables.objectDMFList = (desiredGroupObjectDMF + universalObjectDMF) | unique | list %}
+    {% set nsDesiredDMFVariables.objectDMFList = (desiredGroupObjectDMF + nsDesiredDMFVariables.universalObjectDMF) | unique | list %}
 
     {% set items = desiredState.config.adddmfs.get('items') or [] %}
     {% set columnDMFs = items | map(attribute='system_dmfs') | select('defined') | unique | list %}
     {% set desiredGroupColumnDMF = namespace(data=[]) %}
 
-    {% for dmf in columnDMFs %}
-        {% set cols = items | selectattr('system_dmfs', 'equalto', dmf)
-                            | map(attribute='columnNameExpressions.name')
-                            | select('defined')
-                            | unique
-                            | list %}
+    {% if desiredState.config.addcolumnleveldmfs %}
+        {% for dmf in columnDMFs %}
+            {% set cols = items | selectattr('system_dmfs', 'equalto', dmf)
+                                | map(attribute='columnNameExpressions.name')
+                                | select('defined')
+                                | unique
+                                | list %}
 
-        {% if cols %}
-            {% set desiredGroupColumnDMF.data = desiredGroupColumnDMF.data + [{
-                'DMF': dmf,
-                'COLUMNS': cols
-            }] %}
-        {% endif %}
-    {% endfor %}
+            {% if cols %}
+                {% set desiredGroupColumnDMF.data = desiredGroupColumnDMF.data + [{
+                    'DMF': dmf,
+                    'COLUMNS': cols
+                }] %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
-    {% set combinedDuplicateColumnDMFs = desiredGroupColumnDMF.data + universalCoulmnDMF %}
+    {% set combinedDuplicateColumnDMFs = desiredGroupColumnDMF.data + nsDesiredDMFVariables.universalCoulmnDMF %}
 
     {% for dmf in combinedDuplicateColumnDMFs | map(attribute='DMF') | unique %}
         {% set cols = combinedDuplicateColumnDMFs
@@ -188,23 +251,23 @@ does not permit copying or modification for any other purpose.
             {% for line in item.customDMFArgs.split('\n') %}
                 {% set l = line.strip() %}
 
-                {% if l.startswith('- object:') %}
+                {% if l.startswith('- table') %}
                     {% if args.current %}
                         {% set args.elements = args.elements + [args.current] %}
                     {% endif %}
 
-                    {% set obj = l.replace('- object:', '').replace('"', '').strip() %}
+                    {% set obj = l.split(':')[1].replace('"', '').strip() %}
                     {% set args.current = {
-                        'object': obj,
-                        'cols': []
+                        'table': obj,
+                        'column': []
                     } %}
                 {% endif %}
 
-                {% if l.startswith('- col:') and args.current %}
-                    {% set col = l.replace('- col:', '').replace('"', '').strip() %}
+                {% if l.startswith('- column:') and args.current %}
+                    {% set col = l.split(':')[1].replace('"', '').strip() %}
                     {% set args.current = {
-                        'object': args.current.object,
-                        'cols': args.current.cols + [col]
+                        'table': args.current.table,
+                        'column': (args.current.column | default([])) + [col]
                     } %}
                 {% endif %}
             {% endfor %}
@@ -229,7 +292,7 @@ does not permit copying or modification for any other purpose.
 
             {% set fullyQualifiedBaseTableName = ref_raw(dep.node.location.name, dep.node.name) %}
             {{ stage('Add DMFs Schedule') }}     
-            ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+            ALTER TABLE {{ fullyQualifiedBaseTableName }} 
             {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
                 SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
             {% elif desiredState.config.schedulePeriodOption == 'CRON'%}
@@ -264,20 +327,15 @@ does not permit copying or modification for any other purpose.
             {% endfor %}
 
             {# ----- Apply Custom Column Level DMFs -------------------#}
-            {% if desiredState.config.addCustomDMFs%}
-
-                {% for dmf in nsDesiredDMFVariables.customColumnDMFList %}
-                    {{ stage('Add Custom DMF - ' + dmf.DMF.split("'")[3]) }}
-                    {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
-                    ALTER TABLE {{ fullyQualifiedBaseTableName }}
-                    ADD DATA METRIC FUNCTION {{ fullyQualifiedFunctionName }}
-                    ON {{ renderCustomDMFArgs(dmf.COLUMNS) }}
-                {% endfor %}
-
-            {% endif %}
+            {% for dmf in nsDesiredDMFVariables.customColumnDMFList %}
+                {{ stage('Add Custom DMF - ' + dmf.DMF.split("'")[3]) }}
+                {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
+                ALTER TABLE {{ fullyQualifiedBaseTableName }}
+                ADD DATA METRIC FUNCTION {{ fullyQualifiedFunctionName }}
+                ON {{ renderCustomDMFArgs(dmf.COLUMNS) }}
+            {% endfor %}
 
             {# ----- Create Data Quality Result View -------------------#}
-
             {% set sourceDatabase = desiredState.storageLocations
                                     | selectattr('name', 'equalto', dep.node.location.name)
                                     | map(attribute='database')
@@ -303,22 +361,28 @@ does not permit copying or modification for any other purpose.
                     emailList='',
                     emailSubject='',
                     emailBody='',
-                    alertWarehouse='',
-                    alertFrequency='',
                     metricCondition=[]
                 ) %}
 
-                {{ buildEmailSettings(emailAttributes, fullyQualifiedBaseTableName, fullyQualifiedDesiredViewName) }}
+                {% set alertWarehouse = (desiredState.config.alertWarehouse
+                                            if config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
+                                            else parameters.DMF_ALERT_WAREHOUSE) %}
 
-                {% if emailAttributes.metricCondition | trim | length > 0 %}
+                {% set alertFrequency = (config.alertFrequency + ' MINUTE'
+                                            if use_override and config.alertFrequency | trim
+                                            else parameters.DMF_ALERT_SCHEDULE) %}
+
+                {{ buildEmailSettings(emailAttributes, desiredState, fullyQualifiedBaseTableName, fullyQualifiedDesiredViewName) }}
+
+                {% if emailAttributes.metricCondition | length > 0 %}
 
                     {% set alertName = desiredState.node.name + '_ALERT' %}
                     {% set fullyQualifiedAlertName = ref_no_link(desiredState.node.location.name, alertName) %}
 
-                    {{ stage('Create Data Quality Email Alert') }}
+                    {{ stage('Create Data Quality Alert') }}
                     CREATE OR REPLACE ALERT {{ fullyQualifiedAlertName }}
-                    WAREHOUSE = {{ emailAttributes.alertWarehouse }}
-                    SCHEDULE = '{{ emailAttributes.alertFrequency }}'
+                    WAREHOUSE = {{ alertWarehouse }}
+                    SCHEDULE = '{{ alertFrequency }}'
                     IF
                     (
                         EXISTS
@@ -346,7 +410,7 @@ does not permit copying or modification for any other purpose.
                         $${{ emailAttributes.emailBody }}$$
                     )
 
-                    {{ stage('Resume Data Quality Email Alert') }}
+                    {{ stage('Resume Data Quality Alert') }}
                     ALTER ALERT {{ fullyQualifiedAlertName }} RESUME
                 {% endif %}
             {% endif %}
@@ -359,7 +423,7 @@ does not permit copying or modification for any other purpose.
 
             {% if currentState.config.schedulePeriodOption != desiredState.config.schedulePeriodOption %}
                 {{ stage('Alter DMFs Schedule') }}
-                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                ALTER TABLE {{fullyQualifiedBaseTableName}} 
                 {% if desiredState.config.schedulePeriodOption == 'Minutes' %}
                     SET DATA_METRIC_SCHEDULE = '{{desiredState.config.schedulePeriod}} Minutes'
                 {% elif desiredState.config.schedulePeriodOption == 'CRON'%}
@@ -375,7 +439,7 @@ does not permit copying or modification for any other purpose.
                 {% for dmf in desiredGroupObjectDMF %}
                     {% if dmf not in currentGroupObjectDMF or (desiredState.config.addobjectleveldmfs and currentState.config.addobjectleveldmfs == false) %}
                         {{ stage('Add Object DMF - ' + dmf) }}
-                        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                        ALTER TABLE {{fullyQualifiedBaseTableName}} 
                         ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf }}
                         ON  ()
                     {% endif %}
@@ -384,7 +448,7 @@ does not permit copying or modification for any other purpose.
                 {% for dmf in currentGroupObjectDMF %}
                     {% if dmf not in desiredGroupObjectDMF or (desiredState.config.addobjectleveldmfs == false and currentState.config.addobjectleveldmfs) %}
                         {{ stage('Drop Object DMF - ' + dmf) }}
-                        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+                        ALTER TABLE {{fullyQualifiedBaseTableName}} 
                         DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf }}
                         ON  ()
                     {% endif %}
@@ -412,8 +476,7 @@ does not permit copying or modification for any other purpose.
                         {% set key = dmf.DMF ~ '|' ~ col %}
                         {% if key not in nsColKeyList.current or (desiredState.config.addcolumnleveldmfs and currentState.config.addcolumnleveldmfs == false) %}
                             {{ stage('Add Column DMF - ' ~ dmf.DMF ~ '|' ~ col) }}
-
-                            ALTER TABLE {{ ref_raw(dep.node.location.name, dep.node.name) }}
+                            ALTER TABLE {{ fullyQualifiedBaseTableName }}
                             ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf.DMF }}
                             ON ({{ col }})
                         {% endif %}
@@ -425,8 +488,7 @@ does not permit copying or modification for any other purpose.
                         {% set key = dmf.DMF ~ '|' ~ col %}
                         {% if key not in nsColKeyList.desired or (desiredState.config.addcolumnleveldmfs == false and currentState.config.addcolumnleveldmfs) %}
                             {{ stage('Drop Column DMF - ' ~ dmf.DMF ~ '|' ~ col) }}
-
-                            ALTER TABLE {{ ref_raw(dep.node.location.name, dep.node.name) }}
+                            ALTER TABLE {{ fullyQualifiedBaseTableName }}
                             DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf.DMF }}
                             ON ({{ col }})
                         {% endif %}
@@ -454,7 +516,6 @@ does not permit copying or modification for any other purpose.
 
                     {% if key not in nsCustColKeyList.current or (desiredState.config.addCustomDMFs and currentState.config.addCustomDMFs == false) %}
                         {{ stage('Add Custom DMF - ' ~ dmf.DMF.split("'")[3]) }}
-
                         {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
 
                         ALTER TABLE {{ fullyQualifiedBaseTableName }}
@@ -469,7 +530,6 @@ does not permit copying or modification for any other purpose.
 
                     {% if key not in nsCustColKeyList.desired or (desiredState.config.addCustomDMFs == false and currentState.config.addCustomDMFs) %}
                         {{ stage('Drop Custom DMF - ' ~ dmf.DMF.split("'")[3]) }}
-
                         {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
 
                         ALTER TABLE {{ fullyQualifiedBaseTableName }}
@@ -480,6 +540,7 @@ does not permit copying or modification for any other purpose.
                 {% endfor %}
             {% endif %}
 
+            {# ----- Re-Create Data Quality Result View -------------------#}
             {% set sourceDatabase = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='database') | first %}
             {% set sourceSchema = desiredState.storageLocations | selectattr('name', 'equalto', dep.node.location.name) | map(attribute='schema') | first %}
 
@@ -491,52 +552,204 @@ does not permit copying or modification for any other purpose.
             AND TABLE_SCHEMA = '{{sourceSchema}}'
             AND TABLE_NAME = '{{dep.node.name}}'
 
-        {%endfor%}
-    {%endif%}
+            {# Alter Email Alter If Required #}
+            {% if desiredState.config.emailAlertToggle %}
+                {% set alertName = desiredState.node.name + '_ALERT' %}
+                {% set fullyQualifiedAlertName = ref_no_link(desiredState.node.location.name, alertName) %}
+                {% set resumeAlert = false %}
+                {% set alertWarehouse = (desiredState.config.alertWarehouse
+                                            if config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
+                                            else parameters.DMF_ALERT_WAREHOUSE) %}
+
+                {% set alertFrequency = (config.alertFrequency + ' MINUTE'
+                                            if use_override and config.alertFrequency | trim
+                                            else parameters.DMF_ALERT_SCHEDULE) %}
+
+                {% set locationTest = desiredState.node.location.name == currentState.node.location.name
+                                        and desiredState.node.name == currentState.node.name %}
+
+                {% if currentState.config.emailAlertToggle == false
+                        or locationTest == false %}
+
+                    {% if locationTest == false %}
+                        {% set alertName = currentState.node.name + '_ALERT' %}
+                        {% set fullyQualifiedOldAlertName = ref_no_link(currentState.node.location.name, alertName) %}
+                        {{ stage('Drop Old Data Quality Alert') }}
+                        DROP ALERT IF EXISTS {{ fullyQualifiedOldAlertName }}
+                    {% endif %}
+
+                    {% set emailAttributes = namespace(notfIntegrationName='', emailList='', emailSubject='', emailBody='', metricCondition=[]) %}
+
+                    {{ buildEmailSettings(emailAttributes, desiredState, fullyQualifiedBaseTableName, fullyQualifiedDesiredViewName) }}
+
+                    {% if emailAttributes.metricCondition | length > 0 %}
+
+                        {{ stage('Create New Data Quality Alert') }}
+                        CREATE OR REPLACE ALERT {{ fullyQualifiedAlertName }}
+                        WAREHOUSE = {{ alertWarehouse }}
+                        SCHEDULE = '{{ alertFrequency }}'
+                        IF
+                        (
+                            EXISTS
+                            (
+                                SELECT 1
+                                FROM SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS
+                                WHERE TABLE_DATABASE = '{{ sourceDatabase }}'
+                                AND TABLE_SCHEMA = '{{ sourceSchema }}'
+                                AND TABLE_NAME = '{{ dep.node.name }}'
+                                AND measurement_time > COALESCE
+                                (
+                                        SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME(),
+                                        DATEADD('hour', -24, CURRENT_TIMESTAMP())
+                                )
+                                AND (
+                                    {{ emailAttributes.metricCondition | join('\n OR') }}
+                                )
+                            )
+                        )
+                        THEN
+                        CALL SYSTEM$SEND_EMAIL(
+                            '{{ emailAttributes.notfIntegrationName }}',
+                            '{{ emailAttributes.emailList }}',
+                            '{{ emailAttributes.emailSubject }}',
+                            $${{ emailAttributes.emailBody }}$$
+                        )
+                    {% endif %}
+                    {% set resumeAlert = true %}
+                {% else %}
+                    {% set desiredAlertWarehouse = (desiredState.config.alertWarehouse
+                                                if desiredState.config.overrideEmailAlertToggle and desiredState.config.alertWarehouse | trim 
+                                                else desiredState.parameters.DMF_ALERT_WAREHOUSE) %}
+
+                    {% set currentAlertWarehouse = (currentState.config.alertWarehouse
+                                                if currentState.config.overrideEmailAlertToggle and currentState.config.alertWarehouse | trim 
+                                                else currentState.parameters.DMF_ALERT_WAREHOUSE) %}
+
+                    {% set desiredAlertFrequency = (config.alertFrequency + ' MINUTE'
+                                                if desiredState.config.overrideEmailAlertToggle and config.alertFrequency | trim
+                                                else parameters.DMF_ALERT_SCHEDULE) %}
+
+                    {% set currentAlertFrequency = (currentState.config.alertFrequency + ' MINUTE'
+                                                if currentState.config.overrideEmailAlertToggle and currentState.config.alertFrequency | trim
+                                                else currentState.parameters.DMF_ALERT_SCHEDULE) %}
+
+                    {% if desiredAlertWarehouse != currentAlertWarehouse or desiredAlertFrequency != currentAlertFrequency %}
+
+                        {{ stage('Alter DMF Alert - Set Warehouse/Schedule') }}
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
+                        SET WAREHOUSE = {{ desiredAlertWarehouse }},
+                            SCHEDULE = '{{ desiredAlertFrequency }}'
+
+                        {% set resumeAlert = true %}
+
+                    {% endif %}
+
+                    {% set desiredEmailAttributes = namespace(notfIntegrationName='', emailList='', emailSubject='', emailBody='', metricCondition=[]) %}
+                    {% set currentEmailAttributes = namespace(notfIntegrationName='', emailList='', emailSubject='', emailBody='', metricCondition=[]) %}
+
+                    {{ buildEmailSettings(desiredEmailAttributes, desiredState, fullyQualifiedBaseTableName, fullyQualifiedDesiredViewName) }}
+
+                    {{ buildEmailSettings(currentEmailAttributes, currentState, fullyQualifiedBaseTableName, fullyQualifiedDesiredViewName) }}
+
+                    {% if desiredEmailAttributes.metricCondition != currentEmailAttributes.metricCondition %}
+                        {{ stage('Alter DMF Alert - Modify Condition') }}
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
+                        MODIFY CONDITION EXISTS
+                        (
+                            SELECT 1
+                            FROM SNOWFLAKE.LOCAL.DATA_QUALITY_MONITORING_RESULTS
+                            WHERE TABLE_DATABASE = '{{ sourceDatabase }}'
+                            AND TABLE_SCHEMA = '{{ sourceSchema }}'
+                            AND TABLE_NAME = '{{ dep.node.name }}'
+                            AND measurement_time > COALESCE
+                            (
+                                    SNOWFLAKE.ALERT.LAST_SUCCESSFUL_SCHEDULED_TIME(),
+                                    DATEADD('hour', -24, CURRENT_TIMESTAMP())
+                            )
+                            AND (
+                                {{ desiredEmailAttributes.metricCondition | join('\n OR') }}
+                            )
+                        )
+
+                        {% set resumeAlert = true %}
+                    {% endif %}
+
+                    {% if desiredEmailAttributes.notfIntegrationName != currentEmailAttributes.notfIntegrationName
+                        or desiredEmailAttributes.emailList != currentEmailAttributes.emailList
+                        or desiredEmailAttributes.emailSubject != currentEmailAttributes.emailSubject
+                        or desiredEmailAttributes.emailBody != currentEmailAttributes.emailBody %}
+
+                        {{ stage('Alter DMF Alert - Modify Action') }}
+                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
+                        MODIFY ACTION
+                        CALL SYSTEM$SEND_EMAIL
+                        (
+                            '{{ desiredEmailAttributes.notfIntegrationName }}',
+                            '{{ desiredEmailAttributes.emailList }}',
+                            '{{ desiredEmailAttributes.emailSubject }}',
+                            $${{ desiredEmailAttributes.emailBody }}$$
+                        )
+                        {% set resumeAlert = true %}
+                    {% endif %}
+                {% endif %}
+
+                {% if resumeAlert %}
+                    {{ stage('Resume Data Quality Alert') }}
+                    ALTER ALERT {{ fullyQualifiedAlertName }} RESUME
+                {% endif %}
+            {% elif currentState.config.emailAlertToggle %}
+                {% set alertName = desiredState.node.name + '_ALERT' %}
+                {% set fullyQualifiedAlertName = ref_no_link(desiredState.node.location.name, alertName) %}
+
+                {{ stage('Drop Data Quality Alert') }}
+                DROP ALERT IF EXISTS {{ fullyQualifiedAlertName }}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
 {%elif currentState != undefined and desiredState == undefined %}
     {%- for dep in currentState.sources[0].dependencies -%}
 
-            {% set fullyQualifiedBaseTableName = ref_raw(dep.node.location.name, dep.node.name) %}
+        {% set fullyQualifiedBaseTableName = ref_raw(dep.node.location.name, dep.node.name) %}
 
-            {# ----- Apply Object Level DMFs -------------------#}
-            {% for dmf in nsCurrentDMFVariables.objectDMFList if nsCurrentDMFVariables.objectDMFList %}
-                {{ stage('Drop Object DMF - ' + dmf) }}
-                ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
-                DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf }}
-                ON ()
-            {% endfor %}
+        {# ----- Apply Object Level DMFs -------------------#}
+        {% for dmf in nsCurrentDMFVariables.objectDMFList if nsCurrentDMFVariables.objectDMFList %}
+            {{ stage('Drop Object DMF - ' + dmf) }}
+            ALTER TABLE {{ fullyQualifiedBaseTableName }} 
+            DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf }}
+            ON ()
+        {% endfor %}
 
-            {# ----- Apply Column Level DMFs -------------------#}
-            {% set tableColumns = currentState.columns | map(attribute='name') | list %}
-    
-            {% for dmf in nsCurrentDMFVariables.columnDMFList | sort(attribute='DMF') %}
-                {% set cols = dmf.COLUMNS | default([]) | sort %}
-                {% if cols is defined and cols | length > 0 %}
-                    {% for col in cols %}
-                        {% if col in tableColumns %}
-                            {{ stage('Drop Column DMF - ' + dmf.DMF + '|' + col) }}
-                            ALTER TABLE {{ fullyQualifiedBaseTableName }}
-                            DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf.DMF }}
-                            ON ({{ col }})
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
+        {# ----- Apply Column Level DMFs -------------------#}
+        {% set tableColumns = currentState.columns | map(attribute='name') | list %}
 
-            {# ----- Apply Custom Column Level DMFs -------------------#}
-            {% if currentState.config.addCustomDMFs %}
-                {% for dmf in nsCurrentDMFVariables.customColumnDMFList %}
-                    {{ stage('Add Custom DMF - ' + dmf.DMF.split("'")[3]) }}
-                    {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
-                    ALTER TABLE {{ fullyQualifiedBaseTableName }}
-                    DROP DATA METRIC FUNCTION {{ fullyQualifiedFunctionName }} 
-                    ON {{ renderCustomDMFArgs(dmf.COLUMNS) }}
+        {% for dmf in nsCurrentDMFVariables.columnDMFList | sort(attribute='DMF') %}
+            {% set cols = dmf.COLUMNS | default([]) | sort %}
+            {% if cols is defined and cols | length > 0 %}
+                {% for col in cols %}
+                    {% if col in tableColumns %}
+                        {{ stage('Drop Column DMF - ' + dmf.DMF + '|' + col) }}
+                        ALTER TABLE {{ fullyQualifiedBaseTableName }}
+                        DROP DATA METRIC FUNCTION SNOWFLAKE.CORE.{{ dmf.DMF }}
+                        ON ({{ col }})
+                    {% endif %}
                 {% endfor %}
             {% endif %}
+        {% endfor %}
+
+        {# ----- Apply Custom Column Level DMFs -------------------#}
+        {% if currentState.config.addCustomDMFs %}
+            {% for dmf in nsCurrentDMFVariables.customColumnDMFList %}
+                {{ stage('Drop Custom DMF - ' + dmf.DMF.split("'")[3]) }}
+                {% set fullyQualifiedFunctionName = ref_no_quotes(dmf.DMF) %}
+                ALTER TABLE {{ fullyQualifiedBaseTableName }}
+                DROP DATA METRIC FUNCTION {{ fullyQualifiedFunctionName }} 
+                ON {{ renderCustomDMFArgs(dmf.COLUMNS) }}
+            {% endfor %}
+        {% endif %}
 
         {{ stage('Unset DMFs Schedule') }}
-        ALTER TABLE {{ref_raw(dep.node.location.name, dep.node.name)}} 
+        ALTER TABLE {{ fullyQualifiedBaseTableName }} 
         UNSET DATA_METRIC_SCHEDULE
 
         {{ stage('Drop Data Quality Result View', true, "sql", "create") }}  
@@ -547,7 +760,7 @@ does not permit copying or modification for any other purpose.
             {% set alertName = currentState.node.name + '_ALERT' %}
             {% set fullyQualifiedAlertName = ref_no_link(currentState.node.location.name, alertName) %}
 
-            {{ stage('Drop Data Quality Email Alert') }}
+            {{ stage('Drop Data Quality Alert') }}
             DROP ALERT IF EXISTS {{ fullyQualifiedAlertName }}
         {% endif %}
 

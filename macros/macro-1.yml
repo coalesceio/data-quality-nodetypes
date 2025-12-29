@@ -1,14 +1,14 @@
 fileVersion: 1
 id: "1"
 macroString: |-
-  {% set packageConfiguration = namespace(universalObjectDmfs=['FRESHNESS'], 
-                                          nullCountUniversalColumns=['ID'], 
-                                          nullPercentUniversalColumns=['ID'],
-                                          blankCountUniversalColumns=[],
-                                          blankPercentUniversalColumns=[],
-                                          duplicateCountUniversalColumns=[],
-                                          uniqueCountUniversalColumns=[],
-                                          freshnessUniversalColumns=[]) %}
+  {% set packageConfiguration = namespace(universalObjectDmfs=['FRESHNESS', 'FRESHNESS'], 
+                                          nullCountUniversalColumns=['ORDER_ID'], 
+                                          nullPercentUniversalColumns=['ORDER_ID'],
+                                          blankCountUniversalColumns=['ORDER_ID'],
+                                          blankPercentUniversalColumns=['ORDER_ID'],
+                                          duplicateCountUniversalColumns=['ORDER_ID'],
+                                          uniqueCountUniversalColumns=['ORDER_ID'],
+                                          freshnessUniversalColumns=['CREATED_DATE']) %}
 
   {%- macro ref_raw(location_name, node_name) -%}
       {%- raw -%}{{ ref('{% endraw %}{{- location_name }}{% raw %}', '{% endraw %}{{ node_name }}{% raw %}') }}{% endraw %}
@@ -195,84 +195,76 @@ macroString: |-
     - DMF_ALERT_WAREHOUSE
     - DMF_ALERT_SCHEDULE
   ==========================================================================---- #}
-  {% macro buildEmailSettings(ns, fullyQualifiedBaseTableName, fullyQualifiedViewName) %}
+  {% macro buildEmailSettings(ns, nodeState, fullyQualifiedBaseTableName, fullyQualifiedViewName) %}
 
-      {% if config.emailAlertToggle %}
+      {% if nodeState.config.emailAlertToggle %}
 
           {% set emailSubject = 'Data Quality Notification: Metric Threshold Exceeded' %}
       
-          {% set use_override = config.overrideEmailAlertToggle %}
+          {% set use_override = nodeState.config.overrideEmailAlertToggle %}
 
           {% set ns.notfIntegrationName =
-              (config.notfIntegrationName if use_override and config.notfIntegrationName | trim
-                  else parameters.DMF_ALERT_INTEGRATION) %}
+              (nodeState.config.notfIntegrationName if use_override and nodeState.config.notfIntegrationName | trim
+                  else nodeState.parameters.DMF_ALERT_INTEGRATION) %}
 
           {% set ns.emailList =
-              (config.emailList if use_override and config.emailList | trim
-                  else parameters.DMF_ALERT_EMAIL) %}
+              (nodeState.config.emailList if use_override and nodeState.config.emailList | trim
+                  else nodeState.parameters.DMF_ALERT_EMAIL) %}
 
           {% set ns.emailSubject =
-              (parameters.DMF_EMAIL_SUBJECT if parameters.DMF_EMAIL_SUBJECT is defined and parameters.DMF_EMAIL_SUBJECT | trim | length > 0 else emailSubject) %}
-
-          {% set ns.alertWarehouse =
-              (config.alertWarehouse if use_override and config.alertWarehouse | trim
-                  else parameters.DMF_ALERT_WAREHOUSE) %}
-
-          {% set ns.alertFrequency =
-              (config.alertFrequency if use_override and config.alertFrequency | trim
-                  else parameters.DMF_ALERT_SCHEDULE) %}
+              (nodeState.parameters.DMF_EMAIL_SUBJECT if nodeState.parameters.DMF_EMAIL_SUBJECT is defined and nodeState.parameters.DMF_EMAIL_SUBJECT | trim | length > 0 else emailSubject) %}
 
           {# =================================== Trigger Metrics ========================================---- #}
 
-          {% if config.nullCntTrigger %}
+          {% if nodeState.config.nullCntTrigger %}
               {% set metricName = 'NULL_COUNT' %}
               {% set ns.metricCondition = ns.metricCondition + ["(metric_name = '" ~ metricName ~ "' AND value > 0)"] %}
           {% endif %}
 
-          {% if config.nullPrcntTrigger %}
-              {% set metricName = 'NULL_COUNT' %}
+          {% if nodeState.config.nullPrcntTrigger %}
+              {% set metricName = 'NULL_PERCENT' %}
               {% set ns.metricCondition = ns.metricCondition + [
-                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ config.nullPrcntThreshold ~ ")"
+                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ nodeState.config.nullPrcntThreshold ~ ")"
               ] %}
           {% endif %}
 
-          {% if config.blankCntTrigger %}
+          {% if nodeState.config.blankCntTrigger %}
               {% set metricName = 'BLANK_COUNT' %}
               {% set ns.metricCondition = ns.metricCondition + ["(metric_name = '" ~ metricName ~ "' AND value > 0)"] %}
           {% endif %}
 
-          {% if config.blankPrcntTrigger %}
+          {% if nodeState.config.blankPrcntTrigger %}
               {% set metricName = 'BLANK_PERCENT' %}
               {% set ns.metricCondition = ns.metricCondition + [
-                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ config.blankPrcntThreshold ~ ")"
+                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ nodeState.config.blankPrcntThreshold ~ ")"
               ] %}
           {% endif %}
 
-          {% if config.dupCntTrigger %}
+          {% if nodeState.config.dupCntTrigger %}
               {% set metricName = 'DUPLICATE_COUNT' %}
               {% set ns.metricCondition = ns.metricCondition + ["(metric_name = '" ~ metricName ~ "' AND value > 0)"] %}
           {% endif %}
 
-          {% if config.freshTrigger %}
+          {% if nodeState.config.freshTrigger %}
               {% set metricName = 'FRESHNESS' %}
               {% set ns.metricCondition = ns.metricCondition + [
-                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ config.freshThreshold ~ " * 3600 )"
+                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ nodeState.config.freshThreshold ~ " * 3600 )"
               ] %}
           {% endif %}
 
           {# =================================== Construct Email Body ========================================---- #}
 
-          {% set breachQuery = "SELECT METRIC_NAME, VALUE, MEASUREMENT_TIME\nFROM " ~ fullyQualifiedViewName ~ "\nWHERE " ~ ns.metricCondition | join(" OR ") ~ "\nORDER BY measurement_time DESC;" %}
+          {% set breachQuery = "SELECT METRIC_NAME, ARGUMENT_NAMES, VALUE, MEASUREMENT_TIME\nFROM " ~ fullyQualifiedViewName ~ "\nWHERE " ~ ns.metricCondition | join(" OR ") ~ "\nORDER BY measurement_time DESC;" %}
 
           {% set emailBody = "Monitored Data Quality Metric for "
                               ~ fullyQualifiedBaseTableName ~
                               " has moved outside of its expected range. \n\nPlease review the Data Quality Monitoring Results View - "
                               ~ fullyQualifiedViewName ~
-                              " for details. \n\nUse the following query to view the exact metrics that exceeded thresholds: \n"
+                              " for details. \n\nUse the following query to view the exact metrics that exceeded thresholds: \n\n"
                               ~ breachQuery %}
 
-          {% if parameters.DMF_EMAIL_BODY is defined and parameters.DMF_EMAIL_BODY | trim | length > 0 %}
-              {% set ns.emailBody = parameters.DMF_EMAIL_BODY %}
+          {% if nodeState.parameters.DMF_EMAIL_BODY is defined and nodeState.parameters.DMF_EMAIL_BODY | trim | length > 0 %}
+              {% set ns.emailBody = nodeState.parameters.DMF_EMAIL_BODY %}
           {% else %}
                {% set ns.emailBody = emailBody %}
           {% endif %}
@@ -299,7 +291,7 @@ macroString: |-
   {% macro renderCustomDMFArgs(elements) %}
       (
       {% for elem in elements %}
-          {% set obj = elem.object.replace('<', '').replace('>', '') | trim %}
+          {% set obj = elem.table.replace('<', '').replace('>', '') | trim %}
 
           {% if obj and obj != '<>' %}
               TABLE (
@@ -307,7 +299,7 @@ macroString: |-
               (
           {% endif %}
 
-          {% for col in elem.cols %}
+          {% for col in elem.column %}
               {{ col.replace('<', '').replace('>', '') }}{% if not loop.last %}, {% endif %}
           {% endfor %}
 
