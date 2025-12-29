@@ -650,9 +650,6 @@ does not permit copying or modification for any other purpose.
 
                     {% if emailAttributes.metricCondition | length > 0 %}
 
-                        {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
-
                         {{ stage('Create Data Quality Email Alert') }}
                         CREATE OR REPLACE ALERT {{ fullyQualifiedAlertName }}
                         WAREHOUSE = {{ alertWarehouse }}
@@ -704,15 +701,16 @@ does not permit copying or modification for any other purpose.
 
                     {% if desiredAlertWarehouse != currentAlertWarehouse or desiredAlertFrequency != currentAlertFrequency %}
 
-                        {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
+                        {% if resumeAlert == false %}
+                            {{ stage('Suspend Data Quality Email Alert') }}
+                            ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
+                            {% set resumeAlert = true %}
+                        {% endif %}
 
                         {{ stage('Alter DMF Email Alert - Set Warehouse/Schedule') }}
                         ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
                         SET WAREHOUSE = {{ desiredAlertWarehouse }},
                             SCHEDULE = '{{ desiredAlertFrequency }}'
-
-                        {% set resumeAlert = true %}
 
                     {% endif %}
 
@@ -725,8 +723,11 @@ does not permit copying or modification for any other purpose.
 
                     {% if desiredEmailAttributes.metricCondition != currentEmailAttributes.metricCondition %}
 
-                        {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
+                        {% if resumeAlert == false %}
+                            {{ stage('Suspend Data Quality Email Alert') }}
+                            ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
+                            {% set resumeAlert = true %}
+                        {% endif %}
 
                         {{ stage('Alter DMF Email Alert - Modify Condition') }}
                         ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
@@ -746,8 +747,6 @@ does not permit copying or modification for any other purpose.
                                 {{ desiredEmailAttributes.metricCondition | join('\n OR') }}
                             )
                         )
-
-                        {% set resumeAlert = true %}
                     {% endif %}
 
                     {% if desiredEmailAttributes.notfIntegrationName != currentEmailAttributes.notfIntegrationName
@@ -755,8 +754,11 @@ does not permit copying or modification for any other purpose.
                         or desiredEmailAttributes.emailSubject != currentEmailAttributes.emailSubject
                         or desiredEmailAttributes.emailBody != currentEmailAttributes.emailBody %}
 
-                        {{ stage('Suspend Data Quality Email Alert') }}
-                        ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
+                        {% if resumeAlert == false %}
+                            {{ stage('Suspend Data Quality Email Alert') }}
+                            ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }} SUSPEND
+                            {% set resumeAlert = true %}
+                        {% endif %}
 
                         {{ stage('Alter DMF Email Alert - Modify Action') }}
                         ALTER ALERT IF EXISTS {{ fullyQualifiedAlertName }}
@@ -768,7 +770,6 @@ does not permit copying or modification for any other purpose.
                             '{{ desiredEmailAttributes.emailSubject }}',
                             $${{ desiredEmailAttributes.emailBody }}$$
                         )
-                        {% set resumeAlert = true %}
                     {% endif %}
                 {% endif %}
 
