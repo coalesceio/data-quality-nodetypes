@@ -4,10 +4,13 @@ name: DMFS_FINAL_TEST_DMF
 operation:
   config:
     addCustomDMFs: false
-    addcolumnleveldmfs: false
+    addcolumnleveldmfs: true
     adddmfs:
       items:
-        - {}
+        - columnNameExpressions:
+            columnCounter: 0e146e50-b052-40d9-acae-d88cc382d4cd
+            stepCounter: 8d770523-7581-4b4d-9032-714d6f48282f
+          system_dmfs: MAX
     adddmfsobject:
       items:
         - {}
@@ -24,7 +27,7 @@ operation:
     emailAlertToggle: true
     emailList: ""
     freshThreshold: 24
-    freshTrigger: true
+    freshTrigger: false
     notfIntegrationName: ""
     nullCntTrigger: true
     nullPrcntThreshold: 5
@@ -32,7 +35,7 @@ operation:
     overrideEmailAlertToggle: false
     scheduleCRON: ""
     schedulePeriod: "60"
-    schedulePeriodOption: Minutes
+    schedulePeriodOption: TRIGGER_ON_CHANGES
     universalColumnBlankCountDMF: false
     universalColumnBlankCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
@@ -64,7 +67,7 @@ operation:
        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.nullCountUniversalColumns[]
-    universalColumnNullPercentDMF: false
+    universalColumnNullPercentDMF: true
     universalColumnNullPercentDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
