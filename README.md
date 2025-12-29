@@ -43,7 +43,8 @@ The Work node type has seven configuration groups:
 * [Custom DMFs](#custom-DMFs)
 * [Alerting Options](#alerting-options)
 
-![Screenshot 2025-03-31 at 1 30 49 PM](https://github.com/user-attachments/assets/b3a0a8b9-d185-45b3-86b4-e7546505b7ac)
+<img width="472" height="387" alt="config" src="https://github.com/user-attachments/assets/0bf52813-c27a-4c75-baa8-ad76163eaeee" />
+
 
 #### Node Properties
 
