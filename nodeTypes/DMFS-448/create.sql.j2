@@ -454,7 +454,7 @@ does not permit copying or modification for any other purpose.
                     {% set alertName = desiredState.node.name + '_ALERT' %}
                     {% set fullyQualifiedAlertName = ref_no_link(desiredState.node.location.name, alertName) %}
 
-                    {{ stage('Create Data Quality Email Alert') }}
+                    {{ stage('Create Data Quality Email Alert', true, "sql", "create") }}
                     CREATE OR REPLACE ALERT {{ fullyQualifiedAlertName }}
                     WAREHOUSE = {{ alertWarehouse }}
                     SCHEDULE = '{{ alertFrequency }}'
