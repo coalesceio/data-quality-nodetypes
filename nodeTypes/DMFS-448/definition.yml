@@ -64,8 +64,9 @@ metadata:
         attributeName: universalObjectDmfsList
         type: textBox
         default: "
-          -- This field is auto-populated from the Package Configuration.\n
-          -- To edit, update the below Config\n
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
           packageConfiguration.universalObjectDmfs[]"
         isRequired: false
         syntax: sql
@@ -93,6 +94,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.nullCountUniversalColumns[]"
         isRequired: false
@@ -113,6 +115,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.nullPercentUniversalColumns[]"
         isRequired: false
@@ -133,6 +136,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.blankCountUniversalColumns[]"
         isRequired: false
@@ -153,6 +157,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.blankPercentUniversalColumns[]"
         isRequired: false
@@ -173,6 +178,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.duplicateCountUniversalColumns[]"
         isRequired: false
@@ -193,6 +199,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.uniqueCountUniversalColumns[]"
         isRequired: false
@@ -213,6 +220,7 @@ metadata:
         syntax: sql
         default: "
         -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
         -- To edit, update the below Config in Package Configuration.\n
         packageConfiguration.freshnessUniversalColumns[]"
         isRequired: false
