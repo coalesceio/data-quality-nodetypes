@@ -773,7 +773,7 @@ does not permit copying or modification for any other purpose.
         {% endfor %}
     {% endif %}
 
-{%elif desiredState == undefined %}
+{% elif currentState != undefined and desiredState == undefined %}
     {%- for dep in currentState.sources[0].dependencies -%}
 
         {% set fullyQualifiedBaseTableName = ref_raw(dep.node.location.name, dep.node.name) %}
