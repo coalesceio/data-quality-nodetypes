@@ -1,6 +1,6 @@
 fileVersion: 1
 id: 9f8d526b-8769-4d5e-a033-03dcd23e36dd
-name: DMFS_FINAL_TEST_DMF
+name: DMFS_FINAL_TEST_DMF_1
 operation:
   config:
     addCustomDMFs: false
@@ -258,9 +258,9 @@ operation:
             nodeName: FINAL_TEST_DMF
         join:
           joinCondition: FROM {{ ref('SOURCE', 'FINAL_TEST_DMF') }} "FINAL_TEST_DMF"
-        name: DMFS_FINAL_TEST_DMF
+        name: DMFS_FINAL_TEST_DMF_1
         noLinkRefs: []
-  name: DMFS_FINAL_TEST_DMF
+  name: DMFS_FINAL_TEST_DMF_1
   overrideSQL: false
   schema: ""
   sqlType: "448"
