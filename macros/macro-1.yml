@@ -317,11 +317,13 @@ macroString: |-
   {# ==========================================================================--
   Macro: ref_no_quotes
 
-  Purpose: Resolves a ref()-style argument into a fully qualified database object name by mapping the location and node name using nodeMetadata.
+  Purpose: Resolves a ref()-style argument into a fully qualified database object 
+  name by mapping the location and node name using nodeMetadata.
 
   Arguments: arg - A string containing a reference in the format ref('LOCATION_NAME', 'NODE_NAME').
 
-  Returns: A fully qualified object name in the format: "database"."schema".NODE_NAME based on the matching locationName in nodeMetadata.mapping.
+  Returns: A fully qualified object name in the format: database.schema.NODE_NAME
+   based on the matching locationName in nodeMetadata.mapping. (No quotes)
   ==========================================================================-- #}
   {%- macro ref_no_quotes(arg) -%}
 
@@ -334,5 +336,48 @@ macroString: |-
           {%- endif -%}
       {%- endfor -%}
   {%- endmacro -%}
+
+  {#=======================================================================
+  Purpose: Parse custom DMF arguments defined as a multiline string and transform them 
+  into a structured list of tables with their associated columns for 
+  custom column-level DMF processing.
+
+  Input: Multiline string containing table and column definitions, where each 
+  table entry may be followed by one or more column entries.
+
+  Output: List of table objects, each containing a table name and a list of
+  associated column names, ready to be used in custom DMF configuration logic.
+  ===========================================================================#}
+  {% macro parseCustomDMFArgs(customDMFArgs, ns) %}
+      {% set ns.elements = [] %}
+      {% set ns.current = None %}
+
+      {% for line in customDMFArgs.split('\n') %}
+          {% set l = line.strip() %}
+
+          {% if l.startswith('- table') %}
+              {% if ns.current %}
+                  {% set ns.elements = ns.elements + [ns.current] %}
+              {% endif %}
+
+              {% set table_name = l.split(':')[1].replace('"', '').strip() %}
+              {% set ns.current = {
+                  'table': table_name,
+                  'column': []
+              } %}
+          {% elif l.startswith('- column:') and ns.current %}
+              {% set col = l.split(':')[1].replace('"', '').strip() %}
+              {% set ns.current = {
+                  'table': ns.current.table,
+                  'column': ns.current.column + [col]
+              } %}
+          {% endif %}
+      {% endfor %}
+
+      {% if ns.current %}
+          {% set ns.elements = ns.elements + [ns.current] %}
+      {% endif %}
+
+  {% endmacro %}
 name: macro
 type: Macro

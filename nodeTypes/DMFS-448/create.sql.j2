@@ -145,40 +145,15 @@ does not permit copying or modification for any other purpose.
     {% if currentState.config.addCustomDMFs %}
         {% for item in currentState.config.customDMFsConfig.get('items') %}
 
-            {% set args = namespace(elements=[], current=None) %}
+            {% set parsedColumns = namespace(elements=[], current=None) %}
+            {{ parseCustomDMFArgs(item.customDMFArgs, parsedColumns) }}
 
-            {% for line in item.customDMFArgs.split('\n') %}
-                {% set l = line.strip() %}
-
-                {% if l.startswith('- table') %}
-                    {% if args.current %}
-                        {% set args.elements = args.elements + [args.current] %}
-                    {% endif %}
-
-                    {% set obj = l.split(':')[1].replace('"', '').strip() %}
-                    {% set args.current = {
-                        'table': obj,
-                        'column': []
-                    } %}
-                {% endif %}
-
-                {% if l.startswith('- column:') and args.current %}
-                    {% set col = l.split(':')[1].replace('"', '').strip() %}
-                    {% set args.current = {
-                        'table': args.current.table,
-                        'column': (args.current.column | default([])) + [col]
-                    } %}
-                {% endif %}
-            {% endfor %}
-
-            {% if args.current %}
-                {% set args.elements = args.elements + [args.current] %}
-            {% endif %}
-
-            {% set nsCurrentDMFVariables.customColumnDMFList = nsCurrentDMFVariables.customColumnDMFList + [{
-                'DMF': item.customDMFName.replace('<', '').replace('>', ''),
-                'COLUMNS': args.elements
-            }] %}
+            {% set nsCurrentDMFVariables.customColumnDMFList =
+                nsCurrentDMFVariables.customColumnDMFList + [{
+                    'DMF': item.customDMFName.replace('<', '').replace('>', ''),
+                    'COLUMNS': parsedColumns.elements
+                }]
+            %}
 
         {% endfor %}
     {% endif %}
@@ -318,43 +293,18 @@ does not permit copying or modification for any other purpose.
     {% endfor %}
 
     {#------ Build Dictionary of All Custom Column Level DMF -------#}
-    {% if desiredState.config.addCustomDMFs%}
+    {% if desiredState.config.addCustomDMFs %}
         {% for item in desiredState.config.customDMFsConfig.get('items') %}
 
-            {% set args = namespace(elements=[], current=None) %}
+            {% set parsedColumns = namespace(elements=[], current=None) %}
+            {{ parseCustomDMFArgs(item.customDMFArgs, parsedColumns) }}
 
-            {% for line in item.customDMFArgs.split('\n') %}
-                {% set l = line.strip() %}
-
-                {% if l.startswith('- table') %}
-                    {% if args.current %}
-                        {% set args.elements = args.elements + [args.current] %}
-                    {% endif %}
-
-                    {% set obj = l.split(':')[1].replace('"', '').strip() %}
-                    {% set args.current = {
-                        'table': obj,
-                        'column': []
-                    } %}
-                {% endif %}
-
-                {% if l.startswith('- column:') and args.current %}
-                    {% set col = l.split(':')[1].replace('"', '').strip() %}
-                    {% set args.current = {
-                        'table': args.current.table,
-                        'column': (args.current.column | default([])) + [col]
-                    } %}
-                {% endif %}
-            {% endfor %}
-
-            {% if args.current %}
-                {% set args.elements = args.elements + [args.current] %}
-            {% endif %}
-
-            {% set nsDesiredDMFVariables.customColumnDMFList = nsDesiredDMFVariables.customColumnDMFList + [{
-                'DMF': item.customDMFName.replace('<', '').replace('>', ''),
-                'COLUMNS': args.elements
-            }] %}
+            {% set nsDesiredDMFVariables.customColumnDMFList =
+                nsDesiredDMFVariables.customColumnDMFList + [{
+                    'DMF': item.customDMFName.replace('<', '').replace('>', ''),
+                    'COLUMNS': parsedColumns.elements
+                }]
+            %}
 
         {% endfor %}
     {% endif %}
