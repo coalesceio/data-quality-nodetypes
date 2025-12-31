@@ -187,8 +187,17 @@ Optional Snowflake ALERT creation that sends notifications when data quality iss
 
 <img width="727" height="516" alt="Overrdide" src="https://github.com/user-attachments/assets/4cd57613-a663-4986-b3db-05c4fb61bdd8" />
 
-**Override Parameters**
-<img width="1087" height="257" alt="override-parameter" src="https://github.com/user-attachments/assets/75c37421-2ed4-46f4-901d-42ad5a8add9a" />
+**Alert Parameters**
+```sql
+{
+    "DMF_ALERT_INTEGRATION": "my_email_integration",
+    "DMF_ALERT_EMAIL": "xxxxxxxxxx@xxxxx.xxx",
+    "DMF_ALERT_WAREHOUSE": "COMPUTE_WH",
+    "DMF_ALERT_SCHEDULE": "90 MINUTE",
+    "DMF_EMAIL_BODY": "",
+    "DMF_EMAIL_SUBJECT": ""
+}
+```
 
 ### DMF Deployment
 
