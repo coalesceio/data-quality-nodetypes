@@ -135,7 +135,31 @@ Custom DMFs in Snowflake allow you to define your own data quality checks using 
 
 #### Alerting Options
 
-Optional Snowflake ALERT creation that sends notifications when data quality issues are detected. More abouit Alerting [please refer this documentation.](https://docs.snowflake.com/en/guides-overview-alerts)
+Optional Snowflake ALERT creation that sends notifications when data quality issues are detected. More about Alerting [please refer this documentation.](https://docs.snowflake.com/en/guides-overview-alerts)
+
+**Prerequisites**
+<br/>
+1. Notification Integration (Required for Alerting):
+
+    Users must create a notification integration before enabling alerts:
+
+    ```sql
+    CREATE NOTIFICATION INTEGRATION my_email_integration
+    TYPE = EMAIL
+    ENABLED = TRUE
+    ALLOWED_RECIPIENTS = ('user@company.com');
+    ```
+2. Required Privileges for Alerting:
+
+    CREATE ALERT on the schema<br/>
+    EXECUTE ALERT privilege<br/>
+    USAGE on the notification integration<br/>
+    USAGE on the alert warehouse<br/>
+
+3. Compute Cost Consideration:
+
+    Alerts require a warehouse to evaluate conditions. Frequent schedules across many DMFS nodes will incur compute costs. Default schedule is set to 60 minutes to balance responsiveness with cost.
+
 
 | **Property** | **Description** |
 |----------|-------------|
