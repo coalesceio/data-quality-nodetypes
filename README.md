@@ -73,7 +73,8 @@ When the universal toggle and the column-level universal toggle are enabled, pac
 **Package Config Settings:**
 
 ```sql
-{% set packageConfiguration = namespace(
+{% set packageConfiguration = namespace
+    (
         universalObjectDmfs=['ROW_COUNT', 'FRESHNESS'], 
         nullCountUniversalColumns=[], 
         nullPercentUniversalColumns=[],
@@ -81,7 +82,9 @@ When the universal toggle and the column-level universal toggle are enabled, pac
         blankPercentUniversalColumns=[],
         duplicateCountUniversalColumns=[],
         uniqueCountUniversalColumns=[],
-        freshnessUniversalColumns=[]) %}
+        freshnessUniversalColumns=[]
+    )
+%}
 ```
 
 <img width="597" height="492" alt="universalDMF" src="https://github.com/user-attachments/assets/813d6edc-40c8-4804-9916-bb5c594fcf11" />
