@@ -11,13 +11,17 @@ operation:
             columnCounter: bf544937-3c8b-4440-bdae-003e93a88bae
             stepCounter: 35d43856-ced7-427a-81eb-eb498dc8aa08
           system_dmfs: NULL_COUNT
+        - columnNameExpressions:
+            columnCounter: 1ae5c593-e5a7-4ad7-b33e-95316ed1746c
+            stepCounter: 35d43856-ced7-427a-81eb-eb498dc8aa08
+          system_dmfs: AVG
     adddmfsobject:
       items:
-        - system_dmfs_object: FRESHNESS
+        - system_dmfs_object: ROW_COUNT
     addobjectleveldmfs: true
     alertFrequency: 60
     alertWarehouse: ""
-    blankCntTrigger: false
+    blankCntTrigger: true
     blankPrcntThreshold: 5
     blankPrcntTrigger: false
     customDMFsConfig:
@@ -40,7 +44,7 @@ operation:
     scheduleCRON: ""
     schedulePeriod: "60"
     schedulePeriodOption: Minutes
-    universalColumnBlankCountDMF: false
+    universalColumnBlankCountDMF: true
     universalColumnBlankCountDMFList: |2-
        -- This field is auto-populated from the Package Configuration.
        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
