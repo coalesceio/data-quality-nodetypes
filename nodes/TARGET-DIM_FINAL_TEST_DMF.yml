@@ -12,7 +12,7 @@ operation:
         - columnNameExpressions:
             columnCounter: 7237149a-bb4c-4a99-b1e0-9f024b185a3a
             stepCounter: 8c3c5628-d3bd-4d01-a331-0e506ccf0110
-          sqlExpression: ex. trunc("<column_name>", -5)
+          sqlExpression: ORDER_ID
     clusterKeyExpressions: true
     customZeroKeyValues:
       items:

@@ -23,13 +23,6 @@ operation:
             - table (Required): 
                 - column: <ORDER_ID>
           customDMFName: ref('<SOURCE>', '<ROW_NULL_COUNT>')
-        - customDMFArgs: |
-            - table (Required): 
-                - column: <ID>
-                
-            - table (Optional): {{ref('<TARGET>', '<V_PRODUCTS>')}}
-                - column: <PRODUCT_ID>
-          customDMFName: ref('<SOURCE>', '<check_open_products>')
         - customDMFArgs: |+
             - table (Required): 
                 - column: <ID>
