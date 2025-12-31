@@ -171,5 +171,203 @@ macroString: |-
       {{ nsVariables.ibcoldatatype }}
    
   {% endmacro %}
+
+  {# ==========================================================================--
+    Builds email alert settings for DMF notifications.
+
+    Behavior:
+    - Runs only when emailAlertToggle is enabled
+    - Uses config values when overrideEmailAlertToggle is true and values are provided
+    - Falls back to workspace / environment parameters otherwise
+
+    Expected parameters:
+    - DMF_ALERT_INTEGRATION
+    - DMF_ALERT_EMAIL
+    - DMF_ALERT_WAREHOUSE
+    - DMF_ALERT_SCHEDULE
+  ==========================================================================---- #}
+  {% macro buildEmailSettings(ns, nodeState, fullyQualifiedBaseTableName, fullyQualifiedViewName) %}
+
+      {% if nodeState.config.emailAlertToggle %}
+
+          {% set emailSubject = 'Data Quality Notification: Metric Threshold Exceeded' %}
+      
+          {% set use_override = nodeState.config.overrideEmailAlertToggle %}
+
+          {% set ns.notfIntegrationName =
+              (nodeState.config.notfIntegrationName if use_override and nodeState.config.notfIntegrationName | trim
+                  else nodeState.parameters.DMF_ALERT_INTEGRATION) %}
+
+          {% set ns.emailList =
+              (nodeState.config.emailList if use_override and nodeState.config.emailList | trim
+                  else nodeState.parameters.DMF_ALERT_EMAIL) %}
+
+          {% set ns.emailSubject =
+              (nodeState.parameters.DMF_EMAIL_SUBJECT if nodeState.parameters.DMF_EMAIL_SUBJECT is defined and nodeState.parameters.DMF_EMAIL_SUBJECT | trim | length > 0 else emailSubject) %}
+
+          {# =================================== Trigger Metrics ========================================---- #}
+
+          {% if nodeState.config.nullCntTrigger %}
+              {% set metricName = 'NULL_COUNT' %}
+              {% set ns.metricCondition = ns.metricCondition + ["(metric_name = '" ~ metricName ~ "' AND value > 0)"] %}
+          {% endif %}
+
+          {% if nodeState.config.nullPrcntTrigger %}
+              {% set metricName = 'NULL_PERCENT' %}
+              {% set ns.metricCondition = ns.metricCondition + [
+                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ nodeState.config.nullPrcntThreshold ~ ")"
+              ] %}
+          {% endif %}
+
+          {% if nodeState.config.blankCntTrigger %}
+              {% set metricName = 'BLANK_COUNT' %}
+              {% set ns.metricCondition = ns.metricCondition + ["(metric_name = '" ~ metricName ~ "' AND value > 0)"] %}
+          {% endif %}
+
+          {% if nodeState.config.blankPrcntTrigger %}
+              {% set metricName = 'BLANK_PERCENT' %}
+              {% set ns.metricCondition = ns.metricCondition + [
+                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ nodeState.config.blankPrcntThreshold ~ ")"
+              ] %}
+          {% endif %}
+
+          {% if nodeState.config.dupCntTrigger %}
+              {% set metricName = 'DUPLICATE_COUNT' %}
+              {% set ns.metricCondition = ns.metricCondition + ["(metric_name = '" ~ metricName ~ "' AND value > 0)"] %}
+          {% endif %}
+
+          {% if nodeState.config.freshTrigger %}
+              {% set metricName = 'FRESHNESS' %}
+              {% set ns.metricCondition = ns.metricCondition + [
+                  "(metric_name = '" ~ metricName ~ "' AND value > " ~ nodeState.config.freshThreshold ~ " * 3600 )"
+              ] %}
+          {% endif %}
+
+          {# =================================== Construct Email Body ========================================---- #}
+
+          {% set breachQuery = "SELECT METRIC_NAME, ARGUMENT_NAMES, VALUE, MEASUREMENT_TIME\nFROM " ~ fullyQualifiedViewName ~ "\nWHERE " ~ ns.metricCondition | join(" OR ") ~ "\nORDER BY measurement_time DESC;" %}
+
+          {% set emailBody = "Monitored Data Quality Metric for "
+                              ~ fullyQualifiedBaseTableName ~
+                              " has moved outside of its expected range. \n\nPlease review the Data Quality Monitoring Results View - "
+                              ~ fullyQualifiedViewName ~
+                              " for details. \n\nUse the following query to view the exact metrics that exceeded thresholds: \n\n"
+                              ~ breachQuery %}
+
+          {% if nodeState.parameters.DMF_EMAIL_BODY is defined and nodeState.parameters.DMF_EMAIL_BODY | trim | length > 0 %}
+              {% set ns.emailBody = nodeState.parameters.DMF_EMAIL_BODY %}
+          {% else %}
+               {% set ns.emailBody = emailBody %}
+          {% endif %}
+
+      {% endif %}
+
+  {% endmacro %}
+
+  {# ==========================================================================--
+   Renders the argument list for a Data Metric Function (DMF).
+
+   - Supports both column-only arguments and table-based arguments.
+   - If `object` is provided and not '<>', arguments are wrapped as:
+         TABLE ( <object> ( <col1>, <col2>, ... ) )
+   - If `object` is empty or '<>', columns are rendered directly.
+   - Ensures correct comma placement between argument groups.
+
+   Input structure:
+     elements = [
+       { object: 'TABLE_NAME', cols: ['COL1', 'COL2'] },
+       { object: '<>', cols: ['COL3'] }
+     ]
+  ==========================================================================---- #}
+  {% macro renderCustomDMFArgs(elements) %}
+      (
+      {% for elem in elements %}
+          {% set obj = elem.table.replace('<', '').replace('>', '') | trim %}
+
+          {% if obj and obj != '<>' %}
+              TABLE (
+              {{ obj }}
+              (
+          {% endif %}
+
+          {% for col in elem.column %}
+              {{ col.replace('<', '').replace('>', '') }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+
+          {% if obj and obj != '<>' %}
+              )
+              )
+          {% endif %}
+
+          {% if not loop.last %}, {% endif %}
+      {% endfor %}
+      )
+  {% endmacro %}
+
+  {# ==========================================================================--
+  Macro: ref_no_quotes
+
+  Purpose: Resolves a ref()-style argument into a fully qualified database object 
+  name by mapping the location and node name using nodeMetadata.
+
+  Arguments: arg - A string containing a reference in the format ref('LOCATION_NAME', 'NODE_NAME').
+
+  Returns: A fully qualified object name in the format: database.schema.NODE_NAME
+   based on the matching locationName in nodeMetadata.mapping. (No quotes)
+  ==========================================================================-- #}
+  {%- macro ref_no_quotes(arg) -%}
+
+      {% set location_name = arg.split("'")[1] %}
+      {% set node_name = arg.split("'")[3] %}
+
+      {%- for storage in nodeMetadata.mapping -%}
+          {%- if nodeMetadata.mapping[storage].locationName == location_name -%}
+              {{- nodeMetadata.mapping[storage].database -}}.{{- nodeMetadata.mapping[storage].schema -}}.{{- node_name -}}
+          {%- endif -%}
+      {%- endfor -%}
+  {%- endmacro -%}
+
+  {#=======================================================================
+  Purpose: Parse custom DMF arguments defined as a multiline string and transform them 
+  into a structured list of tables with their associated columns for 
+  custom column-level DMF processing.
+
+  Input: Multiline string containing table and column definitions, where each 
+  table entry may be followed by one or more column entries.
+
+  Output: List of table objects, each containing a table name and a list of
+  associated column names, ready to be used in custom DMF configuration logic.
+  ===========================================================================#}
+  {% macro parseCustomDMFArgs(customDMFArgs, ns) %}
+      {% set ns.elements = [] %}
+      {% set ns.current = None %}
+
+      {% for line in customDMFArgs.split('\n') %}
+          {% set l = line.strip() %}
+
+          {% if l.startswith('- table') %}
+              {% if ns.current %}
+                  {% set ns.elements = ns.elements + [ns.current] %}
+              {% endif %}
+
+              {% set table_name = l.split(':')[1].replace('"', '').strip() %}
+              {% set ns.current = {
+                  'table': table_name,
+                  'column': []
+              } %}
+          {% elif l.startswith('- column:') and ns.current %}
+              {% set col = l.split(':')[1].replace('"', '').strip() %}
+              {% set ns.current = {
+                  'table': ns.current.table,
+                  'column': ns.current.column + [col]
+              } %}
+          {% endif %}
+      {% endfor %}
+
+      {% if ns.current %}
+          {% set ns.elements = ns.elements + [ns.current] %}
+      {% endif %}
+
+  {% endmacro %}
 name: macro
 type: Macro

@@ -4,8 +4,11 @@ name: DMFS_FRUITINVENTORY
 operation:
   config:
     addCustomcolumnleveldmfs: false
+    addCustomdmfsobject:
+      items:
+        - custom_dmfs_object: NULL_COUNT
     addCustomobjectleveldmfs: false
-    addcolumnleveldmfs: true
+    addcolumnleveldmfs: false
     adddmfs:
       items:
         - columnNameExpressions:

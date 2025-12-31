@@ -14,13 +14,17 @@ operation:
       items:
         - custom_dmfs_object: MISSING_SCENARIO_SNAPSHOT_CHECK
     addCustomobjectleveldmfs: true
-    addcolumnleveldmfs: true
+    addcolumnleveldmfs: false
     adddmfs:
       items:
         - columnNameExpressions:
             columnCounter: ad7220ac-8d16-46a1-90b9-997f31c5c3fb
             stepCounter: 351c040a-61ee-495b-9f41-d678b9375809
           system_dmfs: STDDEV
+        - columnNameExpressions:
+            columnCounter: 6c0c6679-6d98-4b0f-960a-b688cc532b9a
+            stepCounter: 351c040a-61ee-495b-9f41-d678b9375809
+          system_dmfs: NULL_COUNT
     adddmfsobject:
       items:
         - system_dmfs_object: ROW_COUNT

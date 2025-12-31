@@ -8,7 +8,7 @@ metadata:
     capitalized: Advance Deploy DMFS
     short: DMFS
     tagColor: gray
-    plural: New Types
+    plural: Data Metric Functions
     deployStrategy: advanced
 
     config:
@@ -16,7 +16,7 @@ metadata:
     - groupName: Scheduling Options
       items:
      
-    # Way to schedule the task to run #
+        # Way to schedule the task to run #
      
       - displayName: Schedule Options
         attributeName: schedulePeriodOption
@@ -42,6 +42,190 @@ metadata:
         isRequired: false
         enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
 
+    - groupName: Universal DMFs
+      items:
+
+        # packageConfiguration - Edit package configuration to set default values #
+
+      - type: toggleButton
+        attributeName: universalDmfs
+        displayName: 'Enable Universal DMFs'
+        default: true
+        isRequired: false
+
+      - type: toggleButton
+        attributeName: universalObjectDmfs
+        displayName: 'Enable Universal Object Level DMFs'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: Object Level DMFs List
+        attributeName: universalObjectDmfsList
+        type: textBox
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+          packageConfiguration.universalObjectDmfs[]"
+        isRequired: false
+        syntax: sql
+        enableIf: "{% if config.universalObjectDmfs and config.universalDmfs %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: universalColumnDmfs
+        displayName: 'Enable Universal Column Level DMFs'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs %} true {% else %} false {% endif %}"
+
+        #-------- Apply NULL_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnNullCountDMF
+        displayName: 'Apply NULL_COUNT'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: NULL_COUNT Column List
+        attributeName: universalColumnNullCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.nullCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply NULL_PERCENT DMF to selected columns --------#
+
+      - type: toggleButton
+        attributeName: universalColumnNullPercentDMF
+        displayName: Apply NULL_PERCENT
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: NULL_PERCENT Column List
+        attributeName: universalColumnNullPercentDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.nullPercentUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnNullPercentDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply BLANK_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnBlankCountDMF
+        displayName: 'Apply BLANK_COUNT'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: BLANK_COUNT Column List
+        attributeName: universalColumnBlankCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.blankCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnBlankCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply BLANK_PERCENT DMF to selected columns --------#
+
+      - type: toggleButton
+        attributeName: universalColumnBlankPercentDMF
+        displayName: Apply BLANK_PERCENT
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: BLANK_PERCENT Column List
+        attributeName: universalColumnBlankPercentDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.blankPercentUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnBlankPercentDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply DUPLICATE_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnDuplicateCountDMF
+        displayName: 'Apply DUPLICATE_COUNT'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: DUPLICATE_COUNT Column List
+        attributeName: universalColumnDuplicateCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.duplicateCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnDuplicateCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply UNIQUE_COUNT DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnUniqueCountDMF
+        displayName: 'Apply UNIQUE_COUNT'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: UNIQUE_COUNT Column List
+        attributeName: universalColumnUniqueCountDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.uniqueCountUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnUniqueCountDMF %} true {% else %} false {% endif %}"
+
+        #-------- Apply FRESHNESS  DMF to selected columns ---------#
+
+      - type: toggleButton
+        attributeName: universalColumnFreshnessDMF
+        displayName: 'Apply FRESHNESS'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs %} true {% else %} false {% endif %}"
+
+      - displayName: FRESHNESS  Column List
+        attributeName: universalColumnFreshnessDMFList
+        type: textBox
+        syntax: sql
+        default: "
+        -- This field is auto-populated from the Package Configuration.\n
+        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.\n
+        -- To edit, update the below Config in Package Configuration.\n
+        packageConfiguration.freshnessUniversalColumns[]"
+        isRequired: false
+        enableIf: "{% if config.universalDmfs and config.universalColumnDmfs and config.universalColumnFreshnessDMF %} true {% else %} false {% endif %}"
+
     - groupName: Object Level DMFs
       items:
 
@@ -49,7 +233,7 @@ metadata:
         attributeName: addobjectleveldmfs
         displayName: 'Add Object Level DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
         displayName: 'DMF Functions'
@@ -59,9 +243,10 @@ metadata:
         - displayName: System DMFs
           attributeName: system_dmfs_object
           type: dropdownSelector
-          default: "NULL_COUNT"
+          default: "ROW_COUNT"
           options:
           - "ROW_COUNT"
+          - "FRESHNESS"
           isRequired: false
           enableIf: "{% if config.addobjectleveldmfs %} true {% else %} false {% endif %}"
 
@@ -75,7 +260,7 @@ metadata:
         attributeName: addcolumnleveldmfs
         displayName: 'Add Column Level DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
         displayName: 'DMF Functions'
@@ -93,78 +278,175 @@ metadata:
           type: dropdownSelector
           default: "NULL_COUNT"
           options:
-          - "BLANK_COUNT"
-          - "BLANK_PERCENT"
-          - "NULL_COUNT"
-          - "AVG"
-          - "MAX"
-          - "MIN"
-          - "STDDEV"
-          - "DUPLICATE_COUNT"
-          - "UNIQUE_COUNT"
-          - "FRESHNESS"
+            - "NULL_COUNT"
+            - "NULL_PERCENT"
+            - "BLANK_COUNT"
+            - "BLANK_PERCENT"
+            - "DUPLICATE_COUNT"
+            - "UNIQUE_COUNT"
+            - "FRESHNESS"
+            - "AVG"
+            - "MAX"
+            - "MIN"
+            - "STDDEV"
           isRequired: false
           enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
 
         isRequired: false
         enableIf: "{% if config.addcolumnleveldmfs %} true {% else %} false {% endif %}"
 
-    - groupName: Custom Object Level DMFs
+    - groupName: Custom DMFs
       items:
 
       - type: toggleButton
-        attributeName: addCustomobjectleveldmfs
-        displayName: 'Add Custom Object Level DMFs'
+        attributeName: addCustomDMFs
+        displayName: 'Add Custom DMFs'
         default: false
-        isRequired: true
+        isRequired: false
 
       - type: tabular
-        displayName: 'Custom DMF Functions'
-        attributeName: addCustomdmfsobject
+        displayName: 'CustomDMF Functions (Note: Use valid inputs to avoid errors)'
+        attributeName: customDMFsConfig
         columns:
 
-        - displayName: System DMFs
-          attributeName: custom_dmfs_object
-          type: dropdownSelector
-          default: "NULL_COUNT"
-          options:
-          - "MISSING_SCENARIO_SNAPSHOT_CHECK"
+        - type: textBox
+          displayName: Function Name
+          attributeName: customDMFName
+          syntax: sql
+          default: ref('<storage_loc>', '<custom_dmf_name>')
           isRequired: false
-          enableIf: "{% if config.addCustomobjectleveldmfs %} true {% else %} false {% endif %}"
 
+        - type: textBox
+          displayName: >
+            Arguments (Note: Remove optional objects if not required)
+          attributeName: customDMFArgs
+          syntax: sql
+          default: |
+            - table (Required): 
+                - column: <col_name1>
+                - column: <col_name2>
+                
+            - table (Optional): {{ref('<storage_loc>', '<table_or_view_name>')}}
+                - column: <col_name1>
+                - column: <col_name2>
         isRequired: false
-        enableIf: "{% if config.addCustomobjectleveldmfs %} true {% else %} false {% endif %}"
+        enableIf: "{% if config.addCustomDMFs %} true {% else %} false {% endif %}"
 
-    - groupName: Custom Column Level DMFs
+    - groupName: Alerting Options
       items:
+     
+      - type: toggleButton
+        attributeName: emailAlertToggle
+        displayName: 'Enable Email Alert'
+        default: false
+        isRequired: false
+
+      - type: label
+        attributeName: paramLabel
+        displayName: "⚠️Note: Make sure the following parameters are defined in both the workspace and deployment environment - DMF_ALERT_INTEGRATION, DMF_ALERT_EMAIL, DMF_ALERT_WAREHOUSE, DMF_ALERT_SCHEDULE. Alternatively, use the override option."
+        enableIf: "{%- if config.overrideEmailAlertToggle == false and (parameters == {} or parameters.DMF_ALERT_INTEGRATION == '' or parameters.DMF_ALERT_EMAIL == '' or parameters.DMF_ALERT_WAREHOUSE == '' or parameters.DMF_ALERT_SCHEDULE == '') -%} true {%- else -%} false {%- endif -%}"
 
       - type: toggleButton
-        attributeName: addCustomcolumnleveldmfs
-        displayName: 'Add Column Level DMFs'
+        attributeName: overrideEmailAlertToggle
+        displayName: 'Enable Override Email Alert'
         default: false
-        isRequired: true
-
-      - type: tabular
-        displayName: 'CustomDMF Functions'
-        attributeName: addCustomdmfs
-        columns:
-
-        - type: columnDropdownSelector
-          displayName: Column Name
-          attributeName: columnCustomNameExpressions
-          isRequired: false
-          enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
-
-        - displayName: Custom DMFs
-          attributeName: custom_dmfs
-          type: dropdownSelector
-          default: "NULL_COUNT"
-          options:
-          - "DMF_PA_VALID_DTS_CHK"
-          isRequired: false
-          enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
-
         isRequired: false
-        enableIf: "{% if config.addCustomcolumnleveldmfs %} true {% else %} false {% endif %}"
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Integration Name
+        attributeName: notfIntegrationName
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Warehouse Name
+        attributeName: alertWarehouse
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Frequency (Minutes)
+        attributeName: alertFrequency
+        type: textBox
+        default: 60
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+      - displayName: Alert Email Recipient List(Ex. email1, email2)
+        attributeName: emailList
+        type: textBox
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - NULL ------------------------#
+
+      - type: toggleButton
+        attributeName: nullCntTrigger
+        displayName: 'Trigger on NULL_COUNT (> 0)'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: nullPrcntTrigger
+        displayName: 'Trigger on NULL_PERCENT'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: textBox
+        attributeName: nullPrcntThreshold
+        displayName: 'Null Percent Threshold (%)'
+        default: 5
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.nullPrcntTrigger %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - BLANK ------------------------#
+
+      - type: toggleButton
+        attributeName: blankCntTrigger
+        displayName: 'Trigger on BLANK_COUNT (> 0)'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: toggleButton
+        attributeName: blankPrcntTrigger
+        displayName: 'Trigger on BLANK_PERCENT'
+        default: false
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: textBox
+        attributeName: blankPrcntThreshold
+        displayName: 'BLANK_PERCENT Threshold (%)'
+        default: 5
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.blankPrcntTrigger %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - DUPLICATE ------------------------#
+
+      - type: toggleButton
+        attributeName: dupCntTrigger
+        displayName: 'Trigger on DUPLICATE_COUNT (> 0)'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+        # ------------- Trigger Configs - FRESHNESS ------------------------#
+
+      - type: toggleButton
+        attributeName: freshTrigger
+        displayName: 'Trigger on FRESHNESS'
+        default: true
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle %} true {% else %} false {% endif %}"
+
+      - type: textBox
+        attributeName: freshThreshold
+        displayName: 'BLANK_PERCENT Threshold (Hours)'
+        default: 24
+        isRequired: false
+        enableIf: "{% if config.emailAlertToggle and config.freshTrigger %} true {% else %} false {% endif %}"
 name: DMFS
 type: NodeType
