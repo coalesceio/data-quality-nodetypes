@@ -10,7 +10,7 @@ config:
   packageVariables: |-
     {% set packageConfiguration = namespace
         (
-            universalObjectDmfs=['ROW_COUNT', 'FRESHNESS'], 
+            universalObjectDmfs=['ROW_COUNT'], 
             nullCountUniversalColumns=['ORDER_ID'], 
             nullPercentUniversalColumns=[],
             blankCountUniversalColumns=[],
@@ -22,7 +22,7 @@ config:
     %}
 fileVersion: 1
 id: "@coalesce/snowflake/data-quality"
-name: DTNEW
+name: DQ210
 packageID: "@coalesce/snowflake/data-quality"
 releaseID: 52376b6c-dd5a-4dda-81f6-0dcb783ff0d7
 type: Package

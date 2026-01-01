@@ -1,0 +1,269 @@
+fileVersion: 1
+id: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+name: DMFS_FINAL_TESI_DMF
+operation:
+  config:
+    addCustomDMFs: false
+    addcolumnleveldmfs: false
+    adddmfs:
+      items:
+        - {}
+    adddmfsobject:
+      items:
+        - {}
+    addobjectleveldmfs: false
+    alertFrequency: 60
+    alertWarehouse: ""
+    blankCntTrigger: false
+    blankPrcntThreshold: 5
+    blankPrcntTrigger: false
+    customDMFsConfig:
+      items:
+        - {}
+    dupCntTrigger: true
+    emailAlertToggle: true
+    emailList: ""
+    freshThreshold: 24
+    freshTrigger: true
+    notfIntegrationName: ""
+    nullCntTrigger: true
+    nullPrcntThreshold: 5
+    nullPrcntTrigger: true
+    overrideEmailAlertToggle: false
+    scheduleCRON: ""
+    schedulePeriod: "60"
+    schedulePeriodOption: TRIGGER_ON_CHANGES
+    universalColumnBlankCountDMF: false
+    universalColumnBlankCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.blankCountUniversalColumns[]
+    universalColumnBlankPercentDMF: false
+    universalColumnBlankPercentDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.blankPercentUniversalColumns[]
+    universalColumnDmfs: true
+    universalColumnDuplicateCountDMF: true
+    universalColumnDuplicateCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.duplicateCountUniversalColumns[]
+    universalColumnFreshnessDMF: true
+    universalColumnFreshnessDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.freshnessUniversalColumns[]
+    universalColumnNullCountDMF: true
+    universalColumnNullCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.nullCountUniversalColumns[]
+    universalColumnNullPercentDMF: false
+    universalColumnNullPercentDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.nullPercentUniversalColumns[]
+    universalColumnUniqueCountDMF: false
+    universalColumnUniqueCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.uniqueCountUniversalColumns[]
+    universalDmfs: true
+    universalObjectDmfs: true
+    universalObjectDmfsList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.universalObjectDmfs[]
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: TARGET
+  materializationType: table
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: dfeaf1a7-86bf-4e80-8a50-c1c79e11bf7b
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 1079e728-948d-4364-882d-66bbf9fe8eba
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d24500cb-ddfe-4b93-beb1-8c4fff589de7
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: ORDER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 69b48d36-7650-46d9-b5c3-f889ad6eb91e
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: ff2eeb51-76b3-498d-a88b-e26aa55382b8
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: CUSTOMER_ID
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 911d426f-f645-4f6b-84eb-2004c30f8f01
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 34745f46-0469-4264-b5b7-1f7c88e776e9
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: EMAIL
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 461a7884-f321-4f38-8df9-85ce66993ef9
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0c829dce-7389-4d67-b863-c9f4abc3a875
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: STATUS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 609e83fc-6675-439f-b24e-e23a6f7e49ec
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d2a3a32c-0c71-44c3-837b-5685219c19ef
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: NUMBER(10,2)
+        description: ""
+        name: AMOUNT
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 90caf361-1f8e-4870-94a0-7e80880b0dd8
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 0e3382b4-7c48-4eee-b72b-91de9b5972b5
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: NUMBER(38,0)
+        description: ""
+        name: QUANTITY
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: ea5dd9cf-4dbb-4c0e-a1b7-bbd56e686b39
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 322f9942-566c-414d-ae0e-3a953badee23
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: DATE
+        description: ""
+        name: CREATED_DATE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 54ffb23e-2381-476c-a4e6-240b5340d8af
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 8cef73f2-bf96-4542-bb3c-0a618b2907de
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: CREATED_TS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 7ef39acc-b2ca-4411-baf7-676b43ecaa26
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 9dbad712-f97e-4b2c-aae5-d826dfd389af
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: UPDATED_TS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 10a9a446-fae0-48df-a1f5-21f13c47336b
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 076f440d-1812-4edf-bf2d-859c6a829e10
+          stepCounter: d59a0917-dfa6-4779-ac1c-b35d29f417bc
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: COUNTRY_CODE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 94987e3f-f7f3-4cef-a36a-08f36e977487
+                stepCounter: 1f833a7f-883c-478c-96ad-5f852ff16e00
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          FINAL_TESI_DMF: 1f833a7f-883c-478c-96ad-5f852ff16e00
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE
+            nodeName: FINAL_TESI_DMF
+        join:
+          joinCondition: FROM {{ ref('SOURCE', 'FINAL_TESI_DMF') }} "FINAL_TESI_DMF"
+        name: DMFS_FINAL_TESI_DMF
+        noLinkRefs: []
+  name: DMFS_FINAL_TESI_DMF
+  overrideSQL: false
+  schema: ""
+  sqlType: DQ210:::448
+  type: sql
+  version: 1
+type: Node
