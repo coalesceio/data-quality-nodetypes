@@ -76,7 +76,7 @@ operation:
        -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
        -- To edit, update the below Config in Package Configuration.
        packageConfiguration.uniqueCountUniversalColumns[]
-    universalDmfs: true
+    universalDmfs: false
     universalObjectDmfs: true
     universalObjectDmfsList: |2-
        -- This field is auto-populated from the Package Configuration.
