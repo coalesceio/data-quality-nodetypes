@@ -2,10 +2,9 @@
     Copyright (c) 2023 Coalesce. All rights reserved.
 This script and its associated documentation are confidential and proprietary to Coalesce.
 Unauthorized reproduction, distribution, or disclosure of this material is strictly prohibited.
-Coalesce permits you to copy and modify this script for the purposes of using with Coalsce but
+Coalesce permits you to copy and modify this script for the purposes of using with Coalesce but
 does not permit copying or modification for any other purpose.  
 #}
-{# == Node Type Version        : 1  == #}
 {# == Node Type Name           : Data Profiling With Task == #}
 {# == Node Type Description    : This node creates a Data Profiling table and a task to insert data into Data Profiling  == #}
 
@@ -25,6 +24,22 @@ does not permit copying or modification for any other purpose.
 {# Create / Alter Table first #}
 
 {% if desiredState and desiredState != currentState%}
+
+    {%- if currentState != undefined and currentState.node.nodeType != desiredState.node.nodeType %}
+        {%- set warningMsg = getNodeTypeSwitchWarning() | default('') %}
+
+        {# Warning display - Node type changes can impact related tasks, streams, or services. #}
+        {%- if warningMsg | trim | length > 0 -%}
+            {{ stage('Warning! Node Type Switching Detected', false) }}
+            {{ warningMsg }}
+            select 1=0
+        {%- endif -%}
+
+        {{ stage('Drop ' + ref_no_link(currentState.node.location.name, currentState.node.name)) }}
+        {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+        DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
+
+    {%- endif -%}
 
 	{# Target Table Info #}
 	{% set targetTableDatabase = ref_no_link(desiredState.node.location.name, desiredState.node.name).split('.')[0] %} 
@@ -132,7 +147,8 @@ does not permit copying or modification for any other purpose.
 	{% endif %}
 
 
-	{% if currentState == undefined or currentState.storageLocations | length == 0%}
+	{% if currentState == undefined or currentState.storageLocations | length == 0 or (currentState != undefined and currentState.node.nodeType != desiredState.node.nodeType) %}
+
 		{{ stage('Create Data Profiling Table') }}
 		CREATE TABLE IF NOT EXISTS {{ fullyQualifiedTargetTableName }}(
 			OBJECT_NAME VARCHAR(50),
@@ -140,16 +156,8 @@ does not permit copying or modification for any other purpose.
 			FUNCTION_APPLIED VARCHAR(50),
 			RESULT VARIANT
 		)
+        {%- if desiredState.node.description | length > 0 %} COMMENT = '{{ desiredState.node.description | escape }}'{% endif %}
 
-  {%- if desiredState.node.description | length > 0 %} COMMENT = '{{ desiredState.node.description | escape }}'{% endif %}
-
-        {% if desiredState.config.clusterKey == true %}
-            {{ stage('Apply Table Clustering') }}
-            ALTER TABLE {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} {{ nsVariables.finalClusterKey }}
-
-            {{ stage('Resume Recluster Table') }}
-            ALTER TABLE {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }} RESUME RECLUSTER
-        {% endif %}
 	{% elif currentState != undefined %}
 
 		{# Change Node Name or Change Storage Location #}
@@ -241,10 +249,8 @@ does not permit copying or modification for any other purpose.
 				{% set srcSchName = currentState.node.location.name %}
 				{% set cdb = currentState.storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='database') | first %}
 				{% set csch = currentState.storageLocations | selectattr('name', 'equalto', srcSchName) | map(attribute='schema') | first %}
-				{% set dpTableName =  currentState.node.name | replace('"','') + "_DATA_PROFILING"  %}
-				{% set renameDpTableName =  desiredState.node.name | replace('"','') + "_DATA_PROFILING"  %}
-				ALTER TABLE  "{{cdb}}"."{{csch}}"."{{cdpTableName}}"
-				RENAME TO   {{ ref_no_link(desiredState.node.location.name, renameDpTableName) }}
+				ALTER TABLE  "{{cdb}}"."{{csch}}"."{{currentState.node.name}}"
+				RENAME TO   {{ ref_no_link(desiredState.node.location.name, desiredState.node.name) }}
 			{% endif %}
 
 
@@ -255,8 +261,9 @@ does not permit copying or modification for any other purpose.
     {% set targetObjectSchema = ref_no_link(currentState.node.location.name, currentState.node.name).split('.')[1] %} 
     {% set fullyQualifiedTargetObjectName = ref_no_link(currentState.node.location.name, currentState.node.name) %}
 
-    {{ stage('Drop Table') }}
-    DROP TABLE IF EXISTS  {{ fullyQualifiedTargetObjectName }}
+    {{ stage('Drop ' + ref_no_link(currentState.node.location.name, currentState.node.name)) }}
+    {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+    DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 {% endif %}
 
 {# Create Task Second #}
