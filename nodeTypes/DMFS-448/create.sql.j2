@@ -27,7 +27,7 @@ does not permit copying or modification for any other purpose.
 {%- endif -%}
 
 {#------ Build Dictionary of CurrentState DMFs -------#}
-{% if currentState and currentState.node.nodeType == desiredState.node.nodeType %}
+{% if currentState %}
 
     {% set nsCurrentDMFVariables = namespace(universalObjectDMF=[],
                                             universalCoulmnDMF=[],
