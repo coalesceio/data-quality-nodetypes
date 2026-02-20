@@ -38,7 +38,7 @@ metadata:
       - displayName: Enter task schedule using CRON
         attributeName: scheduleCRON
         type: textBox
-        placeholder: '5 0-23 * * * America/Los_Angeles'
+        default: '5 0-23 * * * America/Los_Angeles'
         isRequired: false
         enableIf: "{% if config.schedulePeriodOption == 'CRON' %} true {% else %} false {% endif %}"
 
@@ -355,12 +355,14 @@ metadata:
 
       - displayName: Alert Integration Name
         attributeName: notfIntegrationName
+        default: ''
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
 
       - displayName: Alert Warehouse Name
         attributeName: alertWarehouse
+        default: ''
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
@@ -374,6 +376,7 @@ metadata:
 
       - displayName: Alert Email Recipient List(Ex. email1, email2)
         attributeName: emailList
+        default: ''
         type: textBox
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.overrideEmailAlertToggle %} true {% else %} false {% endif %}"
@@ -448,5 +451,15 @@ metadata:
         default: 24
         isRequired: false
         enableIf: "{% if config.emailAlertToggle and config.freshTrigger %} true {% else %} false {% endif %}"
+
+    - groupName: Hidden Config
+      enableIf: "false"
+      items:
+      - displayName: Type
+        type: materializationSelector
+        default: view
+        options:
+        - view
+        isRequired: false
 name: DMFS
 type: NodeType

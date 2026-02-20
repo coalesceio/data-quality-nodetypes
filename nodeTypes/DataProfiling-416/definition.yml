@@ -68,6 +68,7 @@ metadata:
       - displayName: Row Count
         attributeName: isRowCount
         type: toggleButton
+        default: false
         isRequired: false
         name: ROW_COUNT
       - displayName: Distinct Count
@@ -228,8 +229,6 @@ metadata:
         options:
         - task
         isRequired: false
-
-
 
     systemColumns:
     - displayName: PROFILE_METRIC
