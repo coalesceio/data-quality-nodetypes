@@ -226,6 +226,14 @@ When deployed for the first time into an environment the DMF node will update th
 
 The subsequent deployment of DMF node with changes in DMFs definition, adding/dropping DMFs results in updating metadata with latest changes.
 
+#### Node Type Switching
+
+Node Type switching is supported starting from Coalesce version **7.29+**.
+
+From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
+
+For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
+
 #### DMF Undeployment
 
 If a DMF Node is deleted from a Workspace, that Workspace is committed to Git and that commit deployed to a higher level environment then the all the DMFs will be dropped from metadata.
@@ -402,7 +410,15 @@ For tasks with predecessors:
 
 #### Data Profiling With Task Altering Tables
 
-The structure of the data profiling table is defined int he create template and cannot be changed so altering the table is not supported in redeployment.
+The structure of the data profiling table is defined int the create template and cannot be changed so altering the table is not supported in redeployment.
+
+#### Node Type Switching
+
+Node Type switching is supported starting from Coalesce version **7.29+**.
+
+From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
+
+For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
 
 ### Data Profiling With Task Undeployment
 
@@ -423,6 +439,30 @@ For tasks with predecessors:
 | **Suspend Root Task** | Drop a task from a DAG of task the root task needs to be put into a suspended state. |
 | **Drop Task** | Drops the task |
 
+-----------------
+
+#### Node Type Switching Logic
+
+| Current MaterializationType | Desired MaterializationType | Stage |
+|------------|--------|-------|
+| Any Other | View(Static Data Metric) | 1. Warning (if applicable)<br/>2. Drop <br/> 3. Create |
+| Any Other | Table(Static Data Profile)  | 1. Warning (if applicable)<br/>2. Drop <br/> 3. Create |
+
+Please review the documented limitations before performing a node type switch to ensure compatibility and avoid unintended deployment issues.
+
+#### ⚠ Limitations of Node Type Switching (Current)
+
+| # | Current Materialization | Desired Materialization | Limitation |
+|---|--------------------------|--------------------------|------------|
+| 1 | Older Version Iceberg Table | Table | Results in `ALTER` failure. Iceberg tables require `ALTER ICEBERG TABLE`. Works only if latest package (with switching support) is already used. |
+| 2 | Older Version Create or Alter View | Any | Switch fails unless current node uses latest package supporting node type switching. |
+| 3 | First Node in Pipeline | Any | Not supported. First node is foundational and switching may disrupt the pipeline. |
+| 4 | External Packages | Any | Not supported as they typically act as first nodes in the pipeline. |
+| 5 | Functional Packages | Any | Not supported due to column re-sync behavior which may cause schema inconsistencies. |
+| 6 | Dynamic Dimension / LRV | Any | System columns must be manually dropped before redeployment. |
+| 7 | Any | Any Other | After performing node switching, the `Create/Run` in Workspace browser may not work as expected due to changes in the node’s materialization type. |
+
+--------------
 
 ## Code
 
