@@ -800,7 +800,8 @@ does not permit copying or modification for any other purpose.
         UNSET DATA_METRIC_SCHEDULE
 
         {{ stage('Drop Data Quality Result View', true, "sql", "create") }}  
-        DROP VIEW IF EXISTS {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
+        {%- set materialization = dropMaterialization(currentState.node.materializationType) %}
+        DROP {{ materialization }} {{ ref_no_link(currentState.node.location.name, currentState.node.name) }}
 
         {# Drop Email Alert #}
         {% if currentState.config.emailAlertToggle %}

@@ -1,0 +1,213 @@
+fileVersion: 1
+id: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+name: DMFS_CUSTOMERS1
+operation:
+  config:
+    addCustomDMFs: false
+    addcolumnleveldmfs: false
+    adddmfs:
+      items:
+        - {}
+    adddmfsobject:
+      items:
+        - {}
+    addobjectleveldmfs: false
+    alertFrequency: 60
+    alertWarehouse: ""
+    blankCntTrigger: false
+    blankPrcntThreshold: 5
+    blankPrcntTrigger: false
+    customDMFsConfig:
+      items:
+        - {}
+    dupCntTrigger: true
+    emailAlertToggle: false
+    emailList: ""
+    freshThreshold: 24
+    freshTrigger: true
+    notfIntegrationName: ""
+    nullCntTrigger: true
+    nullPrcntThreshold: 5
+    nullPrcntTrigger: false
+    overrideEmailAlertToggle: false
+    scheduleCRON: 5 0-23 * * * America/Los_Angeles
+    schedulePeriod: "60"
+    schedulePeriodOption: Minutes
+    universalColumnBlankCountDMF: false
+    universalColumnBlankCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.blankCountUniversalColumns[]
+    universalColumnBlankPercentDMF: false
+    universalColumnBlankPercentDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.blankPercentUniversalColumns[]
+    universalColumnDmfs: true
+    universalColumnDuplicateCountDMF: true
+    universalColumnDuplicateCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.duplicateCountUniversalColumns[]
+    universalColumnFreshnessDMF: true
+    universalColumnFreshnessDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.freshnessUniversalColumns[]
+    universalColumnNullCountDMF: true
+    universalColumnNullCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.nullCountUniversalColumns[]
+    universalColumnNullPercentDMF: false
+    universalColumnNullPercentDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.nullPercentUniversalColumns[]
+    universalColumnUniqueCountDMF: false
+    universalColumnUniqueCountDMFList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.uniqueCountUniversalColumns[]
+    universalDmfs: true
+    universalObjectDmfs: true
+    universalObjectDmfsList: |2-
+       -- This field is auto-populated from the Package Configuration.
+       -- Redeployment behavior is controlled by toggles, NOT Package Configuration.
+       -- To edit, update the below Config in Package Configuration.
+       packageConfiguration.universalObjectDmfs[]
+  database: ""
+  deployEnabled: true
+  description: ""
+  isMultisource: false
+  locationName: SOURCE
+  materializationType: view
+  metadata:
+    appliedNodeTests: []
+    columns:
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 3be8acb9-49b3-4db8-bafa-7a8f3e3cc5a4
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: VARCHAR(16777216)
+        description: ""
+        name: EMAIL
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: ca55d252-c5d9-4263-aaf6-e4273224b9e4
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: e0f1a5bf-3fb9-4356-bab8-a544803d18a6
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: TIMESTAMP_NTZ(9)
+        description: ""
+        name: JOIN_DATE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 5adebddc-8438-4b2c-90b8-a9388b58aa27
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d9dbea65-f49d-47d4-b21e-b116473ec162
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: NUMBER(6,0)
+        description: ""
+        name: AGE_BAND
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 7322c352-5b22-4320-944f-6111d68fc37b
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 421a9bd9-3b67-4903-8e11-c709e8c86e30
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: VARCHAR(18)
+        description: ""
+        name: HOUSEHOLD_INCOME
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 01b9088f-a964-4eec-bce1-5da507491b2d
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: e0321e40-a7c1-411f-99ef-72e5cba66a11
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: VARCHAR(8)
+        description: ""
+        name: MARITAL_STATUS
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: ecc092cb-fbe3-45e8-a3a7-1e5777023699
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: 02ca1312-d6af-4dd2-9685-9dc7d23ffa24
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: FLOAT
+        description: ""
+        name: HOUSEHOLD_SIZE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: 7971ccef-a64d-4a5a-b2b7-1bf42342caa8
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+      - appliedColumnTests: {}
+        columnReference:
+          columnCounter: d1ee4f37-4408-4b7e-be70-dd32029e75e1
+          stepCounter: b3e6ab2f-c76a-4c25-a8ba-c44dc657f827
+        config: {}
+        dataType: FLOAT
+        description: ""
+        name: TOTAL_ORDER_VALUE
+        nullable: true
+        sourceColumnReferences:
+          - columnReferences:
+              - columnCounter: a130f64d-8fd7-48dd-9b5c-ca1a8b894541
+                stepCounter: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+            transform: ""
+    cteString: ""
+    enabledColumnTestIDs: []
+    sourceMapping:
+      - aliases:
+          CUSTOMERS: 3da04c36-8b50-47d5-bd9c-9983addeb4e0
+        customSQL:
+          customSQL: ""
+        dependencies:
+          - locationName: SOURCE
+            nodeName: CUSTOMERS
+        join:
+          joinCondition: FROM {{ ref('SOURCE', 'CUSTOMERS') }} "CUSTOMERS"
+        name: DMFS_CUSTOMERS1
+        noLinkRefs: []
+  name: DMFS_CUSTOMERS1
+  overrideSQL: false
+  schema: ""
+  sqlType: "448"
+  type: sql
+  version: 1
+type: Node
