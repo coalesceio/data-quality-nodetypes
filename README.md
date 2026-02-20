@@ -455,7 +455,7 @@ Please review the documented limitations before performing a node type switch to
 | # | Current Materialization | Desired Materialization | Limitation |
 |---|--------------------------|--------------------------|------------|
 | 1 | Older Version Iceberg Table | Table | Results in `ALTER` failure. Iceberg tables require `ALTER ICEBERG TABLE`. Works only if latest package (with switching support) is already used. |
-| 2 | Older Version Create or Alter View | Any | Switch fails unless current node uses latest package supporting node type switching. |
+| 2 | Older Version<br/>Create or Alter-View<br/>Data Quality-DMF | Any(except View) | Switch fails unless current node uses latest package supporting node type switching. |
 | 3 | First Node in Pipeline | Any | Not supported. First node is foundational and switching may disrupt the pipeline. |
 | 4 | External Packages | Any | Not supported as they typically act as first nodes in the pipeline. |
 | 5 | Functional Packages | Any | Not supported due to column re-sync behavior which may cause schema inconsistencies. |
