@@ -277,7 +277,7 @@ The Data Profiling node type has four configuration groups:
 | **Option** | **Description** |
 |---------|-------------|
 | **Schedule Task** | True / False toggle that determines whether a task will be created or if the SQL to be used in the task will execute as DML as a Run action.<br/>**True** - The insert data SQL will wrap in a task with specified Scheduling Options. When Run is executed, a message appears prompting the user to wait or suggesting a manual run. <br/>**False** - A table will be created and SQL will execute as a Run action|
-| **Truncate Before** | Toggle: True/False<br/>This determines whether a table will be overwritten each time a task executes. **True**: Uses INSERT OVERWRITE<br/>**False**: Uses INSERT to append data |
+| **Truncate Before** | Toggle: True/False<br/>Determines whether the table is truncated before execution.<br/>True: Table is truncated before the DML operation runs.<br/>False: The DML operation runs without truncation. |
 | **Enable tests** | Toggle: True/False<br/>Determines if tests are enabled |
 | **Sample Mode** | Options: Sample/Full Table<br/>**Sample**: Options: Percent/Fixed Number of Rows <br/>**Full Table**: Performs Data Profiling on all records of source table|
 
