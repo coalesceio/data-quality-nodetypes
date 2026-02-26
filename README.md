@@ -228,7 +228,7 @@ The subsequent deployment of DMF node with changes in DMFs definition, adding/dr
 
 #### Node Type Switching
 
-Node Type switching is supported starting from Coalesce version **7.29+**.
+Node Type switching is supported starting from Coalesce version **7.28+**.
 
 From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
 
@@ -414,7 +414,7 @@ The structure of the data profiling table is defined int the create template and
 
 #### Node Type Switching
 
-Node Type switching is supported starting from Coalesce version **7.29+**.
+Node Type switching is supported starting from Coalesce version **7.28+**.
 
 From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
 
