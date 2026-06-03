@@ -10,7 +10,7 @@ The Coalesce Data Quality Nodetypes Package includes:
 
 ### DMF
 
-The Coalesce DMF node allows you to to monitor the state and integrity of your data. You can use DMFs to measure key metrics, such as, but not limited to, freshness and counts that measure duplicates, NULLs, rows, and unique values.This is based on Data Metric functions concept in Snowflake.For more information on roles and privileges refer [docs](https://docs.snowflake.com/en/user-guide/data-quality-intro#about-data-quality-and-dmfs).
+The Coalesce DMF node allows you to monitor the state and integrity of your data. You can use DMFs to measure key metrics, such as, but not limited to, freshness and counts that measure duplicates, NULLs, rows, and unique values. This is based on Data Metric functions concept in Snowflake. For more information on roles and privileges, see [Snowflake data quality documentation](https://docs.snowflake.com/en/user-guide/data-quality-intro#about-data-quality-and-dmfs).
 
 You can set a DMF on the following kinds of table objects:
 * Dynamic table
@@ -21,19 +21,19 @@ You can set a DMF on the following kinds of table objects:
 * Table (Including temporary and transient tables)
 * View
 
-### Limitations:
+### Limitations
 * You cannot set a DMF on a hybrid table or a stream object.
 * You can only have 10,000 total associations of DMFs on objects per account. Each instance of setting a DMF on a table or view counts as one association.
 * You cannot grant privileges on a DMF to share or set a DMF on a shared table or view.
 * Setting a DMF on an object tag is not supported.
 * You cannot set a DMF on objects in a reader account.
 * Trial accounts do not support this feature.
-* In coalesce,this node cannot be used as part of a pipeline.This node can be added at the end of the pipeline to infer Data Metrics
+* In Coalesce, this Node cannot be used as part of a pipeline. This Node can be added at the end of the pipeline to infer data metrics
 * Package DMF settings are static once defined and deployed. Redeployment behavior is driven only by universal enable or disable toggles, not by changes to package configuration values.
   
 ### DMF Node Configuration
 
-The Work node type has seven configuration groups:
+The DMF Node type has seven configuration groups:
 
 * [Node Properties](#node-properties)
 * [Scheduling Options](#scheduling-options)
@@ -52,7 +52,7 @@ The Work node type has seven configuration groups:
 |----------|-------------|
 | **Storage Location** | Storage Location where the WORK will be created |
 | **Node Type** | Name of template used to create node objects |
-| **Deploy Enabled** | If TRUE the node will be deployed / redeployed when changes are detected<br/> If FALSE the node will not be deployed or will be dropped during redeployment |
+| **Deploy Enabled** | If TRUE the node will be deployed or redeployed when changes are detected<br/> If FALSE the node will not be deployed or will be dropped during redeployment |
 
 #### Scheduling Options
 
@@ -132,7 +132,7 @@ When the universal toggle and the column-level universal toggle are enabled, pac
 
 #### Custom DMFs
 
-Custom DMFs in Snowflake allow you to define your own data quality checks using SQL logic and apply them to tables or columns based on your requirements. For more info on **Custom DMFs** [please refer this documentation](https://docs.snowflake.com/en/user-guide/data-quality-custom-dmfs)
+Custom DMFs in Snowflake allow you to define your own data quality checks using SQL logic and apply them to tables or columns based on your requirements. For more info on **Custom DMFs** [Snowflake documentation](https://docs.snowflake.com/en/user-guide/data-quality-custom-dmfs)
 
 **Edit the placeholders shown here to reflect your own table and column references.**
 
@@ -148,7 +148,7 @@ Custom DMFs in Snowflake allow you to define your own data quality checks using 
 
 #### Alerting Options
 
-Optional Snowflake ALERT creation that sends notifications when data quality issues are detected. More about Alerting [please refer this documentation.](https://docs.snowflake.com/en/guides-overview-alerts)
+Optional Snowflake ALERT creation that sends notifications when data quality issues are detected. More about Alerting [Snowflake documentation](https://docs.snowflake.com/en/guides-overview-alerts)
 
 **Prerequisites**
 <br/>
@@ -220,7 +220,7 @@ When deployed for the first time into an environment the DMF node will update th
 
 | **Stage** | **Description** |
 |-----------|----------------|
-| **Create ** | This will execute a Alter statement and create a DMF entries in metadata |
+| **Create** | This will execute a Alter statement and create a DMF entries in metadata |
 
 #### DMF Redeployment
 
@@ -232,7 +232,7 @@ Node Type switching is supported starting from Coalesce version **7.28+**.
 
 From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
 
-For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
+For more information, see [Node Type Switching Logic and Limitations](#node-type-switching-logic)
 
 #### DMF Undeployment
 
@@ -269,8 +269,8 @@ The Data Profiling node type has four configuration groups:
 |----------|-------------|
 | **Storage Location** | Storage Location where the Data Profiling table will be created |
 | **Node Type** | Name of template used to create node objects |
-| **Description** | A description of the node's purpose |
-| **Deploy Enabled** | If TRUE the node will be deployed / redeployed when changes are detected<br/> If FALSE the node will not be deployed or will be dropped during redeployment |
+| **Description** | A description of the Node's purpose |
+| **Deploy Enabled** | If TRUE the node will be deployed or redeployed when changes are detected<br/> If FALSE the node will not be deployed or will be dropped during redeployment |
 
 #### Options
 
@@ -285,7 +285,7 @@ The Data Profiling node type has four configuration groups:
 
 | **Option** | **Description** |
 |---------|-------------|
-| **Row Count** | True / False toggle that determines weather to add a record for the row count of the source table.<br/>**True** - Add a record for the row count of the source table. <br/>**False** - A record for the row count of the source table is not added.|
+| **Row Count** | True / False toggle that determines whether to add a record for the row count of the source table.<br/>**True** - Add a record for the row count of the source table. <br/>**False** - A record for the row count of the source table is not added.|
 | **Distinct Count** | Add column/columns to get the count of distinct values of the selected column|
 | **Null Count** | Add column/columns to get the count of null values of the selected column |
 | **Not Null Count** | Add column/columns to get the count of not null values of the selected column |
@@ -410,7 +410,7 @@ For tasks with predecessors:
 
 #### Data Profiling With Task Altering Tables
 
-The structure of the data profiling table is defined int the create template and cannot be changed so altering the table is not supported in redeployment.
+The structure of the data profiling table is defined in the create template and cannot be changed so altering the table is not supported in redeployment.
 
 #### Node Type Switching
 
@@ -418,7 +418,7 @@ Node Type switching is supported starting from Coalesce version **7.28+**.
 
 From this version onward, a node’s materialization type can be switched from one supported type to another, subject to certain limitations.
 
-For more info click here - [Node Type Switching Logic and Limitations](#node-type-switching-logic)
+For more information, see [Node Type Switching Logic and Limitations](#node-type-switching-logic)
 
 ### Data Profiling With Task Undeployment
 
@@ -448,7 +448,7 @@ For tasks with predecessors:
 | Any Other | View(Static Data Metric) | 1. Warning (if applicable)<br/>2. Drop <br/> 3. Create |
 | Any Other | Table(Static Data Profile)  | 1. Warning (if applicable)<br/>2. Drop <br/> 3. Create |
 
-Please review the documented limitations before performing a node type switch to ensure compatibility and avoid unintended deployment issues.
+Review the documented limitations before performing a node type switch to ensure compatibility and avoid unintended deployment issues.
 
 #### ⚠ Limitations of Node Type Switching (Current)
 
